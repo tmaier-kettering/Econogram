@@ -1,0 +1,147 @@
+import tkinter as tk
+from tkinter import simpledialog, messagebox
+import pandas as pd
+from Create_Table import create_table
+
+
+def calculate_future_value(cash_flow, rate, periods):
+    """Calculate the future value of a cash flow using the given rate and periods."""
+    return cash_flow * ((1 + rate) ** periods)
+
+
+def check_cash_flow_position_forward(initial_period, new_period):
+    """Ensure that cash flow is not moved backward in time."""
+    if new_period < initial_period:
+        show_warning_forward()
+        return False  # Cancel the operation
+    return True  # Allow the operation
+
+
+def show_warning_forward():
+    """Display a warning about moving cash flows backward in time."""
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    messagebox.showwarning(
+        "Warning",
+        "You cannot move your cash flow backward in time using the future value function. "
+        "Please select the present value function instead."
+    )
+    root.destroy()
+
+
+def popup_future_value(app):
+    """Calculate and generate future value of selected cash flows."""
+    if not app.selected_indices:
+        messagebox.showinfo("Info", "Please select a cash flow or series first.")
+        return
+
+    try:
+        # Validate selection
+        valid_indices = app.cash_flows.index.intersection(app.selected_indices)
+        if valid_indices.empty:
+            messagebox.showinfo("Info", "Selected cash flows are no longer valid.")
+            return
+
+        selected_cash_flows = app.cash_flows.loc[valid_indices]
+
+        # Check if the selected items are a single series or multiple items of one series
+        series_id_counts = selected_cash_flows["Series_ID"].value_counts()
+        if any(series_id_counts > 1):
+            for series_id, count in series_id_counts.items():
+                if count > 1:
+                    # Handle a series with multiple cash flows
+                    series_cash_flows = selected_cash_flows[selected_cash_flows["Series_ID"] == series_id]
+                    new_period = series_cash_flows["Period"].max()  # Keep it at the last period
+
+                    # Ensure the cash flow is moved forward in time (just double-checking, you can remove if not necessary)
+                    if not check_cash_flow_position_forward(new_period, new_period):
+                        return
+
+                    # Calculate combined future value
+                    combined_value = 0
+                    for _, row in series_cash_flows.iterrows():
+                        cash_flow = row["Cash Flow"]
+                        current_period = row["Period"]
+                        periods_difference = new_period - current_period
+                        combined_value += calculate_future_value(
+                            cash_flow, app.interest_rate / 100, periods_difference
+                        )
+
+                    # Create a meaningful series name
+                    original_series_name = series_cash_flows["Series_Name"].iloc[0]
+                    rendered_series_name = f"FV of {original_series_name}"
+
+                    # Create a DataFrame entry for the combined future value
+                    new_series_id = app._get_next_series_id()  # Fetch unique series ID
+                    color = next(app.colors)  # Assign a new unique color
+                    new_entry = pd.DataFrame({
+                        "Period": [new_period],
+                        "Cash Flow": [combined_value],
+                        "Color": [color],
+                        "Series_ID": [new_series_id],
+                        "Series_Name": [rendered_series_name]
+                    })
+
+                    # Append the new entry to cash flows
+                    app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+
+        else:
+            # Handle a single cash flow or series with just one cash flow
+            new_period = simpledialog.askinteger("Input", "Enter the period to move the cash flow to (0-100):")
+            if new_period is not None:
+                if new_period < 0 or new_period > 100:
+                    raise ValueError("Period must be an integer between 0 and 100.")
+
+                initial_period = selected_cash_flows["Period"].max()
+
+                # Ensure the cash flow is moved forward in time
+                if not check_cash_flow_position_forward(initial_period, new_period):
+                    return
+
+                # Calculate future value for the single cash flow
+                combined_value = 0
+                for _, row in selected_cash_flows.iterrows():
+                    cash_flow = row["Cash Flow"]
+                    current_period = row["Period"]
+                    periods_difference = new_period - current_period
+                    combined_value += calculate_future_value(
+                        cash_flow, app.interest_rate / 100, periods_difference
+                    )
+
+                # Create a meaningful series name
+                original_series_name = selected_cash_flows["Series_Name"].iloc[0]
+                rendered_series_name = f"FV of {original_series_name}"
+
+                # Create a DataFrame entry for the calculated future value
+                new_series_id = app._get_next_series_id()  # Fetch unique series ID
+                color = next(app.colors)  # Assign a new unique color
+                new_entry = pd.DataFrame({
+                    "Period": [new_period],
+                    "Cash Flow": [combined_value],
+                    "Color": [color],
+                    "Series_ID": [new_series_id],
+                    "Series_Name": [rendered_series_name]
+                })
+
+                # Append the new entry to cash flows
+                app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+
+        # Clear and update the table
+        create_table(app, [])  # Refresh or reset the displayed table
+
+        # Reset selections and update the plot
+        app.selected_indices = []
+        for rect in app.selection_rects:
+            rect.set_bounds(0, 0, 0, 0)  # Reset highlighted selection
+        for text in app.value_texts:
+            text.remove()  # Remove any text over chart bars
+        app.value_texts = []
+
+        # Update visual plot to reflect changes
+        app.update_plot()
+
+    except ValueError as e:
+        messagebox.showerror("Input Error", str(e))
+    except Exception as e:
+        # Handle general exceptions gracefully
+        messagebox.showerror("Error", f"An error occurred: {str(e)}")
