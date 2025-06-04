@@ -52,9 +52,10 @@ def popup_future_value(app):
                     # Handle a series with multiple cash flows
                     series_cash_flows = selected_cash_flows[selected_cash_flows["Series_ID"] == series_id]
                     new_period = series_cash_flows["Period"].max()  # Keep it at the last period
+                    initial_period = series_cash_flows["Period"].min()
 
                     # Ensure the cash flow is moved forward in time (just double-checking, you can remove if not necessary)
-                    if not check_cash_flow_position_forward(new_period, new_period):
+                    if not check_cash_flow_position_forward(initial_period, new_period):
                         return
 
                     # Calculate combined future value
