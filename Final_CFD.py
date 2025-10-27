@@ -30,8 +30,20 @@ class CashFlowDiagramApp:
         except Exception as e:
             print(f"Could not load icon: {e}")
         
-        # Maximize the window
-        self.root.state('zoomed')
+        # Maximize the window (cross-platform approach)
+        try:
+            # Try Windows/Mac method
+            self.root.state('zoomed')
+        except:
+            # For Linux/Unix, use attributes
+            try:
+                self.root.attributes('-zoomed', True)
+            except:
+                # Fallback: set geometry to screen size
+                self.root.update_idletasks()
+                width = self.root.winfo_screenwidth()
+                height = self.root.winfo_screenheight()
+                self.root.geometry(f'{width}x{height}+0+0')
 
         self.state_history = []  # Track previous states for undo functionality
         self.cash_flows = pd.DataFrame(columns=["Period", "Cash Flow", "Color", "Series_ID"])
