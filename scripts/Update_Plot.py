@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox, simpledialog
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle, Patch
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -103,17 +104,15 @@ def handle_click(event, ax, app):
 
 def rename_series(app):
     """Rename the selected series."""
-    from tkinter import simpledialog
-    
     if not app.selected_indices:
-        from tkinter import messagebox
         messagebox.showwarning("No Selection", "Please select a cash flow to rename.")
         return
     
-    # Get the series ID from the first selected index
+    # Get the series ID and current name from the first selected index
     first_selected_idx = app.selected_indices[0]
-    series_id = app.cash_flows.loc[first_selected_idx, "Series_ID"]
-    current_name = app.cash_flows.loc[first_selected_idx, "Series_Name"]
+    selected_row = app.cash_flows.loc[first_selected_idx]
+    series_id = selected_row["Series_ID"]
+    current_name = selected_row["Series_Name"]
     
     # Prompt for new name
     new_name = simpledialog.askstring("Rename Series", 
