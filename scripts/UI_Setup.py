@@ -1,4 +1,4 @@
-from Clear_Graph import clear_graph
+from scripts.Clear_Graph import clear_graph
 import tkinter as tk
 from tkinter import font, messagebox
 from PIL import Image, ImageTk

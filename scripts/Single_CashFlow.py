@@ -1,7 +1,7 @@
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
-from UI_Setup import get_asset_path
+from scripts.UI_Setup import get_asset_path
 
 
 def popup_add_single_cash_flow(app, series_id):

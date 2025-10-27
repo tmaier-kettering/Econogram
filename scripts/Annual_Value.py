@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import pandas as pd
-from Create_Table import create_table  # Ensure this import is at the top
+from scripts.Create_Table import create_table  # Ensure this import is at the top
 
 
 def popup_annual_value(app, series_id):

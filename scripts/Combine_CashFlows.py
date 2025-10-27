@@ -1,6 +1,6 @@
 import pandas as pd
 from tkinter import messagebox
-from Create_Table import create_table  # Ensure this import is at the top
+from scripts.Create_Table import create_table  # Ensure this import is at the top
 
 
 def combine_cash_flows(app):

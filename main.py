@@ -1,5 +1,5 @@
 import tkinter as tk
-from Final_CFD import CashFlowDiagramApp
+from scripts.Final_CFD import CashFlowDiagramApp
 
 
 if __name__ == "__main__":
