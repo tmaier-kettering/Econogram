@@ -7,15 +7,54 @@ import os
 
 def get_asset_path(filename):
     """Get the absolute path to an asset file.
-    
-    Args:
-        filename: Name of the file in the assets folder
-        
-    Returns:
-        Absolute path to the asset file
+
+    This function searches upward from the current script directory to find an 'assets'
+    directory (so assets can live at the project root). It also supports PyInstaller
+    bundles (sys._MEIPASS) and tries to use the git repo root as a fallback. If nothing
+    is found it returns a sensible relative path (which may not exist).
     """
+    import sys
+    import subprocess
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(script_dir, "assets", filename)
+
+    # If running from a PyInstaller bundle, assets may be in _MEIPASS
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        candidate = os.path.join(meipass, "assets", filename)
+        if os.path.exists(candidate):
+            return candidate
+
+    # Walk upward from this file looking for an 'assets' directory that contains the file
+    cur_dir = script_dir
+    root = os.path.abspath(os.sep)
+    while True:
+        candidate = os.path.join(cur_dir, "assets", filename)
+        if os.path.exists(candidate):
+            return candidate
+        if cur_dir == root:
+            break
+        parent = os.path.dirname(cur_dir)
+        if parent == cur_dir:
+            break
+        cur_dir = parent
+
+    # Try to find repo root via git and look for assets there
+    try:
+        git_root = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=script_dir,
+            stderr=subprocess.DEVNULL
+        ).decode().strip()
+        candidate = os.path.join(git_root, "assets", filename)
+        if os.path.exists(candidate):
+            return candidate
+    except Exception:
+        # git not available or not a git repo — ignore
+        pass
+
+    # Final fallback: assume assets is one level up from this script (common if moved into 'scripts')
+    return os.path.abspath(os.path.join(script_dir, "..", "assets", filename))
 
 
 class ToggleSwitch(tk.Canvas):
@@ -150,7 +189,7 @@ def add_banner(app, parent_frame):
     try:
         banner_path = get_asset_path("banner_trans.png")
         banner_image = Image.open(banner_path)
-        
+
         # Scale the banner to a reasonable width (e.g., 400 pixels wide for side placement)
         target_width = 400
         aspect_ratio = banner_image.height / banner_image.width
@@ -161,10 +200,10 @@ def add_banner(app, parent_frame):
         except AttributeError:
             resample_filter = Image.LANCZOS
         banner_image = banner_image.resize((target_width, target_height), resample_filter)
-        
+
         # Convert to PhotoImage
         banner_photo = ImageTk.PhotoImage(banner_image)
-        
+
         # Create a label to hold the banner and pack it on the right side
         banner_label = tk.Label(parent_frame, image=banner_photo)
         banner_label.image = banner_photo  # Keep a reference to prevent garbage collection
