@@ -48,7 +48,7 @@ def popup_annual_value(app, series_id):
         if app.makeNewSeries:
             # Create a new series with a new color and series ID
             selected_color = next(app.colors)  # Assign a new unique color for the new cash flows
-            new_series_id = series_id
+            new_series_id = app._get_next_series_id()
         else:
             # Use the original series color and ID, and delete the original cash flow
             selected_color = app.cash_flows.loc[selected_index, "Color"]
