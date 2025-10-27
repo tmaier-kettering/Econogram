@@ -185,6 +185,6 @@ def update_selection_display(ax, app):
 
 
 def display_canvas(app, fig):
-    app.canvas = FigureCanvasTkAgg(fig, master=app.root)
+    app.canvas = FigureCanvasTkAgg(fig, master=app.graph_frame)
     app.canvas.draw()
-    app.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+    app.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)

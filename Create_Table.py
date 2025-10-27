@@ -4,14 +4,11 @@ from tkinter import ttk
 
 
 def create_table(app, selected_values):
-    # Clear previous table, if exists
-    if hasattr(app, 'tree'):
-        for i in app.tree.get_children():
-            app.tree.delete(i)
-    else:
+    # Check if tree exists, if not create it
+    if not hasattr(app, 'tree'):
         # Create a container to hold the treeview and scrollbar
-        table_container = tk.Frame(app.root)
-        table_container.pack(side=tk.RIGHT, fill=tk.BOTH)
+        table_container = tk.Frame(app.table_frame)
+        table_container.pack(fill=tk.BOTH, expand=True)
 
         # Add vertical scrollbar
         scrollbar = ttk.Scrollbar(table_container, orient="vertical")
@@ -34,17 +31,24 @@ def create_table(app, selected_values):
 
         # Pack the scrollbar
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Pack the tree
+        app.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    
+    # Clear previous table data
+    for i in app.tree.get_children():
+        app.tree.delete(i)
 
-    # Convert selected_values to DataFrame
-    df = pd.DataFrame(selected_values, columns=['Series Name', 'Period', 'Cash Flow'])
+    # If there are selected values, populate the table
+    if selected_values:
+        # Convert selected_values to DataFrame
+        df = pd.DataFrame(selected_values, columns=['Series Name', 'Period', 'Cash Flow'])
 
-    # Sort the DataFrame by 'Series Name' ascending and 'Period' descending
-    df_sorted = df.sort_values(by=['Series Name', 'Period'], ascending=[True, True])
+        # Sort the DataFrame by 'Series Name' ascending and 'Period' descending
+        df_sorted = df.sort_values(by=['Series Name', 'Period'], ascending=[True, True])
 
-    # Insert the sorted data into the table
-    for index, row in df_sorted.iterrows():
-        # Round the cash flow to 2 decimal places and prepend a dollar sign
-        rounded_cash_flow = f"${round(row['Cash Flow'], 2):,.2f}"
-        app.tree.insert("", "end", values=(row['Series Name'], row['Period'], rounded_cash_flow))
-
-    app.tree.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        # Insert the sorted data into the table
+        for index, row in df_sorted.iterrows():
+            # Round the cash flow to 2 decimal places and prepend a dollar sign
+            rounded_cash_flow = f"${round(row['Cash Flow'], 2):,.2f}"
+            app.tree.insert("", "end", values=(row['Series Name'], row['Period'], rounded_cash_flow))

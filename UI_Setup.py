@@ -35,11 +35,15 @@ def setup_ui(app):
     # Add banner at the top
     add_banner(app)
 
+    # Create a container for buttons
+    app.button_container = tk.Frame(app.root)
+    app.button_container.pack(side="top", fill="x", pady=1)
+
     # Create frames for the top and bottom rows of operation buttons
-    top_button_frame = tk.Frame(app.root)
+    top_button_frame = tk.Frame(app.button_container)
     top_button_frame.pack(side="top", pady=1, anchor='n')  # Reduced vertical spacing
 
-    bottom_button_frame = tk.Frame(app.root)
+    bottom_button_frame = tk.Frame(app.button_container)
     bottom_button_frame.pack(side="top", pady=1, anchor='n')  # Row for bottom buttons
 
     # Top row buttons
@@ -48,10 +52,17 @@ def setup_ui(app):
     # Bottom row buttons
     app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
 
-
-    # Create and pack the graph canvas directly beneath the interest rate
-    graph_canvas = tk.Canvas(app.root, width=960, height=50)
-    graph_canvas.pack(side="top", pady=0)
+    # Create a PanedWindow for resizable sections (graph and table)
+    app.main_paned_window = tk.PanedWindow(app.root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED, sashwidth=5)
+    app.main_paned_window.pack(side="top", fill=tk.BOTH, expand=True)
+    
+    # Create a frame for the graph (will be populated by update_plot)
+    app.graph_frame = tk.Frame(app.main_paned_window)
+    app.main_paned_window.add(app.graph_frame, stretch="always")
+    
+    # Create a frame for the table (will be populated by create_table)
+    app.table_frame = tk.Frame(app.main_paned_window)
+    app.main_paned_window.add(app.table_frame, stretch="never")
 
 
 def add_banner(app):
@@ -181,6 +192,17 @@ def display_help(app):
     except Exception as e:
         print(f"Could not load icon for help window: {e}")
     
+    # Make window always on top
+    help_window.attributes('-topmost', True)
+    
+    # Center the window
+    help_window.update_idletasks()
+    width = help_window.winfo_width()
+    height = help_window.winfo_height()
+    x = (help_window.winfo_screenwidth() // 2) - (width // 2)
+    y = (help_window.winfo_screenheight() // 2) - (height // 2)
+    help_window.geometry(f'{width}x{height}+{x}+{y}')
+    
     font.Font(size=20)
     def show_help_message(title, message):
         tk.messagebox.showinfo(title, message)
@@ -213,11 +235,17 @@ def show_series_popup(app):
         popup_window.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for series popup: {e}")
+    
+    # Make window always on top
+    popup_window.attributes('-topmost', True)
 
     # Center the popup window
-    x = (app.root.winfo_screenwidth() // 2) - 100
-    y = (app.root.winfo_screenheight() // 2) - 75
-    popup_window.geometry(f'+{x}+{y}')
+    popup_window.update_idletasks()
+    width = popup_window.winfo_width()
+    height = popup_window.winfo_height()
+    x = (popup_window.winfo_screenwidth() // 2) - (width // 2)
+    y = (popup_window.winfo_screenheight() // 2) - (height // 2)
+    popup_window.geometry(f'{width}x{height}+{x}+{y}')
 
     # Add buttons for each series type in the popup
     single_cash_flow_button = tk.Button(popup_window, text="Single Cash Flow",

@@ -106,6 +106,17 @@ def popup_uniform_series(app, series_id):
         top.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for uniform series window: {e}")
+    
+    # Make window always on top
+    top.attributes('-topmost', True)
+    
+    # Center the window after widgets are added
+    top.update_idletasks()
+    width = top.winfo_reqwidth()
+    height = top.winfo_reqheight()
+    x = (top.winfo_screenwidth() // 2) - (width // 2)
+    y = (top.winfo_screenheight() // 2) - (height // 2)
+    top.geometry(f'+{x}+{y}')
 
     # Layout the form fields and labels
     tk.Label(top, text="Cash Flow Amount:").grid(row=0, column=0, padx=10, pady=5)
