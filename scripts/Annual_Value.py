@@ -33,7 +33,6 @@ def popup_annual_value(app, series_id):
 
         # Get the selected cash flow and app settings
         selected_cash_flow = app.cash_flows.loc[selected_index, "Cash Flow"]
-        selected_color = next(app.colors)  # Assign a new unique color for the new cash flows
         series_name = app.cash_flows.loc[selected_index, "Series_Name"]
         interest_rate = app.interest_rate / 100  # Convert interest rate from percentage to decimal
 
@@ -46,16 +45,27 @@ def popup_annual_value(app, series_id):
         # Update the series name to include a reference to Annual Value
         rendered_series_name = f"AV of {series_name}"  # Use 'AV of' for Annual Value reference
 
+        if app.makeNewSeries:
+            # Create a new series with a new color and series ID
+            selected_color = next(app.colors)  # Assign a new unique color for the new cash flows
+            new_series_id = app._get_next_series_id()
+        else:
+            # Use the original series color and ID, and delete the original cash flow
+            selected_color = app.cash_flows.loc[selected_index, "Color"]
+            new_series_id = app.cash_flows.loc[selected_index, "Series_ID"]
+            # Delete the original cash flow
+            app.cash_flows = app.cash_flows.drop(app.selected_indices).reset_index(drop=True)
+
         # Generate the uniform series of cash flows, starting one year after the selected period
         new_cash_flows = pd.DataFrame([{
             "Period": selected_period + period + 1,  # Start one year after the selected period
             "Cash Flow": A,
-            "Color": selected_color,  # Assign the dynamically assigned color
-            "Series_ID": series_id,  # Include the series_id for the new cash flows
+            "Color": selected_color,  # Assign the color
+            "Series_ID": new_series_id,  # Include the series_id for the new cash flows
             "Series_Name": rendered_series_name  # Include the updated series name
         } for period in range(num_periods)])
 
-        # Append the new annual series to the cash flows without removing the selected cash flow
+        # Append the new annual series to the cash flows
         app.cash_flows = pd.concat([app.cash_flows, new_cash_flows], ignore_index=True)
 
         # Clear and update the table
