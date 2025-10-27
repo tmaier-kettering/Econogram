@@ -1,6 +1,7 @@
 from Clear_Graph import clear_graph
 import tkinter as tk
 from tkinter import font, messagebox
+from PIL import Image, ImageTk
 
 
 def setup_ui(app):
@@ -16,6 +17,9 @@ def setup_ui(app):
         'highlightbackground': 'black',
         'highlightcolor': 'black'
     }
+
+    # Add banner at the top
+    add_banner(app)
 
     # Create frames for the top and bottom rows of operation buttons
     top_button_frame = tk.Frame(app.root)
@@ -34,6 +38,29 @@ def setup_ui(app):
     # Create and pack the graph canvas directly beneath the interest rate
     graph_canvas = tk.Canvas(app.root, width=960, height=50)
     graph_canvas.pack(side="top", pady=0)
+
+
+def add_banner(app):
+    """Add the banner image to the top of the window."""
+    try:
+        banner_path = "/home/runner/work/Econogram/Econogram/assets/banner_trans.png"
+        banner_image = Image.open(banner_path)
+        
+        # Scale the banner to a reasonable width (e.g., 600 pixels wide)
+        target_width = 600
+        aspect_ratio = banner_image.height / banner_image.width
+        target_height = int(target_width * aspect_ratio)
+        banner_image = banner_image.resize((target_width, target_height), Image.LANCZOS)
+        
+        # Convert to PhotoImage
+        banner_photo = ImageTk.PhotoImage(banner_image)
+        
+        # Create a label to hold the banner
+        banner_label = tk.Label(app.root, image=banner_photo)
+        banner_label.image = banner_photo  # Keep a reference to prevent garbage collection
+        banner_label.pack(side="top", pady=5)
+    except Exception as e:
+        print(f"Could not load banner: {e}")
 
 
 def create_operation_buttons_top_row(app, frame, options, plus_question_button_font):
@@ -127,6 +154,14 @@ def display_help(app):
     help_window = tk.Toplevel()
     help_window.title("Help Menu")
     help_window.geometry("250x350")
+    
+    # Set the window icon
+    try:
+        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        help_window.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for help window: {e}")
+    
     font.Font(size=20)
     def show_help_message(title, message):
         tk.messagebox.showinfo(title, message)
@@ -152,6 +187,13 @@ def show_series_popup(app):
     popup_window = tk.Toplevel()
     popup_window.title("Select Series")
     popup_window.geometry("200x150")  # Reduced size
+    
+    # Set the window icon
+    try:
+        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        popup_window.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for series popup: {e}")
 
     # Center the popup window
     x = (app.root.winfo_screenwidth() // 2) - 100

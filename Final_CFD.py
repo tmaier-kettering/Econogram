@@ -22,6 +22,13 @@ class CashFlowDiagramApp:
         self.toggle_makeNewSeries_button = None
         self.root = root
         self.root.title("Cash Flow Diagram")
+        
+        # Set the application icon
+        try:
+            icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+            self.root.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Could not load icon: {e}")
 
         self.state_history = []  # Track previous states for undo functionality
         self.cash_flows = pd.DataFrame(columns=["Period", "Cash Flow", "Color", "Series_ID"])

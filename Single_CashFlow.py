@@ -91,6 +91,13 @@ def popup_add_single_cash_flow(app, series_id):
     # Create a top-level window
     top = tk.Toplevel(app.root)
     top.title("Single Cash Flow Input")
+    
+    # Set the window icon
+    try:
+        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        top.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for single cash flow window: {e}")
 
     # Arrange the widgets using grid layout
     tk.Label(top, text="Cash Flow Amount:").grid(row=0, column=0, padx=10, pady=5)

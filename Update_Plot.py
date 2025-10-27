@@ -89,12 +89,12 @@ def handle_click(event, ax, app):
             clicked_bar = next((bar for bar in ax.patches if bar.contains(event)[0]), None)
             if clicked_bar:
                 if event.button == 3:  # Right-click
-                    handle_bar_selection(clicked_bar, ax, app)
+                    handle_bar_selection(clicked_bar, ax, app, right_click=True)
                     update_selection_display(ax, app)
                     show_context_menu(event, app)
                     return
                 else:  # Left-click
-                    handle_bar_selection(clicked_bar, ax, app)
+                    handle_bar_selection(clicked_bar, ax, app, right_click=False)
         except KeyError as e:
             print(f"Error: No matching series or invalid bar data - {str(e)}")
 
@@ -124,7 +124,7 @@ def show_context_menu(event, app):
     context_menu.grab_release()
 
 
-def handle_bar_selection(clicked_bar, ax, app):
+def handle_bar_selection(clicked_bar, ax, app, right_click=False):
     bar_id = clicked_bar.get_gid()
     cash_flow_row = app.cash_flows.loc[bar_id] if bar_id is not None else None
 
@@ -134,23 +134,27 @@ def handle_bar_selection(clicked_bar, ax, app):
         is_single_cash_flow_series = len(series_indices) == 1
 
         if is_single_cash_flow_series:
-            toggle_single_cash_flow_selection(bar_id, app)
+            toggle_single_cash_flow_selection(bar_id, app, right_click)
         else:
-            toggle_series_selection(series_indices, app)
+            toggle_series_selection(series_indices, app, right_click)
 
 
-def toggle_single_cash_flow_selection(bar_id, app):
+def toggle_single_cash_flow_selection(bar_id, app, right_click=False):
     # Toggle selection of a single cash flow
+    # On right-click, only select (don't deselect if already selected)
     if bar_id in app.selected_indices:
-        app.selected_indices.remove(bar_id)
+        if not right_click:
+            app.selected_indices.remove(bar_id)
     else:
         app.selected_indices.append(bar_id)
 
 
-def toggle_series_selection(series_indices, app):
+def toggle_series_selection(series_indices, app, right_click=False):
     # Toggle selection of a series
+    # On right-click, only select (don't deselect if already selected)
     if all(index in app.selected_indices for index in series_indices):
-        app.selected_indices = [index for index in app.selected_indices if index not in series_indices]
+        if not right_click:
+            app.selected_indices = [index for index in app.selected_indices if index not in series_indices]
     else:
         app.selected_indices.extend(index for index in series_indices if index not in app.selected_indices)
 

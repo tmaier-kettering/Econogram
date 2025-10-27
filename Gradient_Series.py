@@ -98,6 +98,13 @@ def popup_gradient_series(app, series_id):
     # Create the popup window for gradient series input
     top = tk.Toplevel(app.root)
     top.title("Gradient Series Input")
+    
+    # Set the window icon
+    try:
+        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        top.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for gradient series window: {e}")
 
     # Layout the form fields and labels
     tk.Label(top, text="Gradient Amount:").grid(row=0, column=0, padx=10, pady=5)
