@@ -112,6 +112,7 @@ def show_context_menu(event, app):
     context_menu.add_command(label="Annual Value", command=app.popup_annual_value)
     context_menu.add_separator()
     context_menu.add_command(label="Combine Cash Flow", command=app.combine_cash_flows)
+    context_menu.add_command(label="Invert Series", command=app.invert_selected_series)
     context_menu.add_separator()
     context_menu.add_command(label="Delete Selection", command=app.delete_selected_series)
     context_menu.add_command(label="Clear", command=lambda: clear_graph(app))

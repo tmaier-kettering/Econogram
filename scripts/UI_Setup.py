@@ -96,6 +96,7 @@ def create_menu_bar(app):
     menubar.add_cascade(label="Edit", menu=edit_menu)
     edit_menu.add_command(label="Undo", command=app.undo_last_action, accelerator="Ctrl+Z")
     edit_menu.add_command(label="Delete Selection", command=app.delete_selected_series, accelerator="Delete")
+    edit_menu.add_command(label="Invert Series", command=app.invert_selected_series)
     edit_menu.add_separator()
     edit_menu.add_command(label="Combine Cash Flows", command=app.combine_cash_flows)
     
