@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from itertools import cycle
 from Update_Plot import update_plot
-from UI_Setup import setup_ui
+from UI_Setup import setup_ui, get_asset_path
 from Uniform_Series import popup_uniform_series
 from Combine_CashFlows import combine_cash_flows
 from Single_CashFlow import popup_add_single_cash_flow
@@ -22,6 +22,13 @@ class CashFlowDiagramApp:
         self.toggle_makeNewSeries_button = None
         self.root = root
         self.root.title("Cash Flow Diagram")
+        
+        # Set the application icon
+        try:
+            icon_path = get_asset_path("app.ico")
+            self.root.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Could not load icon: {e}")
 
         self.state_history = []  # Track previous states for undo functionality
         self.cash_flows = pd.DataFrame(columns=["Period", "Cash Flow", "Color", "Series_ID"])

@@ -1,6 +1,21 @@
 from Clear_Graph import clear_graph
 import tkinter as tk
 from tkinter import font, messagebox
+from PIL import Image, ImageTk
+import os
+
+
+def get_asset_path(filename):
+    """Get the absolute path to an asset file.
+    
+    Args:
+        filename: Name of the file in the assets folder
+        
+    Returns:
+        Absolute path to the asset file
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, "assets", filename)
 
 
 def setup_ui(app):
@@ -16,6 +31,9 @@ def setup_ui(app):
         'highlightbackground': 'black',
         'highlightcolor': 'black'
     }
+
+    # Add banner at the top
+    add_banner(app)
 
     # Create frames for the top and bottom rows of operation buttons
     top_button_frame = tk.Frame(app.root)
@@ -34,6 +52,34 @@ def setup_ui(app):
     # Create and pack the graph canvas directly beneath the interest rate
     graph_canvas = tk.Canvas(app.root, width=960, height=50)
     graph_canvas.pack(side="top", pady=0)
+
+
+def add_banner(app):
+    """Add the banner image to the top of the window."""
+    try:
+        banner_path = get_asset_path("banner_trans.png")
+        banner_image = Image.open(banner_path)
+        
+        # Scale the banner to a reasonable width (e.g., 600 pixels wide)
+        target_width = 600
+        aspect_ratio = banner_image.height / banner_image.width
+        target_height = int(target_width * aspect_ratio)
+        # Use Image.Resampling.LANCZOS for newer Pillow versions, fallback to Image.LANCZOS
+        try:
+            resample_filter = Image.Resampling.LANCZOS
+        except AttributeError:
+            resample_filter = Image.LANCZOS
+        banner_image = banner_image.resize((target_width, target_height), resample_filter)
+        
+        # Convert to PhotoImage
+        banner_photo = ImageTk.PhotoImage(banner_image)
+        
+        # Create a label to hold the banner
+        banner_label = tk.Label(app.root, image=banner_photo)
+        banner_label.image = banner_photo  # Keep a reference to prevent garbage collection
+        banner_label.pack(side="top", pady=5)
+    except Exception as e:
+        print(f"Could not load banner: {e}")
 
 
 def create_operation_buttons_top_row(app, frame, options, plus_question_button_font):
@@ -127,6 +173,14 @@ def display_help(app):
     help_window = tk.Toplevel()
     help_window.title("Help Menu")
     help_window.geometry("250x350")
+    
+    # Set the window icon
+    try:
+        icon_path = get_asset_path("app.ico")
+        help_window.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for help window: {e}")
+    
     font.Font(size=20)
     def show_help_message(title, message):
         tk.messagebox.showinfo(title, message)
@@ -152,6 +206,13 @@ def show_series_popup(app):
     popup_window = tk.Toplevel()
     popup_window.title("Select Series")
     popup_window.geometry("200x150")  # Reduced size
+    
+    # Set the window icon
+    try:
+        icon_path = get_asset_path("app.ico")
+        popup_window.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for series popup: {e}")
 
     # Center the popup window
     x = (app.root.winfo_screenwidth() // 2) - 100

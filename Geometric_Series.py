@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
+from UI_Setup import get_asset_path
 
 
 def popup_geometric_series(app, series_id):
@@ -114,6 +115,13 @@ def popup_geometric_series(app, series_id):
     # Create the popup window
     popup = tk.Toplevel(app.root)
     popup.title("Geometric Series Input")
+    
+    # Set the window icon
+    try:
+        icon_path = get_asset_path("app.ico")
+        popup.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Could not load icon for geometric series window: {e}")
 
     tk.Label(popup, text="Starting Period:").grid(row=0, column=0, padx=10, pady=5)
     start_year_entry = tk.Entry(popup, validate="key",
