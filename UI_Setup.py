@@ -18,6 +18,52 @@ def get_asset_path(filename):
     return os.path.join(script_dir, "assets", filename)
 
 
+class ToggleSwitch(tk.Canvas):
+    """A custom toggle switch widget with left-right switch design."""
+    
+    def __init__(self, parent, width=60, height=30, command=None, **kwargs):
+        super().__init__(parent, width=width, height=height, highlightthickness=0, **kwargs)
+        self.width = width
+        self.height = height
+        self.command = command
+        self.is_on = False
+        
+        # Colors
+        self.bg_off = "#CCCCCC"
+        self.bg_on = "#4CAF50"
+        self.handle_color = "#FFFFFF"
+        
+        # Create the background and handle
+        self.bg_rect = self.create_oval(2, 2, width-2, height-2, fill=self.bg_off, outline="")
+        self.handle = self.create_oval(4, 4, height-4, height-4, fill=self.handle_color, outline="")
+        
+        # Bind click event
+        self.bind("<Button-1>", self.toggle)
+        
+    def toggle(self, event=None):
+        """Toggle the switch state."""
+        self.is_on = not self.is_on
+        self.update_visual()
+        if self.command:
+            self.command()
+    
+    def update_visual(self):
+        """Update the visual appearance based on state."""
+        if self.is_on:
+            # Move handle to the right and change background to green
+            self.coords(self.handle, self.width - self.height + 4, 4, self.width - 4, self.height - 4)
+            self.itemconfig(self.bg_rect, fill=self.bg_on)
+        else:
+            # Move handle to the left and change background to gray
+            self.coords(self.handle, 4, 4, self.height - 4, self.height - 4)
+            self.itemconfig(self.bg_rect, fill=self.bg_off)
+    
+    def set_state(self, is_on):
+        """Set the state of the switch without triggering the command."""
+        self.is_on = is_on
+        self.update_visual()
+
+
 def setup_ui(app):
     # Define a font style for buttons
     button_font = font.Font(size=10, weight="bold")
@@ -32,12 +78,13 @@ def setup_ui(app):
         'highlightcolor': 'black'
     }
 
-    # Add banner at the top
-    add_banner(app)
+    # Create a top container that holds buttons on left and banner on right
+    top_container = tk.Frame(app.root)
+    top_container.pack(side="top", fill="x", pady=1)
 
-    # Create a container for buttons
-    app.button_container = tk.Frame(app.root)
-    app.button_container.pack(side="top", fill="x", pady=1)
+    # Create a container for buttons on the left
+    app.button_container = tk.Frame(top_container)
+    app.button_container.pack(side="left", fill="y", pady=1, padx=5)
 
     # Create frames for the top and bottom rows of operation buttons
     top_button_frame = tk.Frame(app.button_container)
@@ -52,6 +99,9 @@ def setup_ui(app):
     # Bottom row buttons
     app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
 
+    # Add banner on the right side
+    add_banner(app, top_container)
+
     # Create a PanedWindow for resizable sections (graph and table)
     app.main_paned_window = tk.PanedWindow(app.root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED, sashwidth=5)
     app.main_paned_window.pack(side="top", fill=tk.BOTH, expand=True)
@@ -65,14 +115,14 @@ def setup_ui(app):
     app.main_paned_window.add(app.table_frame, stretch="never")
 
 
-def add_banner(app):
-    """Add the banner image to the top of the window."""
+def add_banner(app, parent_frame):
+    """Add the banner image to the right side of the parent frame."""
     try:
         banner_path = get_asset_path("banner_trans.png")
         banner_image = Image.open(banner_path)
         
-        # Scale the banner to a reasonable width (e.g., 600 pixels wide)
-        target_width = 600
+        # Scale the banner to a reasonable width (e.g., 400 pixels wide for side placement)
+        target_width = 400
         aspect_ratio = banner_image.height / banner_image.width
         target_height = int(target_width * aspect_ratio)
         # Use Image.Resampling.LANCZOS for newer Pillow versions, fallback to Image.LANCZOS
@@ -85,10 +135,10 @@ def add_banner(app):
         # Convert to PhotoImage
         banner_photo = ImageTk.PhotoImage(banner_image)
         
-        # Create a label to hold the banner
-        banner_label = tk.Label(app.root, image=banner_photo)
+        # Create a label to hold the banner and pack it on the right side
+        banner_label = tk.Label(parent_frame, image=banner_photo)
         banner_label.image = banner_photo  # Keep a reference to prevent garbage collection
-        banner_label.pack(side="top", pady=5)
+        banner_label.pack(side="right", pady=5, padx=10)
     except Exception as e:
         print(f"Could not load banner: {e}")
 
@@ -125,13 +175,23 @@ def create_operation_buttons_bottom_row(app, frame, options):
     undo_button = tk.Button(frame, text="Undo", command=app.undo_last_action, height=1, **options)
     undo_button.pack(side="left", padx=2)
 
-    toggle_makeNewSeries_button = tk.Button(frame, text="Make New Series", command=app.toggle_makeNewSeries, height=1, **options, relief="raised")
-    toggle_makeNewSeries_button.pack(side="left", padx=2)
+    # Create a frame to hold the label and toggle switch together
+    toggle_frame = tk.Frame(frame)
+    toggle_frame.pack(side="left", padx=5)
+    
+    # Add label for the toggle switch
+    toggle_label = tk.Label(toggle_frame, text="Make New Series:", font=options['font'])
+    toggle_label.pack(side="left", padx=(0, 5))
+    
+    # Create the toggle switch
+    toggle_makeNewSeries_button = ToggleSwitch(toggle_frame, width=50, height=25, command=app.toggle_makeNewSeries)
+    toggle_makeNewSeries_button.pack(side="left")
 
     # Interest rate section placed on the right
     create_interest_rate_frame(app, frame)
 
     return toggle_makeNewSeries_button
+
 
 
 def create_plus_button(app, frame, plus_question_button_font):
