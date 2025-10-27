@@ -1,0 +1,187 @@
+Index: UI_Setup.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from Clear_Graph import clear_graph\r\nimport tkinter as tk\r\nfrom tkinter import font, messagebox\r\nfrom PIL import Image, ImageTk\r\nimport os\r\n\r\n\r\ndef get_asset_path(filename):\r\n    \"\"\"Get the absolute path to an asset file.\r\n    \r\n    Args:\r\n        filename: Name of the file in the assets folder\r\n        \r\n    Returns:\r\n        Absolute path to the asset file\r\n    \"\"\"\r\n    script_dir = os.path.dirname(os.path.abspath(__file__))\r\n    return os.path.join(script_dir, \"assets\", filename)\r\n\r\n\r\ndef setup_ui(app):\r\n    # Define a font style for buttons\r\n    button_font = font.Font(size=10, weight=\"bold\")\r\n    plus_question_button_font = font.Font(size=14, weight=\"bold\")  # Larger font for plus and question symbol\r\n\r\n    # Define button options excluding the plus and question buttons\r\n    button_options = {\r\n        'font': button_font,\r\n        'borderwidth': 2,\r\n        'highlightthickness': 2,\r\n        'highlightbackground': 'black',\r\n        'highlightcolor': 'black'\r\n    }\r\n\r\n    # Add banner at the top\r\n    add_banner(app)\r\n\r\n    # Create frames for the top and bottom rows of operation buttons\r\n    top_button_frame = tk.Frame(app.root)\r\n    top_button_frame.pack(side=\"top\", pady=1, anchor='n')  # Reduced vertical spacing\r\n\r\n    bottom_button_frame = tk.Frame(app.root)\r\n    bottom_button_frame.pack(side=\"top\", pady=1, anchor='n')  # Row for bottom buttons\r\n\r\n    # Top row buttons\r\n    create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)\r\n\r\n    # Bottom row buttons\r\n    app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)\r\n\r\n\r\n    # Create and pack the graph canvas directly beneath the interest rate\r\n    graph_canvas = tk.Canvas(app.root, width=960, height=50)\r\n    graph_canvas.pack(side=\"top\", pady=0)\r\n\r\n\r\ndef add_banner(app):\r\n    \"\"\"Add the banner image to the top of the window.\"\"\"\r\n    try:\r\n        banner_path = get_asset_path(\"banner_trans.png\")\r\n        banner_image = Image.open(banner_path)\r\n        \r\n        # Scale the banner to a reasonable width (e.g., 600 pixels wide)\r\n        target_width = 600\r\n        aspect_ratio = banner_image.height / banner_image.width\r\n        target_height = int(target_width * aspect_ratio)\r\n        # Use Image.Resampling.LANCZOS for newer Pillow versions, fallback to Image.LANCZOS\r\n        try:\r\n            resample_filter = Image.Resampling.LANCZOS\r\n        except AttributeError:\r\n            resample_filter = Image.LANCZOS\r\n        banner_image = banner_image.resize((target_width, target_height), resample_filter)\r\n        \r\n        # Convert to PhotoImage\r\n        banner_photo = ImageTk.PhotoImage(banner_image)\r\n        \r\n        # Create a label to hold the banner\r\n        banner_label = tk.Label(app.root, image=banner_photo)\r\n        banner_label.image = banner_photo  # Keep a reference to prevent garbage collection\r\n        banner_label.pack(side=\"top\", pady=5)\r\n    except Exception as e:\r\n        print(f\"Could not load banner: {e}\")\r\n\r\n\r\ndef create_operation_buttons_top_row(app, frame, options, plus_question_button_font):\r\n    # Create buttons with reduced padding, size, and layout\r\n    present_value_button = tk.Button(frame, text=\"Present Value\", command=app.popup_present_value, height=1, **options)\r\n    present_value_button.pack(side=\"left\", padx=2)\r\n\r\n    future_value_button = tk.Button(frame, text=\"Future Value\", command=app.popup_future_value, height=1, **options)\r\n    future_value_button.pack(side=\"left\", padx=2)\r\n\r\n    annual_value_button = tk.Button(frame, text=\"Annual Value\", command=app.popup_annual_value, height=1, **options)\r\n    annual_value_button.pack(side=\"left\", padx=2)\r\n\r\n    combine_cash_flow_button = tk.Button(frame, text=\"Combine Cash Flow\", command=app.combine_cash_flows, height=1,\r\n                                         **options)\r\n    combine_cash_flow_button.pack(side=\"left\", padx=2)\r\n\r\n    # Create '+' and '?' buttons on the top row\r\n    create_plus_button(app, frame, plus_question_button_font)\r\n    create_question_button(app, frame, plus_question_button_font)\r\n\r\n\r\n# Create the compact bottom row buttons\r\ndef create_operation_buttons_bottom_row(app, frame, options):\r\n    # Create buttons with reduced padding, size, and layout for the bottom row\r\n    delete_button = tk.Button(frame, text=\"Delete Selection\", command=app.delete_selected_series, height=1, **options)\r\n    delete_button.pack(side=\"left\", padx=2)\r\n\r\n    clear_button = tk.Button(frame, text=\"Clear\", command=lambda: clear_graph(app), height=1, **options)\r\n    clear_button.pack(side=\"left\", padx=2)\r\n\r\n    undo_button = tk.Button(frame, text=\"Undo\", command=app.undo_last_action, height=1, **options)\r\n    undo_button.pack(side=\"left\", padx=2)\r\n\r\n    toggle_makeNewSeries_button = tk.Button(frame, text=\"Make New Series\", command=app.toggle_makeNewSeries, height=1, **options, relief=\"raised\")\r\n    toggle_makeNewSeries_button.pack(side=\"left\", padx=2)\r\n\r\n    # Interest rate section placed on the right\r\n    create_interest_rate_frame(app, frame)\r\n\r\n    return toggle_makeNewSeries_button\r\n\r\n\r\ndef create_plus_button(app, frame, plus_question_button_font):\r\n    # Create a canvas to draw the circular plus button\r\n    plus_canvas = tk.Canvas(frame, width=45, height=45, highlightthickness=0)\r\n    plus_canvas.pack(side=\"left\", padx=5)\r\n\r\n    # Draw a circle (oval with equal sides) as the button's background\r\n    plus_canvas.create_oval(5, 5, 40, 40, fill='green', outline='')\r\n\r\n    # Place a '+' symbol in the center of the circle\r\n    plus_canvas.create_text(23, 23, text=\"+\", font=plus_question_button_font, fill='white', anchor=\"center\")\r\n\r\n    # Bind click event to the canvas to trigger show_series_popup\r\n    plus_canvas.bind(\"<Button-1>\", lambda _: show_series_popup(app))\r\n\r\n\r\ndef create_question_button(app, frame, plus_question_button_font):\r\n    # Create a canvas to draw the circular question button\r\n    question_canvas = tk.Canvas(frame, width=45, height=45, highlightthickness=0)\r\n    question_canvas.pack(side=\"left\", padx=5)\r\n\r\n    # Draw a circle (oval with equal sides) as the button's background\r\n    question_canvas.create_oval(5, 5, 40, 40, fill='purple', outline='')\r\n\r\n    # Place a '?' symbol in the center of the circle\r\n    question_canvas.create_text(23, 23, text=\"?\", font=plus_question_button_font, fill='white', anchor=\"center\")\r\n\r\n    # Bind click event to the canvas for a potential help or info popup\r\n    question_canvas.bind(\"<Button-1>\", lambda _: display_help(app))\r\n\r\n\r\ndef create_interest_rate_frame(app, frame):\r\n    # Container frame for interest rate controls\r\n    interest_rate_frame = tk.Frame(frame)\r\n    interest_rate_frame.pack(side=\"right\", padx=10)  # Positioned on the far right of the bottom frame\r\n\r\n    # Interest rate label\r\n    app.interest_rate_label = tk.Label(interest_rate_frame, text=f\"{app.interest_rate}%\", font=(\"Arial\", 10, \"bold\"))\r\n    app.interest_rate_label.pack(side=\"right\", padx=5)\r\n\r\n    # Button to update the interest rate\r\n    update_rate_button = tk.Button(interest_rate_frame, text=\"Interest Rate\",\r\n                                   command=lambda: prompt_interest_rate_change(app))\r\n    update_rate_button.pack(side=\"right\", padx=5)\r\n\r\n\r\ndef display_help(app):\r\n    # Create a help popup window with buttons\r\n    help_window = tk.Toplevel()\r\n    help_window.title(\"Help Menu\")\r\n    help_window.geometry(\"250x350\")\r\n    \r\n    # Set the window icon\r\n    try:\r\n        icon_path = get_asset_path(\"app.ico\")\r\n        help_window.iconbitmap(icon_path)\r\n    except Exception as e:\r\n        print(f\"Could not load icon for help window: {e}\")\r\n    \r\n    font.Font(size=20)\r\n    def show_help_message(title, message):\r\n        tk.messagebox.showinfo(title, message)\r\n\r\n    # Create buttons for each help topic\r\n    help_topics = [\r\n        (\"Present Value\", \"Present Value calculates the equivalent worth of a series of cash flows at a point before the series begins, using a specified interest rate. For cash flow series with multiple payments (uniform, gradient, or geometric), this point is one period before the first payment. For a single cash flow, the point of reference can be any period before the payment.\"),\r\n        (\"Future Value\", \"Future Value calculates the equivalent worth of a series of cash flows at a point after the series ends, using a specified interest rate. For cash flow series with multiple payments (uniform, gradient, or geometric), this point is one period after the final payment. For a single cash flow, the point of reference can be any period after the payment.\"),\r\n        (\"Annual Value\", \"Annual Value calculates the equivalent uniform annual worth of a series of cash flows over its duration, using a specified interest rate. For cash flow series with multiple payments (uniform, gradient, or geometric), this value represents a consistent annual amount spanning the series. For a single cash flow, it distributes the value evenly across the specified periods.\"),\r\n        (\"Combining Cash Flows\", \"This function sums single cash flows that occur in the same period.\"),\r\n        (\"Interest Rate\", \"The interest rate is the global time value of money across the entire program and applies to all functions.\"),\r\n        (\"Single Cash Flow\", \"A single cash flow is an individual financial transaction involving a one-time payment or receipt of money at a specific point in time.\"),\r\n        (\"Uniform Series\", \"A uniform or annual series is a series of constant values over a set number of periods.\"),\r\n        (\"Gradient Series\", \"A gradient series is a series that increases by a set value across the length of the series. The first value in the series is always 0.\"),\r\n        (\"Geometric Series\", \"A geometric series is a series that increases by a set percentage, known as the growth percentage, across the length of the series.\"),\r\n        (\"FAQs\", \"1. If your problem includes a negative period, consider reframing the problem with your most negative value being set as Period 0.                                                                                 2. If the problem requires multiple interest rates, you are able to manipulate the cash flow to its final point and change the interest rate for the other parts of the problem.                        3. Just note that any changes across periods will involve the current interest rate displayed at the top of the screen.\")]\r\n\r\n    for topic, message in help_topics:\r\n        tk.Button(help_window, text=topic, command=lambda t=topic, m=message: show_help_message(t, m)).pack(pady=5)\r\n\r\ndef show_series_popup(app):\r\n    # Create a new, smaller window popup for selecting series\r\n    popup_window = tk.Toplevel()\r\n    popup_window.title(\"Select Series\")\r\n    popup_window.geometry(\"200x150\")  # Reduced size\r\n    \r\n    # Set the window icon\r\n    try:\r\n        icon_path = get_asset_path(\"app.ico\")\r\n        popup_window.iconbitmap(icon_path)\r\n    except Exception as e:\r\n        print(f\"Could not load icon for series popup: {e}\")\r\n\r\n    # Center the popup window\r\n    x = (app.root.winfo_screenwidth() // 2) - 100\r\n    y = (app.root.winfo_screenheight() // 2) - 75\r\n    popup_window.geometry(f'+{x}+{y}')\r\n\r\n    # Add buttons for each series type in the popup\r\n    single_cash_flow_button = tk.Button(popup_window, text=\"Single Cash Flow\",\r\n                                        command=lambda: [app.popup_add_single_cash_flow(), popup_window.destroy()])\r\n    single_cash_flow_button.pack(pady=5)\r\n\r\n    uniform_series_button = tk.Button(popup_window, text=\"Uniform Series\",\r\n                                      command=lambda: [app.popup_uniform_series(), popup_window.destroy()])\r\n    uniform_series_button.pack(pady=5)\r\n\r\n    gradient_series_button = tk.Button(popup_window, text=\"Gradient Series\",\r\n                                       command=lambda: [app.popup_gradient_series(), popup_window.destroy()])\r\n    gradient_series_button.pack(pady=5)\r\n\r\n    geometric_series_button = tk.Button(popup_window, text=\"Geometric Series\",\r\n                                        command=lambda: [app.popup_geometric_series(), popup_window.destroy()])\r\n    geometric_series_button.pack(pady=5)\r\n\r\n\r\ndef prompt_interest_rate_change(app):\r\n    new_rate = tk.simpledialog.askstring(\"Change Interest Rate\", \"Enter new interest rate:\")\r\n    if new_rate is not None:\r\n        app.update_interest_rate(new_rate)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/UI_Setup.py b/UI_Setup.py
+--- a/UI_Setup.py	(revision 9a7bfcc2d98a4d395524990993eeac66b3ec4575)
++++ b/UI_Setup.py	(date 1761581863796)
+@@ -32,9 +32,6 @@
+         'highlightcolor': 'black'
+     }
+ 
+-    # Add banner at the top
+-    add_banner(app)
+-
+     # Create frames for the top and bottom rows of operation buttons
+     top_button_frame = tk.Frame(app.root)
+     top_button_frame.pack(side="top", pady=1, anchor='n')  # Reduced vertical spacing
+@@ -54,34 +51,6 @@
+     graph_canvas.pack(side="top", pady=0)
+ 
+ 
+-def add_banner(app):
+-    """Add the banner image to the top of the window."""
+-    try:
+-        banner_path = get_asset_path("banner_trans.png")
+-        banner_image = Image.open(banner_path)
+-        
+-        # Scale the banner to a reasonable width (e.g., 600 pixels wide)
+-        target_width = 600
+-        aspect_ratio = banner_image.height / banner_image.width
+-        target_height = int(target_width * aspect_ratio)
+-        # Use Image.Resampling.LANCZOS for newer Pillow versions, fallback to Image.LANCZOS
+-        try:
+-            resample_filter = Image.Resampling.LANCZOS
+-        except AttributeError:
+-            resample_filter = Image.LANCZOS
+-        banner_image = banner_image.resize((target_width, target_height), resample_filter)
+-        
+-        # Convert to PhotoImage
+-        banner_photo = ImageTk.PhotoImage(banner_image)
+-        
+-        # Create a label to hold the banner
+-        banner_label = tk.Label(app.root, image=banner_photo)
+-        banner_label.image = banner_photo  # Keep a reference to prevent garbage collection
+-        banner_label.pack(side="top", pady=5)
+-    except Exception as e:
+-        print(f"Could not load banner: {e}")
+-
+-
+ def create_operation_buttons_top_row(app, frame, options, plus_question_button_font):
+     # Create buttons with reduced padding, size, and layout
+     present_value_button = tk.Button(frame, text="Present Value", command=app.popup_present_value, height=1, **options)
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"2d16781b-0a17-4a5f-a256-0f544d10928c\" name=\"Changes\" comment=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Final_CFD.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Final_CFD.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\"><![CDATA[{\r\n  \"lastFilter\": {\r\n    \"state\": \"OPEN\",\r\n    \"assignee\": \"tmaier-kettering\"\r\n  }\r\n}]]></component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/tmaier-kettering/Econogram.git\",\r\n    \"accountId\": \"f4da5598-e566-4b9e-842e-6b45e8096265\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 5\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2vXaYPeHpkWGzOrChSR2oBq1gtO\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Python.Final CFD.executor\": \"Run\",\r\n    \"Python.Present_Value.executor\": \"Run\",\r\n    \"Python.main.executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\torst\\PycharmProjects\\Econogram\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.26053.29\" />\r\n        <option value=\"bundled-python-sdk-b1dbf8ef85a6-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.26053.29\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"2d16781b-0a17-4a5f-a256-0f544d10928c\" name=\"Changes\" comment=\"\" />\r\n      <created>1744293920196</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1744293920196</updated>\r\n      <workItem from=\"1744293921281\" duration=\"8000\" />\r\n      <workItem from=\"1761576496270\" duration=\"1521000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1761577242749</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1761577242749</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"2\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/Econogram$Final_CFD.coverage\" NAME=\"Final CFD Coverage Results\" MODIFIED=\"1761576517876\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n    <SUITE FILE_PATH=\"coverage/Econogram$Present_Value.coverage\" NAME=\"Present_Value Coverage Results\" MODIFIED=\"1761576499297\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n    <SUITE FILE_PATH=\"coverage/Econogram$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1761577575191\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 9a7bfcc2d98a4d395524990993eeac66b3ec4575)
++++ b/.idea/workspace.xml	(date 1761585515258)
+@@ -4,10 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Add .gitignore file and rename Final CFD.py to Final_CFD.py">
++    <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Refactor import statements in workspace.xml and add misc.xml for project configuration">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Final_CFD.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final_CFD.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/UI_Setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI_Setup.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -15,6 +14,11 @@
+     <option name="LAST_RESOLUTION" value="IGNORE" />
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="copilot/update-cash-flow-selection-ui" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+   <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+@@ -42,6 +46,7 @@
+   "keyToString": {
+     "Python.Final CFD.executor": "Run",
+     "Python.Present_Value.executor": "Run",
++    "Python.UI_Setup.executor": "Run",
+     "Python.main.executor": "Run",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+     "RunOnceActivity.git.unshallow": "true",
+@@ -58,6 +63,36 @@
+     <key name="MoveFile.RECENT_KEYS">
+       <recent name="C:\Users\torst\PycharmProjects\Econogram" />
+     </key>
++  </component>
++  <component name="RunManager">
++    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="CFDDiagramer" />
++      <option name="ENV_FILES" value="" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <recent_temporary>
++      <list>
++        <item itemvalue="Python.main" />
++      </list>
++    </recent_temporary>
+   </component>
+   <component name="SharedIndexes">
+     <attachedChunks>
+@@ -76,7 +111,7 @@
+       <option name="presentableId" value="Default" />
+       <updated>1744293920196</updated>
+       <workItem from="1744293921281" duration="8000" />
+-      <workItem from="1761576496270" duration="1521000" />
++      <workItem from="1761576496270" duration="4500000" />
+     </task>
+     <task id="LOCAL-00001" summary="Add .gitignore file and rename Final CFD.py to Final_CFD.py">
+       <option name="closed" value="true" />
+@@ -86,7 +121,23 @@
+       <option name="project" value="LOCAL" />
+       <updated>1761577242749</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="Refactor import statements in Final_CFD.py and main.py">
++      <option name="closed" value="true" />
++      <created>1761578043995</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1761578043995</updated>
++    </task>
++    <task id="LOCAL-00003" summary="Refactor import statements in workspace.xml and add misc.xml for project configuration">
++      <option name="closed" value="true" />
++      <created>1761579355184</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1761579355184</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -94,11 +145,14 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="Add .gitignore file and rename Final CFD.py to Final_CFD.py" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Add .gitignore file and rename Final CFD.py to Final_CFD.py" />
++    <MESSAGE value="Refactor import statements in Final_CFD.py and main.py" />
++    <MESSAGE value="Refactor import statements in workspace.xml and add misc.xml for project configuration" />
++    <option name="LAST_COMMIT_MESSAGE" value="Refactor import statements in workspace.xml and add misc.xml for project configuration" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/Econogram$Final_CFD.coverage" NAME="Final CFD Coverage Results" MODIFIED="1761576517876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+     <SUITE FILE_PATH="coverage/Econogram$Present_Value.coverage" NAME="Present_Value Coverage Results" MODIFIED="1761576499297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+-    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761577575191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761581917136" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++    <SUITE FILE_PATH="coverage/Econogram$UI_Setup.coverage" NAME="UI_Setup Coverage Results" MODIFIED="1761581863807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+   </component>
+ </project>
+\ No newline at end of file

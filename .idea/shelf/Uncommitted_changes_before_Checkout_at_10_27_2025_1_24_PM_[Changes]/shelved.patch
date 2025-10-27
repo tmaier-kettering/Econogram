@@ -1,0 +1,291 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import tkinter as tk\r\nfrom Final_CFD import CashFlowDiagramApp\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    root = tk.Tk()\r\n    app = CashFlowDiagramApp(root)\r\n    root.mainloop()
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 804d22b4cfdb90a78a8e5ad492f745634b0280e4)
++++ b/main.py	(date 1761585792284)
+@@ -1,5 +1,5 @@
+ import tkinter as tk
+-from Final_CFD import CashFlowDiagramApp
++from scripts.Final_CFD import CashFlowDiagramApp
+ 
+ 
+ if __name__ == "__main__":
+Index: UI_Setup.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/UI_Setup.py b/scripts/UI_Setup.py
+rename from UI_Setup.py
+rename to scripts/UI_Setup.py
+--- a/UI_Setup.py	(revision 804d22b4cfdb90a78a8e5ad492f745634b0280e4)
++++ b/scripts/UI_Setup.py	(date 1761585792277)
+@@ -1,4 +1,4 @@
+-from Clear_Graph import clear_graph
++from scripts.Clear_Graph import clear_graph
+ import tkinter as tk
+ from tkinter import font, messagebox
+ from PIL import Image, ImageTk
+Index: Present_Value.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Present_Value.py b/scripts/Present_Value.py
+rename from Present_Value.py
+rename to scripts/Present_Value.py
+--- a/Present_Value.py	(revision 804d22b4cfdb90a78a8e5ad492f745634b0280e4)
++++ b/scripts/Present_Value.py	(date 1761585792271)
+@@ -1,6 +1,6 @@
+ import pandas as pd
+ from tkinter import simpledialog, messagebox, Tk
+-from Create_Table import create_table
++from scripts.Create_Table import create_table
+ 
+ 
+ def calculate_present_value(cash_flow, rate, periods):
+Index: Update_Plot.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Update_Plot.py b/scripts/Update_Plot.py
+rename from Update_Plot.py
+rename to scripts/Update_Plot.py
+--- a/Update_Plot.py	(revision 804d22b4cfdb90a78a8e5ad492f745634b0280e4)
++++ b/scripts/Update_Plot.py	(date 1761585792292)
+@@ -2,8 +2,8 @@
+ from matplotlib import pyplot as plt
+ from matplotlib.patches import Rectangle, Patch
+ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+-from Create_Table import create_table
+-from Clear_Graph import clear_graph
++from scripts.Create_Table import create_table
++from scripts.Clear_Graph import clear_graph
+ 
+ 
+ def update_plot(app):
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"2d16781b-0a17-4a5f-a256-0f544d10928c\" name=\"Changes\" comment=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/Final_CFD.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/Final_CFD.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\"><![CDATA[{\r\n  \"lastFilter\": {\r\n    \"state\": \"OPEN\",\r\n    \"assignee\": \"tmaier-kettering\"\r\n  }\r\n}]]></component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/tmaier-kettering/Econogram.git\",\r\n    \"accountId\": \"f4da5598-e566-4b9e-842e-6b45e8096265\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 5\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2vXaYPeHpkWGzOrChSR2oBq1gtO\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Python.Final CFD.executor\": \"Run\",\r\n    \"Python.Present_Value.executor\": \"Run\",\r\n    \"Python.main.executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\torst\\PycharmProjects\\Econogram\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.26053.29\" />\r\n        <option value=\"bundled-python-sdk-b1dbf8ef85a6-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.26053.29\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"2d16781b-0a17-4a5f-a256-0f544d10928c\" name=\"Changes\" comment=\"\" />\r\n      <created>1744293920196</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1744293920196</updated>\r\n      <workItem from=\"1744293921281\" duration=\"8000\" />\r\n      <workItem from=\"1761576496270\" duration=\"1521000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1761577242749</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1761577242749</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"2\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Add .gitignore file and rename Final CFD.py to Final_CFD.py\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/Econogram$Final_CFD.coverage\" NAME=\"Final CFD Coverage Results\" MODIFIED=\"1761576517876\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n    <SUITE FILE_PATH=\"coverage/Econogram$Present_Value.coverage\" NAME=\"Present_Value Coverage Results\" MODIFIED=\"1761576499297\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n    <SUITE FILE_PATH=\"coverage/Econogram$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1761577575191\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 804d22b4cfdb90a78a8e5ad492f745634b0280e4)
++++ b/.idea/workspace.xml	(date 1761585540582)
+@@ -4,10 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Add .gitignore file and rename Final CFD.py to Final_CFD.py">
++    <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Refactor import statements in workspace.xml and add misc.xml for project configuration">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/Final_CFD.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final_CFD.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/UI_Setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI_Setup.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -15,20 +14,25 @@
+     <option name="LAST_RESOLUTION" value="IGNORE" />
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="copilot/update-cash-flow-selection-ui" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+-  "lastFilter": {
+-    "state": "OPEN",
+-    "assignee": "tmaier-kettering"
++  <component name="GitHubPullRequestSearchHistory">{
++  &quot;lastFilter&quot;: {
++    &quot;state&quot;: &quot;OPEN&quot;,
++    &quot;assignee&quot;: &quot;tmaier-kettering&quot;
+   }
+-}]]></component>
+-  <component name="GithubPullRequestsUISettings"><![CDATA[{
+-  "selectedUrlAndAccountId": {
+-    "url": "https://github.com/tmaier-kettering/Econogram.git",
+-    "accountId": "f4da5598-e566-4b9e-842e-6b45e8096265"
++}</component>
++  <component name="GithubPullRequestsUISettings">{
++  &quot;selectedUrlAndAccountId&quot;: {
++    &quot;url&quot;: &quot;https://github.com/tmaier-kettering/Econogram.git&quot;,
++    &quot;accountId&quot;: &quot;f4da5598-e566-4b9e-842e-6b45e8096265&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 5
+ }</component>
+@@ -38,26 +42,57 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "Python.Final CFD.executor": "Run",
+-    "Python.Present_Value.executor": "Run",
+-    "Python.main.executor": "Run",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "RunOnceActivity.git.unshallow": "true",
+-    "git-widget-placeholder": "master",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.detected.package.tslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "node.js.selected.package.tslint": "(autodetect)",
+-    "nodejs_package_manager_path": "npm",
+-    "vue.rearranger.settings.migration": "true"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;Python.Final CFD.executor&quot;: &quot;Run&quot;,
++    &quot;Python.Present_Value.executor&quot;: &quot;Run&quot;,
++    &quot;Python.UI_Setup.executor&quot;: &quot;Run&quot;,
++    &quot;Python.main.executor&quot;: &quot;Run&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
++    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
++    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
++    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
++    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
++    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
++    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RecentsManager">
+     <key name="MoveFile.RECENT_KEYS">
+       <recent name="C:\Users\torst\PycharmProjects\Econogram" />
+     </key>
++  </component>
++  <component name="RunManager">
++    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="CFDDiagramer" />
++      <option name="ENV_FILES" value="" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <recent_temporary>
++      <list>
++        <item itemvalue="Python.main" />
++      </list>
++    </recent_temporary>
+   </component>
+   <component name="SharedIndexes">
+     <attachedChunks>
+@@ -76,7 +111,7 @@
+       <option name="presentableId" value="Default" />
+       <updated>1744293920196</updated>
+       <workItem from="1744293921281" duration="8000" />
+-      <workItem from="1761576496270" duration="1521000" />
++      <workItem from="1761576496270" duration="4500000" />
+     </task>
+     <task id="LOCAL-00001" summary="Add .gitignore file and rename Final CFD.py to Final_CFD.py">
+       <option name="closed" value="true" />
+@@ -86,7 +121,23 @@
+       <option name="project" value="LOCAL" />
+       <updated>1761577242749</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="Refactor import statements in Final_CFD.py and main.py">
++      <option name="closed" value="true" />
++      <created>1761578043995</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1761578043995</updated>
++    </task>
++    <task id="LOCAL-00003" summary="Refactor import statements in workspace.xml and add misc.xml for project configuration">
++      <option name="closed" value="true" />
++      <created>1761579355184</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1761579355184</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -94,11 +145,14 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="Add .gitignore file and rename Final CFD.py to Final_CFD.py" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Add .gitignore file and rename Final CFD.py to Final_CFD.py" />
++    <MESSAGE value="Refactor import statements in Final_CFD.py and main.py" />
++    <MESSAGE value="Refactor import statements in workspace.xml and add misc.xml for project configuration" />
++    <option name="LAST_COMMIT_MESSAGE" value="Refactor import statements in workspace.xml and add misc.xml for project configuration" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/Econogram$Final_CFD.coverage" NAME="Final CFD Coverage Results" MODIFIED="1761576517876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+     <SUITE FILE_PATH="coverage/Econogram$Present_Value.coverage" NAME="Present_Value Coverage Results" MODIFIED="1761576499297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+-    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761577575191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761581917136" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
++    <SUITE FILE_PATH="coverage/Econogram$UI_Setup.coverage" NAME="UI_Setup Coverage Results" MODIFIED="1761581863807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+   </component>
+ </project>
+\ No newline at end of file
+diff --git a/Final_CFD.py b/scripts/Final_CFD.py
+rename from Final_CFD.py
+rename to scripts/Final_CFD.py
+diff --git a/Future_Value.py b/scripts/Future_Value.py
+rename from Future_Value.py
+rename to scripts/Future_Value.py
+diff --git a/Clear_Graph.py b/scripts/Clear_Graph.py
+rename from Clear_Graph.py
+rename to scripts/Clear_Graph.py
+diff --git a/Create_Table.py b/scripts/Create_Table.py
+rename from Create_Table.py
+rename to scripts/Create_Table.py
+diff --git a/Delete_Series.py b/scripts/Delete_Series.py
+rename from Delete_Series.py
+rename to scripts/Delete_Series.py
+diff --git a/Geometric_Series.py b/scripts/Geometric_Series.py
+rename from Geometric_Series.py
+rename to scripts/Geometric_Series.py
+diff --git a/Uniform_Series.py b/scripts/Uniform_Series.py
+rename from Uniform_Series.py
+rename to scripts/Uniform_Series.py
+diff --git a/Gradient_Series.py b/scripts/Gradient_Series.py
+rename from Gradient_Series.py
+rename to scripts/Gradient_Series.py
+diff --git a/Single_CashFlow.py b/scripts/Single_CashFlow.py
+rename from Single_CashFlow.py
+rename to scripts/Single_CashFlow.py
+diff --git a/Annual_Value.py b/scripts/Annual_Value.py
+rename from Annual_Value.py
+rename to scripts/Annual_Value.py
+diff --git a/Combine_CashFlows.py b/scripts/Combine_CashFlows.py
+rename from Combine_CashFlows.py
+rename to scripts/Combine_CashFlows.py
+diff --git a/scripts/__init__.py b/scripts/__init__.py
+new file mode 100644
