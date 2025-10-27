@@ -151,16 +151,16 @@ def setup_ui(app):
     top_container = tk.Frame(app.root)
     top_container.pack(side="top", fill="x", pady=1)
 
-    # Create a container for buttons on the left
+    # Create a container for buttons that will be centered
     app.button_container = tk.Frame(top_container)
-    app.button_container.pack(side="left", fill="y", pady=1, padx=5)
+    app.button_container.pack(side="left", fill="both", expand=True, pady=1, padx=5)
 
     # Create frames for the top and bottom rows of operation buttons
     top_button_frame = tk.Frame(app.button_container)
-    top_button_frame.pack(side="top", pady=1, anchor='n')  # Reduced vertical spacing
+    top_button_frame.pack(side="top", pady=1, expand=True)  # Reduced vertical spacing
 
     bottom_button_frame = tk.Frame(app.button_container)
-    bottom_button_frame.pack(side="top", pady=1, anchor='n')  # Row for bottom buttons
+    bottom_button_frame.pack(side="top", pady=1, expand=True)  # Row for bottom buttons
 
     # Top row buttons
     create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)
