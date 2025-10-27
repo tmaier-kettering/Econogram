@@ -206,6 +206,6 @@ def show_series_popup(app):
 
 
 def prompt_interest_rate_change(app):
-    new_rate = tk.simpledialog.askstring("Change Interest Rate", "Enter new interest rate:")
-    if new_rate is not None:
+    new_rate = simpledialog.askstring("Change Interest Rate", "Enter new interest rate:")
+    if new_rate is not None and new_rate.strip():
         app.update_interest_rate(new_rate)
