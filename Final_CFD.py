@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -34,11 +35,11 @@ class CashFlowDiagramApp:
         try:
             # Try Windows/Mac method
             self.root.state('zoomed')
-        except:
+        except tk.TclError:
             # For Linux/Unix, use attributes
             try:
                 self.root.attributes('-zoomed', True)
-            except:
+            except tk.TclError:
                 # Fallback: set geometry to screen size
                 self.root.update_idletasks()
                 width = self.root.winfo_screenwidth()
