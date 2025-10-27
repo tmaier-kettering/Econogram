@@ -1,4 +1,4 @@
-from PIL._tkinter_finder import tk
+import tkinter as tk
 from Final_CFD import CashFlowDiagramApp
 
 
