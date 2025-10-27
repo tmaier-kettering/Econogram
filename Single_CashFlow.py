@@ -99,6 +99,17 @@ def popup_add_single_cash_flow(app, series_id):
         top.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for single cash flow window: {e}")
+    
+    # Make window always on top
+    top.attributes('-topmost', True)
+    
+    # Center the window
+    top.update_idletasks()
+    width = top.winfo_reqwidth()
+    height = top.winfo_reqheight()
+    x = (top.winfo_screenwidth() // 2) - (width // 2)
+    y = (top.winfo_screenheight() // 2) - (height // 2)
+    top.geometry(f'+{x}+{y}')
 
     # Arrange the widgets using grid layout
     tk.Label(top, text="Cash Flow Amount:").grid(row=0, column=0, padx=10, pady=5)

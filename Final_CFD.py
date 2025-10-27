@@ -29,6 +29,9 @@ class CashFlowDiagramApp:
             self.root.iconbitmap(icon_path)
         except Exception as e:
             print(f"Could not load icon: {e}")
+        
+        # Maximize the window
+        self.root.state('zoomed')
 
         self.state_history = []  # Track previous states for undo functionality
         self.cash_flows = pd.DataFrame(columns=["Period", "Cash Flow", "Color", "Series_ID"])
@@ -47,6 +50,7 @@ class CashFlowDiagramApp:
         self.next_series_id = 0
 
         setup_ui(self)
+        create_table(self, [])  # Create empty table at startup
         self._save_state()
         self.update_plot()
 

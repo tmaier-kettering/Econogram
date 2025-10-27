@@ -122,6 +122,17 @@ def popup_geometric_series(app, series_id):
         popup.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for geometric series window: {e}")
+    
+    # Make window always on top
+    popup.attributes('-topmost', True)
+    
+    # Center the window after widgets are added
+    popup.update_idletasks()
+    width = popup.winfo_reqwidth()
+    height = popup.winfo_reqheight()
+    x = (popup.winfo_screenwidth() // 2) - (width // 2)
+    y = (popup.winfo_screenheight() // 2) - (height // 2)
+    popup.geometry(f'+{x}+{y}')
 
     tk.Label(popup, text="Starting Period:").grid(row=0, column=0, padx=10, pady=5)
     start_year_entry = tk.Entry(popup, validate="key",
