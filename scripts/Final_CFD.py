@@ -147,10 +147,7 @@ class CashFlowDiagramApp:
 
     def toggle_makeNewSeries(self):
         self.makeNewSeries = not self.makeNewSeries
-        if self.toggle_makeNewSeries_button.config('relief')[-1] == 'sunken':
-            self.toggle_makeNewSeries_button.config(relief="raised")
-        else:
-            self.toggle_makeNewSeries_button.config(relief="sunken")
+        # The toggle switch handles its own visual state, no need to update it here
 
     def clear_graph(self):
         self._save_state()

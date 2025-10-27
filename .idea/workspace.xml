@@ -4,25 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Refactor import statements in workspace.xml and add misc.xml for project configuration">
-      <change afterPath="$PROJECT_DIR$/scripts/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Annual_Value.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Annual_Value.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Clear_Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Clear_Graph.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Combine_CashFlows.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Combine_CashFlows.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Create_Table.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Create_Table.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Delete_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Delete_Series.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Final_CFD.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Final_CFD.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Future_Value.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Future_Value.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Geometric_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Geometric_Series.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gradient_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Gradient_Series.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Present_Value.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Present_Value.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Single_CashFlow.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Single_CashFlow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI_Setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/UI_Setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Uniform_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Uniform_Series.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Update_Plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Update_Plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Refactor import statements in workspace.xml and add misc.xml for project configuration" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,23 +46,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.Final CFD.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Present_Value.executor&quot;: &quot;Run&quot;,
-    &quot;Python.UI_Setup.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Final CFD.executor": "Run",
+    "Python.Present_Value.executor": "Run",
+    "Python.UI_Setup.executor": "Run",
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "#5 on copilot/update-banner-image-and-toggle",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\torst\PycharmProjects\Econogram\scripts" />
@@ -176,7 +158,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Econogram$Final_CFD.coverage" NAME="Final CFD Coverage Results" MODIFIED="1761576517876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Econogram$Present_Value.coverage" NAME="Present_Value Coverage Results" MODIFIED="1761576499297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761585748729" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761587402598" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Econogram$UI_Setup.coverage" NAME="UI_Setup Coverage Results" MODIFIED="1761581863807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
