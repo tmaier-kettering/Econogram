@@ -1,5 +1,5 @@
 from tkinter import messagebox
-from Create_Table import create_table  # Ensure the import at the top
+from scripts.Create_Table import create_table  # Ensure the import at the top
 
 
 def clear_graph(app):

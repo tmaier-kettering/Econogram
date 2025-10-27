@@ -1,6 +1,6 @@
 import pandas as pd
 from tkinter import simpledialog, messagebox, Tk
-from Create_Table import create_table
+from scripts.Create_Table import create_table
 
 
 def calculate_present_value(cash_flow, rate, periods):

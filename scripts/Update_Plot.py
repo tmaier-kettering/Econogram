@@ -2,8 +2,8 @@ import tkinter as tk
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle, Patch
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from Create_Table import create_table
-from Clear_Graph import clear_graph
+from scripts.Create_Table import create_table
+from scripts.Clear_Graph import clear_graph
 
 
 def update_plot(app):

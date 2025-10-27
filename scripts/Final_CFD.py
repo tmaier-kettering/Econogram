@@ -3,19 +3,19 @@ from tkinter import messagebox
 import pandas as pd
 import matplotlib.pyplot as plt
 from itertools import cycle
-from Update_Plot import update_plot
-from UI_Setup import setup_ui, get_asset_path
-from Uniform_Series import popup_uniform_series
-from Combine_CashFlows import combine_cash_flows
-from Single_CashFlow import popup_add_single_cash_flow
-from Gradient_Series import popup_gradient_series
-from Present_Value import popup_present_value
-from Future_Value import popup_future_value
-from Annual_Value import popup_annual_value
-from Geometric_Series import popup_geometric_series
-from Delete_Series import delete_selected_series
-from Clear_Graph import clear_graph
-from Create_Table import create_table
+from scripts.Update_Plot import update_plot
+from scripts.UI_Setup import setup_ui, get_asset_path
+from scripts.Uniform_Series import popup_uniform_series
+from scripts.Combine_CashFlows import combine_cash_flows
+from scripts.Single_CashFlow import popup_add_single_cash_flow
+from scripts.Gradient_Series import popup_gradient_series
+from scripts.Present_Value import popup_present_value
+from scripts.Future_Value import popup_future_value
+from scripts.Annual_Value import popup_annual_value
+from scripts.Geometric_Series import popup_geometric_series
+from scripts.Delete_Series import delete_selected_series
+from scripts.Clear_Graph import clear_graph
+from scripts.Create_Table import create_table
 
 
 class CashFlowDiagramApp:

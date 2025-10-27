@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
-from UI_Setup import get_asset_path
+from scripts.UI_Setup import get_asset_path
 
 
 def popup_geometric_series(app, series_id):
