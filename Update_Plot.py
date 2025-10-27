@@ -103,8 +103,6 @@ def handle_click(event, ax, app):
 
 def show_context_menu(event, app):
     """Display a context menu with cash flow operations."""
-    import tkinter as tk
-    
     # Create context menu
     context_menu = tk.Menu(app.root, tearoff=0)
     
@@ -120,13 +118,10 @@ def show_context_menu(event, app):
     context_menu.add_command(label="Undo", command=app.undo_last_action)
     
     # Display the menu at the cursor position
-    # Convert matplotlib event coordinates to tkinter coordinates
-    try:
-        x = app.root.winfo_pointerx()
-        y = app.root.winfo_pointery()
-        context_menu.tk_popup(x, y)
-    finally:
-        context_menu.grab_release()
+    x = app.root.winfo_pointerx()
+    y = app.root.winfo_pointery()
+    context_menu.tk_popup(x, y)
+    context_menu.grab_release()
 
 
 def handle_bar_selection(clicked_bar, ax, app):
