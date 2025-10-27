@@ -33,12 +33,41 @@ class ToggleSwitch(tk.Canvas):
         self.bg_on = "#4CAF50"
         self.handle_color = "#FFFFFF"
         
-        # Create the background and handle
-        self.bg_rect = self.create_oval(2, 2, width-2, height-2, fill=self.bg_off, outline="")
-        self.handle = self.create_oval(4, 4, height-4, height-4, fill=self.handle_color, outline="")
+        # Calculate rounded rectangle radius and handle size
+        self.radius = height // 2
+        self.handle_size = height - 8  # Handle slightly smaller than height
         
-        # Bind click event
+        # Create the background with rounded rectangle
+        self.bg_rect = self._create_rounded_rectangle(2, 2, width-2, height-2, self.radius, fill=self.bg_off, outline="")
+        
+        # Create the circular handle
+        self.handle = self.create_oval(4, 4, 4 + self.handle_size, 4 + self.handle_size, fill=self.handle_color, outline="")
+        
+        # Bind events for mouse and keyboard accessibility
         self.bind("<Button-1>", self.toggle)
+        self.bind("<Return>", self.toggle)  # Enter key
+        self.bind("<space>", self.toggle)   # Space key
+        
+        # Make focusable for keyboard navigation
+        self.config(takefocus=1)
+        
+    def _create_rounded_rectangle(self, x1, y1, x2, y2, radius, **kwargs):
+        """Create a rounded rectangle on the canvas."""
+        points = [
+            x1 + radius, y1,
+            x2 - radius, y1,
+            x2, y1,
+            x2, y1 + radius,
+            x2, y2 - radius,
+            x2, y2,
+            x2 - radius, y2,
+            x1 + radius, y2,
+            x1, y2,
+            x1, y2 - radius,
+            x1, y1 + radius,
+            x1, y1
+        ]
+        return self.create_polygon(points, smooth=True, **kwargs)
         
     def toggle(self, event=None):
         """Toggle the switch state."""
@@ -51,11 +80,12 @@ class ToggleSwitch(tk.Canvas):
         """Update the visual appearance based on state."""
         if self.is_on:
             # Move handle to the right and change background to green
-            self.coords(self.handle, self.width - self.height + 4, 4, self.width - 4, self.height - 4)
+            handle_x = self.width - self.handle_size - 4
+            self.coords(self.handle, handle_x, 4, handle_x + self.handle_size, 4 + self.handle_size)
             self.itemconfig(self.bg_rect, fill=self.bg_on)
         else:
             # Move handle to the left and change background to gray
-            self.coords(self.handle, 4, 4, self.height - 4, self.height - 4)
+            self.coords(self.handle, 4, 4, 4 + self.handle_size, 4 + self.handle_size)
             self.itemconfig(self.bg_rect, fill=self.bg_off)
     
     def set_state(self, is_on):
