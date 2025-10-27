@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle, Patch
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from Create_Table import create_table
+from Clear_Graph import clear_graph
 
 
 def update_plot(app):
@@ -87,11 +88,40 @@ def handle_click(event, ax, app):
         try:
             clicked_bar = next((bar for bar in ax.patches if bar.contains(event)[0]), None)
             if clicked_bar:
-                handle_bar_selection(clicked_bar, ax, app)
+                if event.button == 3:  # Right-click
+                    handle_bar_selection(clicked_bar, ax, app)
+                    update_selection_display(ax, app)
+                    show_context_menu(event, app)
+                    return
+                else:  # Left-click
+                    handle_bar_selection(clicked_bar, ax, app)
         except KeyError as e:
             print(f"Error: No matching series or invalid bar data - {str(e)}")
 
     update_selection_display(ax, app)
+
+
+def show_context_menu(event, app):
+    """Display a context menu with cash flow operations."""
+    # Create context menu
+    context_menu = tk.Menu(app.root, tearoff=0)
+    
+    # Add menu items for each operation
+    context_menu.add_command(label="Present Value", command=app.popup_present_value)
+    context_menu.add_command(label="Future Value", command=app.popup_future_value)
+    context_menu.add_command(label="Annual Value", command=app.popup_annual_value)
+    context_menu.add_separator()
+    context_menu.add_command(label="Combine Cash Flow", command=app.combine_cash_flows)
+    context_menu.add_separator()
+    context_menu.add_command(label="Delete Selection", command=app.delete_selected_series)
+    context_menu.add_command(label="Clear", command=lambda: clear_graph(app))
+    context_menu.add_command(label="Undo", command=app.undo_last_action)
+    
+    # Display the menu at the cursor position
+    x = app.root.winfo_pointerx()
+    y = app.root.winfo_pointery()
+    context_menu.tk_popup(x, y)
+    context_menu.grab_release()
 
 
 def handle_bar_selection(clicked_bar, ax, app):
