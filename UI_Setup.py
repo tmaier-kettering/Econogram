@@ -2,6 +2,7 @@ from Clear_Graph import clear_graph
 import tkinter as tk
 from tkinter import font, messagebox
 from PIL import Image, ImageTk
+import os
 
 
 def setup_ui(app):
@@ -43,7 +44,8 @@ def setup_ui(app):
 def add_banner(app):
     """Add the banner image to the top of the window."""
     try:
-        banner_path = "/home/runner/work/Econogram/Econogram/assets/banner_trans.png"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        banner_path = os.path.join(script_dir, "assets", "banner_trans.png")
         banner_image = Image.open(banner_path)
         
         # Scale the banner to a reasonable width (e.g., 600 pixels wide)
@@ -157,7 +159,8 @@ def display_help(app):
     
     # Set the window icon
     try:
-        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, "assets", "app.ico")
         help_window.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for help window: {e}")
@@ -190,7 +193,8 @@ def show_series_popup(app):
     
     # Set the window icon
     try:
-        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, "assets", "app.ico")
         popup_window.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for series popup: {e}")

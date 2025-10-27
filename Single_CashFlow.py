@@ -1,6 +1,7 @@
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
+import os
 
 
 def popup_add_single_cash_flow(app, series_id):
@@ -94,7 +95,8 @@ def popup_add_single_cash_flow(app, series_id):
     
     # Set the window icon
     try:
-        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, "assets", "app.ico")
         top.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for single cash flow window: {e}")

@@ -2,6 +2,7 @@ from tkinter import messagebox
 import pandas as pd
 import matplotlib.pyplot as plt
 from itertools import cycle
+import os
 from Update_Plot import update_plot
 from UI_Setup import setup_ui
 from Uniform_Series import popup_uniform_series
@@ -25,7 +26,8 @@ class CashFlowDiagramApp:
         
         # Set the application icon
         try:
-            icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            icon_path = os.path.join(script_dir, "assets", "app.ico")
             self.root.iconbitmap(icon_path)
         except Exception as e:
             print(f"Could not load icon: {e}")

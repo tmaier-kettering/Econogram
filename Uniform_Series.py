@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
+import os
 
 
 def popup_uniform_series(app, series_id):
@@ -101,7 +102,8 @@ def popup_uniform_series(app, series_id):
     
     # Set the window icon
     try:
-        icon_path = "/home/runner/work/Econogram/Econogram/assets/app.ico"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, "assets", "app.ico")
         top.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for uniform series window: {e}")
