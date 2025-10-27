@@ -146,8 +146,12 @@ class CashFlowDiagramApp:
             messagebox.showinfo("Undo", "No more actions to undo.")
 
     def toggle_makeNewSeries(self):
-        self.makeNewSeries = not self.makeNewSeries
-        # The toggle switch handles its own visual state, no need to update it here
+        # Update the makeNewSeries based on the menu checkbutton state
+        if hasattr(self, 'makeNewSeries_var'):
+            self.makeNewSeries = self.makeNewSeries_var.get()
+        else:
+            # Fallback for backward compatibility
+            self.makeNewSeries = not self.makeNewSeries
 
     def clear_graph(self):
         self._save_state()
