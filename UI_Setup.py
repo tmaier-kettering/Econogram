@@ -5,6 +5,19 @@ from PIL import Image, ImageTk
 import os
 
 
+def get_asset_path(filename):
+    """Get the absolute path to an asset file.
+    
+    Args:
+        filename: Name of the file in the assets folder
+        
+    Returns:
+        Absolute path to the asset file
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, "assets", filename)
+
+
 def setup_ui(app):
     # Define a font style for buttons
     button_font = font.Font(size=10, weight="bold")
@@ -44,15 +57,19 @@ def setup_ui(app):
 def add_banner(app):
     """Add the banner image to the top of the window."""
     try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        banner_path = os.path.join(script_dir, "assets", "banner_trans.png")
+        banner_path = get_asset_path("banner_trans.png")
         banner_image = Image.open(banner_path)
         
         # Scale the banner to a reasonable width (e.g., 600 pixels wide)
         target_width = 600
         aspect_ratio = banner_image.height / banner_image.width
         target_height = int(target_width * aspect_ratio)
-        banner_image = banner_image.resize((target_width, target_height), Image.LANCZOS)
+        # Use Image.Resampling.LANCZOS for newer Pillow versions, fallback to Image.LANCZOS
+        try:
+            resample_filter = Image.Resampling.LANCZOS
+        except AttributeError:
+            resample_filter = Image.LANCZOS
+        banner_image = banner_image.resize((target_width, target_height), resample_filter)
         
         # Convert to PhotoImage
         banner_photo = ImageTk.PhotoImage(banner_image)
@@ -159,8 +176,7 @@ def display_help(app):
     
     # Set the window icon
     try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        icon_path = os.path.join(script_dir, "assets", "app.ico")
+        icon_path = get_asset_path("app.ico")
         help_window.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for help window: {e}")
@@ -193,8 +209,7 @@ def show_series_popup(app):
     
     # Set the window icon
     try:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        icon_path = os.path.join(script_dir, "assets", "app.ico")
+        icon_path = get_asset_path("app.ico")
         popup_window.iconbitmap(icon_path)
     except Exception as e:
         print(f"Could not load icon for series popup: {e}")
