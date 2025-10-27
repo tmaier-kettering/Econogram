@@ -110,9 +110,7 @@ def rename_series(app):
     
     # Get the series ID and current name from the first selected index
     first_selected_idx = app.selected_indices[0]
-    selected_row = app.cash_flows.loc[first_selected_idx]
-    series_id = selected_row["Series_ID"]
-    current_name = selected_row["Series_Name"]
+    series_id, current_name = app.cash_flows.loc[first_selected_idx, ['Series_ID', 'Series_Name']]
     
     # Prompt for new name
     new_name = simpledialog.askstring("Rename Series", 
