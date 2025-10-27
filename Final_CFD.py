@@ -133,8 +133,3 @@ class CashFlowDiagramApp:
         self._save_state()
         clear_graph(self)
 
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = CashFlowDiagramApp(root)
-    root.mainloop()
