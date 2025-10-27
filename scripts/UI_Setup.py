@@ -215,17 +215,17 @@ def add_banner(app, parent_frame):
 def create_operation_buttons_top_row(app, frame, options, plus_question_button_font):
     # Create buttons with reduced padding, size, and layout
     present_value_button = tk.Button(frame, text="Present Value", command=app.popup_present_value, height=1, **options)
-    present_value_button.pack(side="left", padx=2)
+    present_value_button.pack(side="left", padx=2, pady=5)
 
     future_value_button = tk.Button(frame, text="Future Value", command=app.popup_future_value, height=1, **options)
-    future_value_button.pack(side="left", padx=2)
+    future_value_button.pack(side="left", padx=2, pady=5)
 
     annual_value_button = tk.Button(frame, text="Annual Value", command=app.popup_annual_value, height=1, **options)
-    annual_value_button.pack(side="left", padx=2)
+    annual_value_button.pack(side="left", padx=2, pady=5)
 
     combine_cash_flow_button = tk.Button(frame, text="Combine Cash Flow", command=app.combine_cash_flows, height=1,
                                          **options)
-    combine_cash_flow_button.pack(side="left", padx=2)
+    combine_cash_flow_button.pack(side="left", padx=2, pady=5)
 
     # Create '+' and '?' buttons on the top row
     create_plus_button(app, frame, plus_question_button_font)
@@ -236,25 +236,25 @@ def create_operation_buttons_top_row(app, frame, options, plus_question_button_f
 def create_operation_buttons_bottom_row(app, frame, options):
     # Create buttons with reduced padding, size, and layout for the bottom row
     delete_button = tk.Button(frame, text="Delete Selection", command=app.delete_selected_series, height=1, **options)
-    delete_button.pack(side="left", padx=2)
+    delete_button.pack(side="left", padx=2, pady=5)
 
     clear_button = tk.Button(frame, text="Clear", command=lambda: clear_graph(app), height=1, **options)
-    clear_button.pack(side="left", padx=2)
+    clear_button.pack(side="left", padx=2, pady=5)
 
     undo_button = tk.Button(frame, text="Undo", command=app.undo_last_action, height=1, **options)
-    undo_button.pack(side="left", padx=2)
+    undo_button.pack(side="left", padx=2, pady=5)
 
     # Create a frame to hold the label and toggle switch together
     toggle_frame = tk.Frame(frame)
-    toggle_frame.pack(side="left", padx=5)
+    toggle_frame.pack(side="left", padx=5, pady=5)
     
     # Add label for the toggle switch
     toggle_label = tk.Label(toggle_frame, text="Make New Series:", font=options['font'])
-    toggle_label.pack(side="left", padx=(0, 5))
+    toggle_label.pack(side="left", padx=(0, 5), anchor="center")
     
     # Create the toggle switch
     toggle_makeNewSeries_button = ToggleSwitch(toggle_frame, width=50, height=25, command=app.toggle_makeNewSeries)
-    toggle_makeNewSeries_button.pack(side="left")
+    toggle_makeNewSeries_button.pack(side="left", anchor="center")
 
     # Interest rate section placed on the right
     create_interest_rate_frame(app, frame)
@@ -266,7 +266,7 @@ def create_operation_buttons_bottom_row(app, frame, options):
 def create_plus_button(app, frame, plus_question_button_font):
     # Create a canvas to draw the circular plus button
     plus_canvas = tk.Canvas(frame, width=45, height=45, highlightthickness=0)
-    plus_canvas.pack(side="left", padx=5)
+    plus_canvas.pack(side="left", padx=5, pady=5)
 
     # Draw a circle (oval with equal sides) as the button's background
     plus_canvas.create_oval(5, 5, 40, 40, fill='green', outline='')
@@ -281,7 +281,7 @@ def create_plus_button(app, frame, plus_question_button_font):
 def create_question_button(app, frame, plus_question_button_font):
     # Create a canvas to draw the circular question button
     question_canvas = tk.Canvas(frame, width=45, height=45, highlightthickness=0)
-    question_canvas.pack(side="left", padx=5)
+    question_canvas.pack(side="left", padx=5, pady=5)
 
     # Draw a circle (oval with equal sides) as the button's background
     question_canvas.create_oval(5, 5, 40, 40, fill='purple', outline='')

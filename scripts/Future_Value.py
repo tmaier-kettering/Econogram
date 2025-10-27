@@ -68,23 +68,11 @@ def popup_future_value(app):
                             cash_flow, app.interest_rate / 100, periods_difference
                         )
 
-                    # Create a meaningful series name
-                    original_series_name = series_cash_flows["Series_Name"].iloc[0]
-                    rendered_series_name = f"FV of {original_series_name}"
-
-                    # Create a DataFrame entry for the combined future value
-                    new_series_id = app._get_next_series_id()  # Fetch unique series ID
-                    color = next(app.colors)  # Assign a new unique color
-                    new_entry = pd.DataFrame({
-                        "Period": [new_period],
-                        "Cash Flow": [combined_value],
-                        "Color": [color],
-                        "Series_ID": [new_series_id],
-                        "Series_Name": [rendered_series_name]
-                    })
-
-                    # Append the new entry to cash flows
-                    app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+                    if app.makeNewSeries:
+                        make_new_series_for_multiple_cash_flow(app, combined_value, new_period, series_cash_flows)
+                    else:
+                        update_series_for_multiple_cash_flow(app, combined_value, new_period, series_cash_flows,
+                                                             series_id)
 
         else:
             # Handle a single cash flow or series with just one cash flow
@@ -109,23 +97,10 @@ def popup_future_value(app):
                         cash_flow, app.interest_rate / 100, periods_difference
                     )
 
-                # Create a meaningful series name
-                original_series_name = selected_cash_flows["Series_Name"].iloc[0]
-                rendered_series_name = f"FV of {original_series_name}"
-
-                # Create a DataFrame entry for the calculated future value
-                new_series_id = app._get_next_series_id()  # Fetch unique series ID
-                color = next(app.colors)  # Assign a new unique color
-                new_entry = pd.DataFrame({
-                    "Period": [new_period],
-                    "Cash Flow": [combined_value],
-                    "Color": [color],
-                    "Series_ID": [new_series_id],
-                    "Series_Name": [rendered_series_name]
-                })
-
-                # Append the new entry to cash flows
-                app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+                if app.makeNewSeries:
+                    make_new_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows)
+                else:
+                    update_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows)
 
         # Clear and update the table
         create_table(app, [])  # Refresh or reset the displayed table
@@ -146,3 +121,69 @@ def popup_future_value(app):
     except Exception as e:
         # Handle general exceptions gracefully
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
+
+def update_series_for_multiple_cash_flow(app, combined_value, new_period, series_cash_flows, series_id):
+    # Update the series
+    color = series_cash_flows["Color"].iloc[0]  # Assuming color is consistent within a series
+    new_entry = pd.DataFrame({
+        "Period": [new_period],
+        "Cash Flow": [combined_value],
+        "Color": [color],
+        "Series_ID": [series_id],
+        "Series_Name": [series_cash_flows["Series_Name"].iloc[0]]
+    })
+    app.cash_flows = app.cash_flows.drop(series_cash_flows.index).reset_index(drop=True)
+    app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+
+
+def make_new_series_for_multiple_cash_flow(app, combined_value, new_period, series_cash_flows):
+    # Create a name for the calculated series
+    original_series_name = series_cash_flows["Series_Name"].iloc[0]
+    rendered_series_name = f"FV of {original_series_name}"
+    # Create a new entry for the calculated future value
+    new_series_id = app._get_next_series_id()
+    color = next(app.colors)  # Assign a new unique color
+    new_entry = pd.DataFrame({
+        "Period": [new_period],
+        "Cash Flow": [combined_value],
+        "Color": [color],
+        "Series_ID": [new_series_id],
+        "Series_Name": [rendered_series_name]
+    })
+    # Add the calculated future value to the app's cash flows
+    app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+
+
+def make_new_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows):
+    # Create a name for the calculated series
+    original_series_name = selected_cash_flows["Series_Name"].iloc[0]
+    rendered_series_name = f"FV of {original_series_name}"
+    # Create a new entry for the calculated future value
+    new_series_id = app._get_next_series_id()
+    color = next(app.colors)  # Assign a new unique color
+    new_entry = pd.DataFrame({
+        "Period": [new_period],
+        "Cash Flow": [combined_value],
+        "Color": [color],
+        "Series_ID": [new_series_id],
+        "Series_Name": [rendered_series_name]
+    })
+    # Add the calculated future value to the app's cash flows
+    app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
+
+
+def update_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows):
+    series_id = selected_cash_flows["Series_ID"].iloc[0]
+    series_name = selected_cash_flows["Series_Name"].iloc[0]
+    color = selected_cash_flows["Color"].iloc[0]  # Assuming color is consistent within a series
+    new_entry = pd.DataFrame({
+        "Period": [new_period],
+        "Cash Flow": [combined_value],
+        "Color": [color],
+        "Series_ID": [series_id],
+        "Series_Name": [series_name]
+    })
+    app.cash_flows = app.cash_flows.drop(app.selected_indices).reset_index(drop=True)
+    new_entry_cleaned = new_entry.dropna(how='all')
+    app.cash_flows = pd.concat([app.cash_flows, new_entry_cleaned], ignore_index=True)
