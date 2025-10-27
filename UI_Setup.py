@@ -46,7 +46,7 @@ class ToggleSwitch(tk.Canvas):
         # Bind events for mouse and keyboard accessibility
         self.bind("<Button-1>", self.toggle)
         self.bind("<Return>", self.toggle)  # Enter key
-        self.bind("<space>", self.toggle)   # Space key
+        self.bind("<Key-space>", self.toggle)   # Space key
         
         # Make focusable for keyboard navigation
         self.config(takefocus=1)
