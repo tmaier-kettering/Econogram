@@ -57,6 +57,42 @@ def get_asset_path(filename):
 
 
 def setup_ui(app):
+    # Define a font style for buttons
+    button_font = font.Font(size=10, weight="bold")
+    plus_question_button_font = font.Font(size=14, weight="bold")  # Larger font for plus and question symbol
+
+    # Define button options excluding the plus and question buttons
+    button_options = {
+        'font': button_font,
+        'borderwidth': 2,
+        'highlightthickness': 2,
+        'highlightbackground': 'black',
+        'highlightcolor': 'black'
+    }
+
+    # Create a top container that holds buttons on left and banner on right
+    top_container = tk.Frame(app.root)
+    top_container.pack(side="top", fill="x", pady=1)
+
+    # Create a container for buttons that will be centered
+    app.button_container = tk.Frame(top_container)
+    app.button_container.pack(side="left", fill="both", expand=True, pady=1, padx=5)
+
+    # Create frames for the top and bottom rows of operation buttons
+    top_button_frame = tk.Frame(app.button_container)
+    top_button_frame.pack(side="top", pady=1, expand=True)  # Reduced vertical spacing
+
+    bottom_button_frame = tk.Frame(app.button_container)
+    bottom_button_frame.pack(side="top", pady=1, expand=True)  # Row for bottom buttons
+
+    # Top row buttons
+    create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)
+
+    # Bottom row buttons
+    app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
+
+    # Add banner on the right side
+    add_banner(app, top_container)
     # Create the menu bar
     create_menu_bar(app)
     

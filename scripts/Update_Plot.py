@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox, simpledialog
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle, Patch
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -101,6 +102,27 @@ def handle_click(event, ax, app):
     update_selection_display(ax, app)
 
 
+def rename_series(app):
+    """Rename the selected series."""
+    if not app.selected_indices:
+        messagebox.showwarning("No Selection", "Please select a cash flow to rename.")
+        return
+    
+    # Get the series ID and current name from the first selected index
+    first_selected_idx = app.selected_indices[0]
+    series_id, current_name = app.cash_flows.loc[first_selected_idx, ['Series_ID', 'Series_Name']]
+    
+    # Prompt for new name
+    new_name = simpledialog.askstring("Rename Series", 
+                                      f"Enter new name for '{current_name}':",
+                                      initialvalue=current_name)
+    
+    if new_name and new_name.strip():
+        # Update all rows with this series ID
+        app.cash_flows.loc[app.cash_flows["Series_ID"] == series_id, "Series_Name"] = new_name.strip()
+        app.update_plot()
+
+
 def show_context_menu(event, app):
     """Display a context menu with cash flow operations."""
     # Create context menu
@@ -113,6 +135,8 @@ def show_context_menu(event, app):
     context_menu.add_separator()
     context_menu.add_command(label="Combine Cash Flow", command=app.combine_cash_flows)
     context_menu.add_command(label="Invert Series", command=app.invert_selected_series)
+    context_menu.add_separator()
+    context_menu.add_command(label="Rename", command=lambda: rename_series(app))
     context_menu.add_separator()
     context_menu.add_command(label="Delete Selection", command=app.delete_selected_series)
     context_menu.add_command(label="Clear", command=lambda: clear_graph(app))
