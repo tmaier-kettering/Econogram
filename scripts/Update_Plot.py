@@ -23,7 +23,10 @@ def update_plot(app):
         set_y_limits_with_buffer(ax)
         configure_axes(ax, app)
         add_legend(ax, app)
-        configure_event_handling(fig, ax, app)
+    
+    # Configure event handling regardless of whether there are cash flows
+    # This ensures the right-click context menu works even on an empty graph
+    configure_event_handling(fig, ax, app)
 
     # Display the canvas within the GUI
     display_canvas(app, fig)
