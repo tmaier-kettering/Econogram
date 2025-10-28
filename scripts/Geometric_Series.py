@@ -26,9 +26,16 @@ def popup_geometric_series(app, series_id):
         return True
 
     def validate_numeric_input(entry_text, action_type):
-        # Allow only numeric input with a maximum length of 3 characters
-        if action_type == '1' and (not entry_text.isdigit() or len(entry_text) >= 4):
-            return False
+        # Allow negative integers and positive integers (no length limit)
+        if action_type == '1':  # If we're inserting a character
+            if entry_text in {'-', ''}:  # Allow '-' during input
+                return True
+            if not (
+                    entry_text.replace('-', '', 1).isdigit() and  # Allows '-'
+                    entry_text.count('-') <= 1 and  # Only one negative sign
+                    (entry_text.find('-') <= 0)  # Negative sign must be at the first position
+            ):
+                return False
         return True
 
     def validate_series_name_input(entry_text, action_type):
@@ -42,10 +49,8 @@ def popup_geometric_series(app, series_id):
             # Validate start year input
             try:
                 start_year = int(start_year_entry.get())
-                if start_year < 0 or start_year > 100:
-                    raise ValueError("Starting Year must be an integer between 0 and 100.")
             except ValueError:
-                raise ValueError("Starting Year must be an integer between 0 and 100.")
+                raise ValueError("Starting Period must be a valid integer.")
 
             # Validate initial value input with conversion to float
             initial_value = initial_value_entry.get()
@@ -59,10 +64,10 @@ def popup_geometric_series(app, series_id):
             # Validate series length input
             try:
                 num_years = int(num_years_entry.get())
-                if num_years < 1 or start_year + num_years > 100:
-                    raise ValueError("Series Length must maintain the years between 0 and 100.")
+                if num_years < 1:
+                    raise ValueError("Series Length must be at least 1.")
             except ValueError:
-                raise ValueError("Series Length must maintain the years between 0 and 100.")
+                raise ValueError("Series Length must be at least 1.")
 
             # Validate growth rate input with conversion to float
             growth_rate = growth_rate_entry.get()
