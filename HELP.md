@@ -114,6 +114,12 @@ A uniform series is a sequence of equal cash flows occurring at regular interval
 - Length: 10
 - Result: $1000 cash flows at periods 5, 6, 7, 8, 9, 10, 11, 12, 13, and 14
 
+**Example with negative starting period:**
+- Amount: $500
+- Starting Period: -3
+- Length: 7
+- Result: $500 cash flows at periods -3, -2, -1, 0, 1, 2, and 3
+
 **Notes:**
 - All cash flows in the series have the same value
 - The series will be displayed in a single color
@@ -281,7 +287,8 @@ Annual Value converts a single cash flow into an equivalent uniform series over 
 **Requirements:**
 - Only works with a single selected cash flow
 - Cannot be used on series with multiple cash flows
-- The number of periods must be at least 1
+- The number of periods (n) specifies how many payment periods in the resulting uniform series (must be at least 1)
+- The uniform series will start one period after the selected cash flow's period
 
 **Formula (when interest rate ≠ 0):**
 A = PV × [i / (1 - (1 + i)^-n)]
