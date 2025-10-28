@@ -94,6 +94,7 @@ def show_split_dialog(app, series_id, series_data, periods):
             app.selected_indices = []
             create_table(app, [])
             app.update_plot()
+            app.update_canvas()
             
             top.destroy()
             messagebox.showinfo("Success", f"Series split into '{series1_name}' and '{series2_name}'.")
