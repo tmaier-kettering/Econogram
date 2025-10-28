@@ -54,7 +54,7 @@ def create_bars(ax, app):
                                  head_width=head_width, 
                                  head_length=min(head_length, abs(cash_flow) * 0.9),
                                  length_includes_head=True,
-                                 color=row["Color"], 
+                                 facecolor=row["Color"], 
                                  edgecolor='black',
                                  linewidth=0.5)
             else:
@@ -64,7 +64,7 @@ def create_bars(ax, app):
                                  head_width=head_width, 
                                  head_length=min(head_length, abs(cash_flow) * 0.9),
                                  length_includes_head=True,
-                                 color=row["Color"], 
+                                 facecolor=row["Color"], 
                                  edgecolor='black',
                                  linewidth=0.5)
             

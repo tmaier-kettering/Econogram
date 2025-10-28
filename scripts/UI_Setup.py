@@ -85,14 +85,11 @@ def setup_ui(app):
     bottom_button_frame = tk.Frame(app.button_container)
     bottom_button_frame.pack(side="top", pady=1, expand=True)  # Row for bottom buttons
 
-    # Top row buttons
-    create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)
-
-    # Bottom row buttons
-    app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
-
-    # Add banner on the right side
-    add_banner(app, top_container)
+    # Note: Button rows have been replaced with menu bar
+    # create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)
+    # app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
+    # add_banner(app, top_container)
+    
     # Create the menu bar
     create_menu_bar(app)
     
