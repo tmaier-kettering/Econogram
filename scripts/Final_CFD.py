@@ -24,7 +24,7 @@ class CashFlowDiagramApp:
     def __init__(self, root):
         self.toggle_makeNewSeries_button = None
         self.root = root
-        self.root.title("Cash Flow Diagram")
+        self.root.title("Econogram")
         
         # Set the application icon
         try:

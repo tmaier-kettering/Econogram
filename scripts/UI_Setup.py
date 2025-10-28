@@ -1,3 +1,5 @@
+import webbrowser
+
 from scripts.Clear_Graph import clear_graph
 import tkinter as tk
 from tkinter import font, messagebox, simpledialog
@@ -176,9 +178,7 @@ def create_menu_bar(app):
         "1. If your problem includes a negative period, consider reframing the problem with your most negative value being set as Period 0.\n\n2. If the problem requires multiple interest rates, you are able to manipulate the cash flow to its final point and change the interest rate for the other parts of the problem.\n\n3. Just note that any changes across periods will involve the current interest rate displayed at the top of the screen."))
 
     help_menu.add_separator()
-    help_menu.add_command(label="About", command=lambda: show_help_message(
-        "About Cash Flow Diagram",
-        "Cash Flow Diagram\nA tool for analyzing and visualizing cash flows over time."))
+    help_menu.add_command(label="About", command=_open_help_docs)
 
     # Bind keyboard shortcuts
     app.root.bind('<Control-z>', lambda e: app.undo_last_action())
@@ -195,6 +195,9 @@ def create_status_bar(app):
     app.interest_rate_label = tk.Label(status_bar, text=f"{app.interest_rate}%", font=("Arial", 10, "bold"))
     app.interest_rate_label.pack(side="left", padx=5)
 
+
+def _open_help_docs():
+    webbrowser.open("https://github.com/tmaier-kettering/Econogram")
 
 def show_help_message(title, message):
     """Show a help message dialog."""

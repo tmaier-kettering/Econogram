@@ -92,7 +92,6 @@ def show_split_dialog(app, series_id, series_data, periods):
             app.update_canvas()
 
             top.destroy()
-            messagebox.showinfo("Success", f"Series split into '{series1_name}' and '{series2_name}'.")
 
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while splitting: {str(e)}")
