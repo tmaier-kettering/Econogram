@@ -79,16 +79,12 @@ def setup_ui(app):
     app.button_container.pack(side="left", fill="both", expand=True, pady=1, padx=5)
 
     # Create frames for the top and bottom rows of operation buttons
+    # Note: Button panels were replaced with menu bar in UI refactor
     top_button_frame = tk.Frame(app.button_container)
-    top_button_frame.pack(side="top", pady=1, expand=True)  # Reduced vertical spacing
+    top_button_frame.pack(side="top", pady=1, expand=True)
 
     bottom_button_frame = tk.Frame(app.button_container)
-    bottom_button_frame.pack(side="top", pady=1, expand=True)  # Row for bottom buttons
-
-    # Note: Button rows have been replaced with menu bar
-    # create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)
-    # app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
-    # add_banner(app, top_container)
+    bottom_button_frame.pack(side="top", pady=1, expand=True)
     
     # Create the menu bar
     create_menu_bar(app)
