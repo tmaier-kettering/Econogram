@@ -89,13 +89,18 @@ def handle_click(event, ax, app):
         try:
             clicked_bar = next((bar for bar in ax.patches if bar.contains(event)[0]), None)
             if clicked_bar:
-                if event.button == 3:  # Right-click
+                if event.button == 3:  # Right-click on a bar
                     handle_bar_selection(clicked_bar, ax, app, right_click=True)
                     update_selection_display(ax, app)
                     show_context_menu(event, app)
                     return
-                else:  # Left-click
+                else:  # Left-click on a bar
                     handle_bar_selection(clicked_bar, ax, app, right_click=False)
+            else:
+                # Click on blank space
+                if event.button == 3:  # Right-click on blank space
+                    show_insert_menu(event, app)
+                    return
         except KeyError as e:
             print(f"Error: No matching series or invalid bar data - {str(e)}")
 
@@ -159,6 +164,24 @@ def show_context_menu(event, app):
     y = app.root.winfo_pointery()
     context_menu.tk_popup(x, y)
     context_menu.grab_release()
+
+
+def show_insert_menu(event, app):
+    """Display a context menu with insert options for new series."""
+    # Create context menu
+    insert_menu = tk.Menu(app.root, tearoff=0)
+    
+    # Add menu items for each insert operation
+    insert_menu.add_command(label="Single Cash Flow", command=app.popup_add_single_cash_flow)
+    insert_menu.add_command(label="Uniform Series", command=app.popup_uniform_series)
+    insert_menu.add_command(label="Gradient Series", command=app.popup_gradient_series)
+    insert_menu.add_command(label="Geometric Series", command=app.popup_geometric_series)
+    
+    # Display the menu at the cursor position
+    x = app.root.winfo_pointerx()
+    y = app.root.winfo_pointery()
+    insert_menu.tk_popup(x, y)
+    insert_menu.grab_release()
 
 
 def handle_bar_selection(clicked_bar, ax, app, right_click=False):
