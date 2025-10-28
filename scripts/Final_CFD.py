@@ -14,6 +14,7 @@ from scripts.Future_Value import popup_future_value
 from scripts.Annual_Value import popup_annual_value
 from scripts.Geometric_Series import popup_geometric_series
 from scripts.Delete_Series import delete_selected_series
+from scripts.Invert_Series import invert_selected_series
 from scripts.Clear_Graph import clear_graph
 from scripts.Create_Table import create_table
 
@@ -136,6 +137,10 @@ class CashFlowDiagramApp:
         self._save_state()
         delete_selected_series(self)
 
+    def invert_selected_series(self):
+        self._save_state()
+        invert_selected_series(self)
+
     def undo_last_action(self):
         if len(self.state_history) > 1:
             self.state_history.pop()
@@ -146,8 +151,12 @@ class CashFlowDiagramApp:
             messagebox.showinfo("Undo", "No more actions to undo.")
 
     def toggle_makeNewSeries(self):
-        self.makeNewSeries = not self.makeNewSeries
-        # The toggle switch handles its own visual state, no need to update it here
+        # Update the makeNewSeries based on the menu checkbutton state
+        if hasattr(self, 'makeNewSeries_var'):
+            self.makeNewSeries = self.makeNewSeries_var.get()
+        else:
+            # Fallback for backward compatibility
+            self.makeNewSeries = not self.makeNewSeries
 
     def clear_graph(self):
         self._save_state()
