@@ -1,3 +1,8 @@
+"""Invert series module.
+
+Inverts the sign of all cash flows in a selected series, converting inflows
+to outflows and vice versa.
+"""
 import pandas as pd
 from tkinter import messagebox
 from scripts.Create_Table import create_table
@@ -23,7 +28,6 @@ def invert_selected_series(app):
         series_mask = app.cash_flows["Series_ID"] == series_id
         app.cash_flows.loc[series_mask, "Cash Flow"] = -app.cash_flows.loc[series_mask, "Cash Flow"]
 
-        # Clear the table by calling create_table with an empty list
         create_table(app, [])
 
         # Clear the selection and update all dependent parts

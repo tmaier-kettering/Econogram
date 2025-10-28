@@ -1,3 +1,8 @@
+"""Future value calculation module.
+
+Calculates the future value of selected cash flows or series,
+moving cash flows forward in time using the specified interest rate.
+"""
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import pandas as pd
@@ -51,7 +56,7 @@ def popup_future_value(app):
                 if count > 1:
                     # Handle a series with multiple cash flows
                     series_cash_flows = selected_cash_flows[selected_cash_flows["Series_ID"] == series_id]
-                    new_period = series_cash_flows["Period"].max()  # Keep it at the last period
+                    new_period = series_cash_flows["Period"].max()  # At the last period
                     initial_period = series_cash_flows["Period"].min()
 
                     # Ensure the cash flow is moved forward in time (just double-checking, you can remove if not necessary)

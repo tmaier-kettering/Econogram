@@ -1,3 +1,8 @@
+"""Split series module.
+
+Splits a multi-cash-flow series into two separate series at a chosen point
+using an interactive slider dialog.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
@@ -6,7 +11,7 @@ from scripts.UI_Setup import get_asset_path
 
 
 def split_selected_series(app):
-    """Split the selected series into two separate series at a chosen point."""
+    """Split the selected series into two separate series at a chosen point using a slider."""
     if not app.selected_indices:
         messagebox.showinfo("Selection Error", "No series selected for splitting.")
         return

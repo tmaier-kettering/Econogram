@@ -1,3 +1,8 @@
+"""Geometric series input dialog module.
+
+Provides the dialog for adding geometric cash flow series to the diagram.
+A geometric series increases by a constant percentage each period.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
@@ -39,7 +44,7 @@ def popup_geometric_series(app, series_id):
         return True
 
     def validate_series_name_input(entry_text, action_type):
-        # Limit the series name to 15 characters
+        # Limit the series name to 14 characters (validate at 15 to allow up to 14)
         if action_type == '1' and len(entry_text) >= 15:
             return False
         return True

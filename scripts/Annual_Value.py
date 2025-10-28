@@ -1,7 +1,12 @@
+"""Annual value calculation module.
+
+Converts a single cash flow into an equivalent uniform series over a specified
+number of periods using the specified interest rate.
+"""
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import pandas as pd
-from scripts.Create_Table import create_table  # Ensure this import is at the top
+from scripts.Create_Table import create_table
 
 
 def popup_annual_value(app, series_id):
@@ -21,18 +26,10 @@ def popup_annual_value(app, series_id):
             messagebox.showerror("Input Error", "Please enter a valid number of periods.")
             return
 
-        # Validate period range to remain within 100th period
-        selected_index = app.selected_indices[0]
-        selected_period = app.cash_flows.loc[selected_index, "Period"]
-        if selected_period + num_periods > 100:
-            messagebox.showerror(
-                "Input Error",
-                "The number of periods causes cash flows to extend beyond the 100th period. Please choose a smaller number."
-            )
-            return
-
         # Get the selected cash flow and app settings
+        selected_index = app.selected_indices[0]
         selected_cash_flow = app.cash_flows.loc[selected_index, "Cash Flow"]
+        selected_period = app.cash_flows.loc[selected_index, "Period"]
         series_name = app.cash_flows.loc[selected_index, "Series_Name"]
         interest_rate = app.interest_rate / 100  # Convert interest rate from percentage to decimal
 
@@ -68,8 +65,7 @@ def popup_annual_value(app, series_id):
         # Append the new annual series to the cash flows
         app.cash_flows = pd.concat([app.cash_flows, new_cash_flows], ignore_index=True)
 
-        # Clear and update the table
-        create_table(app, [])  # Reset or refresh the table with updated rows
+        create_table(app, [])
 
         # Clear selections and update the plot
         app.selected_indices = []

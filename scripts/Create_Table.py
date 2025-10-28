@@ -1,3 +1,7 @@
+"""Table creation and display module.
+
+Creates and updates the tabular view of cash flows displayed alongside the diagram.
+"""
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
@@ -39,12 +43,12 @@ def create_table(app, selected_values):
     for i in app.tree.get_children():
         app.tree.delete(i)
 
-    # If there are selected values, populate the table
+    # Populate the table with selected values
     if selected_values:
         # Convert selected_values to DataFrame
         df = pd.DataFrame(selected_values, columns=['Series Name', 'Period', 'Cash Flow'])
 
-        # Sort the DataFrame by 'Series Name' ascending and 'Period' descending
+        # Sort the DataFrame by 'Series Name' ascending and 'Period' ascending
         df_sorted = df.sort_values(by=['Series Name', 'Period'], ascending=[True, True])
 
         # Insert the sorted data into the table

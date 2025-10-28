@@ -1,3 +1,7 @@
+"""Single cash flow input dialog module.
+
+Provides the dialog for adding individual single cash flows to the diagram.
+"""
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox
@@ -38,7 +42,7 @@ def popup_add_single_cash_flow(app, series_id):
         return True
 
     def validate_series_name_input(entry_text, action_type):
-        # Limit the series name to 15 characters
+        # Limit the series name to 14 characters (validate at 15 to allow up to 14)
         if action_type == '1' and len(entry_text) >= 15:
             return False
         return True

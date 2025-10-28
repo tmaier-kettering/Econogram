@@ -1,6 +1,10 @@
+"""Delete series module.
+
+Provides functionality to delete selected cash flow series from the diagram.
+"""
 import pandas as pd
 from tkinter import messagebox
-from scripts.Create_Table import create_table  # Ensure the import at the top
+from scripts.Create_Table import create_table
 
 
 def delete_selected_series(app):
@@ -10,7 +14,7 @@ def delete_selected_series(app):
 
     # Ensure all selected indices are within bounds and exist
     if not all(index in app.cash_flows.index for index in app.selected_indices):
-        messagebox.showinfo("Selection Erro",
+        messagebox.showinfo("Selection Error",
                             "No series selected for deletion.")
         return
 
@@ -21,7 +25,6 @@ def delete_selected_series(app):
         # Remove series from cash_flows where Series_ID is in selected_series_ids
         app.cash_flows.drop(index=app.selected_indices, inplace=True)
 
-        # Clear the table by calling create_table with an empty list
         create_table(app, [])
 
         # Clear the selection and update all dependent parts

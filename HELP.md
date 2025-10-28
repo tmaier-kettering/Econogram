@@ -30,7 +30,7 @@ Econogram's interface consists of:
 - **Menu Bar**: Access to all functions organized by category
 - **Status Bar**: Displays the current interest rate
 - **Graph Panel**: Visual cash flow diagram showing periods (x-axis) and cash flow amounts (y-axis)
-- **Table Panel**: Tabular view of all cash flows with period, amount, and series information
+- **Table Panel**: Tabular view of selected cash flows with period, amount, and series information
 
 ### Menu Structure
 
@@ -246,7 +246,7 @@ Future Value calculates the equivalent worth of cash flows at a point after the 
 
 **Behavior for different series types:**
 
-- **Series with multiple cash flows** (uniform, gradient, geometric): The future value is calculated at one period after the final payment. This is automatic and does not require user input for the period.
+- **Series with multiple cash flows** (uniform, gradient, geometric): The future value is calculated at the final payment period. This is automatic and does not require user input for the period.
 
 - **Single cash flow**: You can specify any period after the cash flow to calculate the future value.
 
@@ -350,38 +350,40 @@ Multiplies all cash flows in the selected series by -1, converting inflows to ou
 
 **Edit → Split Series**
 
-Breaks a multi-cash-flow series into individual single cash flows, each with its own series ID but retaining the original series name.
+Splits a multi-cash-flow series into two separate series at a chosen point using a slider interface.
 
 **Use cases:**
-- Isolating specific cash flows for individual analysis
+- Dividing a series into two parts for separate analysis
 - Preparing for selective calculations on part of a series
 - Creating flexibility for different manipulations of series components
 
 **Notes:**
-- Each resulting cash flow gets a new color
-- The original series name is preserved
-- This operation cannot be applied to series that are already single cash flows
+- The first part retains the original color
+- The second part gets a new color
+- Both parts are named with "_1" and "_2" suffixes
+- This operation cannot be applied to series with only one cash flow
 
 ### Combine Cash Flows
 
 **Edit → Combine Cash Flows**
 
-Sums all cash flows that occur in the same period, creating a single aggregated cash flow for each period.
+Combines selected cash flows that occur in the same period into a single aggregated cash flow.
 
 **Behavior:**
-- Cash flows at the same period are added together
-- The resulting combined series gets a new series ID and color
-- Original series are removed
-- The combined series is named "Combined Cash Flows"
+- Select multiple cash flows from the same period
+- The selected cash flows are added together
+- The resulting combined cash flow gets a new series ID and color
+- Original selected cash flows are removed
+- The combined series is named by joining the original series names with " + "
 
 **Use cases:**
-- Simplifying complex diagrams
-- Creating a net cash flow view
-- Preparing for calculations on the total effect
+- Simplifying complex diagrams by combining related cash flows
+- Creating a net cash flow view for a specific period
+- Preparing for calculations on the combined effect
 
 **Example:**
-- Period 5: +$1000 (Series A), -$300 (Series B)
-- After combining: Period 5: +$700 (Combined Cash Flows)
+- Select two cash flows at Period 5: +$1000 (Series A), -$300 (Series B)
+- After combining: Period 5: +$700 (Series A + Series B)
 
 ### Clear Graph
 

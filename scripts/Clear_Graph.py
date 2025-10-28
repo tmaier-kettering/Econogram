@@ -1,5 +1,9 @@
+"""Clear graph functionality module.
+
+Provides the functionality to clear all cash flows from the diagram.
+"""
 from tkinter import messagebox
-from scripts.Create_Table import create_table  # Ensure the import at the top
+from scripts.Create_Table import create_table
 
 
 def clear_graph(app):
@@ -22,7 +26,6 @@ def clear_graph(app):
             app.canvas.get_tk_widget().pack_forget()
             app.canvas = None
 
-        # Clear the table by calling create_table with an empty list
         create_table(app, [])
 
         # Save the state after clearing

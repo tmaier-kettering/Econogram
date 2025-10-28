@@ -1,3 +1,8 @@
+"""Core cash flow diagram application module.
+
+This module contains the main application class (CashFlowDiagramApp) and the
+ColorManager class for managing color assignment to cash flow series.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd

@@ -1,6 +1,10 @@
+"""Combine cash flows module.
+
+Combines multiple cash flows occurring in the same period into a single aggregated value.
+"""
 import pandas as pd
 from tkinter import messagebox
-from scripts.Create_Table import create_table  # Ensure this import is at the top
+from scripts.Create_Table import create_table
 
 
 def combine_cash_flows(app):
@@ -47,8 +51,7 @@ def combine_cash_flows(app):
         # Add the new combined cash flow entry
         app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
 
-        # Clear the table and refresh the application
-        create_table(app, [])  # Clear or update the displayed table
+        create_table(app, [])
 
         # Reset app selections and visuals
         app.selected_indices = []  # Clear selected indices
