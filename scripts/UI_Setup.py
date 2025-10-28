@@ -57,60 +57,24 @@ def get_asset_path(filename):
 
 
 def setup_ui(app):
-    # Define a font style for buttons
-    button_font = font.Font(size=10, weight="bold")
-    plus_question_button_font = font.Font(size=14, weight="bold")  # Larger font for plus and question symbol
-
-    # Define button options excluding the plus and question buttons
-    button_options = {
-        'font': button_font,
-        'borderwidth': 2,
-        'highlightthickness': 2,
-        'highlightbackground': 'black',
-        'highlightcolor': 'black'
-    }
-
-    # Create a top container that holds buttons on left and banner on right
-    top_container = tk.Frame(app.root)
-    top_container.pack(side="top", fill="x", pady=1)
-
-    # Create a container for buttons that will be centered
-    app.button_container = tk.Frame(top_container)
-    app.button_container.pack(side="left", fill="both", expand=True, pady=1, padx=5)
-
-    # Create frames for the top and bottom rows of operation buttons
-    top_button_frame = tk.Frame(app.button_container)
-    top_button_frame.pack(side="top", pady=1, expand=True)  # Reduced vertical spacing
-
-    bottom_button_frame = tk.Frame(app.button_container)
-    bottom_button_frame.pack(side="top", pady=1, expand=True)  # Row for bottom buttons
-
-    # Top row buttons
-    create_operation_buttons_top_row(app, top_button_frame, button_options, plus_question_button_font)
-
-    # Bottom row buttons
-    app.toggle_makeNewSeries_button = create_operation_buttons_bottom_row(app, bottom_button_frame, button_options)
-
-    # Add banner on the right side
-    add_banner(app, top_container)
     # Create the menu bar
     create_menu_bar(app)
-    
+
     # Create a status bar at the top for interest rate display
     create_status_bar(app)
 
     # Create a PanedWindow for resizable sections (graph and table)
     app.main_paned_window = tk.PanedWindow(app.root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED, sashwidth=5)
     app.main_paned_window.pack(side="top", fill=tk.BOTH, expand=True)
-    
+
     # Create a frame for the graph (will be populated by update_plot)
     app.graph_frame = tk.Frame(app.main_paned_window)
     app.main_paned_window.add(app.graph_frame, stretch="always")
-    
+
     # Create a frame for the table (will be populated by create_table)
     app.table_frame = tk.Frame(app.main_paned_window)
     app.main_paned_window.add(app.table_frame, stretch="never")
-    
+
     # Initialize toggle state for Make New Series
     app.makeNewSeries = False
 
@@ -119,14 +83,14 @@ def create_menu_bar(app):
     """Create a traditional menu bar with File, Edit, Insert, Calculate, Options, and Help menus."""
     menubar = tk.Menu(app.root)
     app.root.config(menu=menubar)
-    
+
     # File Menu
     file_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="File", menu=file_menu)
     file_menu.add_command(label="Clear Graph", command=app.clear_graph)
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=app.root.quit)
-    
+
     # Edit Menu
     edit_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Edit", menu=edit_menu)
@@ -135,7 +99,7 @@ def create_menu_bar(app):
     edit_menu.add_command(label="Invert Series", command=app.invert_selected_series)
     edit_menu.add_separator()
     edit_menu.add_command(label="Combine Cash Flows", command=app.combine_cash_flows)
-    
+
     # Insert Menu
     insert_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Insert", menu=insert_menu)
@@ -143,14 +107,14 @@ def create_menu_bar(app):
     insert_menu.add_command(label="Uniform Series", command=app.popup_uniform_series)
     insert_menu.add_command(label="Gradient Series", command=app.popup_gradient_series)
     insert_menu.add_command(label="Geometric Series", command=app.popup_geometric_series)
-    
+
     # Calculate Menu
     calculate_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Calculate", menu=calculate_menu)
     calculate_menu.add_command(label="Present Value", command=app.popup_present_value)
     calculate_menu.add_command(label="Future Value", command=app.popup_future_value)
     calculate_menu.add_command(label="Annual Value", command=app.popup_annual_value)
-    
+
     # Options Menu
     options_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Options", menu=options_menu)
@@ -158,63 +122,63 @@ def create_menu_bar(app):
     options_menu.add_separator()
     # Add checkbutton for Make New Series toggle
     app.makeNewSeries_var = tk.BooleanVar(value=False)
-    options_menu.add_checkbutton(label="Make New Series", variable=app.makeNewSeries_var, 
+    options_menu.add_checkbutton(label="Make New Series", variable=app.makeNewSeries_var,
                                  command=app.toggle_makeNewSeries)
-    
+
     # Help Menu
     help_menu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Help", menu=help_menu)
-    
+
     # Add help topics to the Help menu
     help_menu.add_command(label="Present Value", command=lambda: show_help_message(
-        "Present Value", 
+        "Present Value",
         "Present Value calculates the equivalent worth of a series of cash flows at a point before the series begins, using a specified interest rate. For cash flow series with multiple payments (uniform, gradient, or geometric), this point is one period before the first payment. For a single cash flow, the point of reference can be any period before the payment."))
-    
+
     help_menu.add_command(label="Future Value", command=lambda: show_help_message(
-        "Future Value", 
+        "Future Value",
         "Future Value calculates the equivalent worth of a series of cash flows at a point after the series ends, using a specified interest rate. For cash flow series with multiple payments (uniform, gradient, or geometric), this point is one period after the final payment. For a single cash flow, the point of reference can be any period after the payment."))
-    
+
     help_menu.add_command(label="Annual Value", command=lambda: show_help_message(
-        "Annual Value", 
+        "Annual Value",
         "Annual Value calculates the equivalent uniform annual worth of a series of cash flows over its duration, using a specified interest rate. For cash flow series with multiple payments (uniform, gradient, or geometric), this value represents a consistent annual amount spanning the series. For a single cash flow, it distributes the value evenly across the specified periods."))
-    
+
     help_menu.add_command(label="Combining Cash Flows", command=lambda: show_help_message(
-        "Combining Cash Flows", 
+        "Combining Cash Flows",
         "This function sums single cash flows that occur in the same period."))
-    
+
     help_menu.add_command(label="Interest Rate", command=lambda: show_help_message(
-        "Interest Rate", 
+        "Interest Rate",
         "The interest rate is the global time value of money across the entire program and applies to all functions."))
-    
+
     help_menu.add_separator()
-    
+
     help_menu.add_command(label="Single Cash Flow", command=lambda: show_help_message(
-        "Single Cash Flow", 
+        "Single Cash Flow",
         "A single cash flow is an individual financial transaction involving a one-time payment or receipt of money at a specific point in time."))
-    
+
     help_menu.add_command(label="Uniform Series", command=lambda: show_help_message(
-        "Uniform Series", 
+        "Uniform Series",
         "A uniform or annual series is a series of constant values over a set number of periods."))
-    
+
     help_menu.add_command(label="Gradient Series", command=lambda: show_help_message(
-        "Gradient Series", 
+        "Gradient Series",
         "A gradient series is a series that increases by a set value across the length of the series. The first value in the series is always 0."))
-    
+
     help_menu.add_command(label="Geometric Series", command=lambda: show_help_message(
-        "Geometric Series", 
+        "Geometric Series",
         "A geometric series is a series that increases by a set percentage, known as the growth percentage, across the length of the series."))
-    
+
     help_menu.add_separator()
-    
+
     help_menu.add_command(label="FAQs", command=lambda: show_help_message(
-        "FAQs", 
+        "FAQs",
         "1. If your problem includes a negative period, consider reframing the problem with your most negative value being set as Period 0.\n\n2. If the problem requires multiple interest rates, you are able to manipulate the cash flow to its final point and change the interest rate for the other parts of the problem.\n\n3. Just note that any changes across periods will involve the current interest rate displayed at the top of the screen."))
-    
+
     help_menu.add_separator()
     help_menu.add_command(label="About", command=lambda: show_help_message(
-        "About Cash Flow Diagram", 
+        "About Cash Flow Diagram",
         "Cash Flow Diagram\nA tool for analyzing and visualizing cash flows over time."))
-    
+
     # Bind keyboard shortcuts
     app.root.bind('<Control-z>', lambda e: app.undo_last_action())
     app.root.bind('<Delete>', lambda e: app.delete_selected_series())
@@ -224,7 +188,7 @@ def create_status_bar(app):
     """Create a status bar at the top to display the interest rate."""
     status_bar = tk.Frame(app.root, relief=tk.SUNKEN, bd=1)
     status_bar.pack(side="top", fill="x")
-    
+
     # Interest rate label
     tk.Label(status_bar, text="Interest Rate:", font=("Arial", 10)).pack(side="left", padx=5)
     app.interest_rate_label = tk.Label(status_bar, text=f"{app.interest_rate}%", font=("Arial", 10, "bold"))
