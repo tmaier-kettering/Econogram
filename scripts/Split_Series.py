@@ -102,7 +102,9 @@ def show_split_dialog(app, series_id, series_data, periods):
     def update_split_label(value):
         """Update the label showing the current split position."""
         idx = int(float(value))
-        split_label.config(text=f"Split between period {periods[idx]} and {periods[idx + 1]}")
+        # Safety check (though slider range prevents this)
+        if idx + 1 < len(periods):
+            split_label.config(text=f"Split between period {periods[idx]} and {periods[idx + 1]}")
 
     # Create the popup window
     top = tk.Toplevel(app.root)
