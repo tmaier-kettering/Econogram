@@ -128,6 +128,16 @@ def show_context_menu(event, app):
     # Create context menu
     context_menu = tk.Menu(app.root, tearoff=0)
     
+    # Check if selected series has length > 1
+    show_split_option = False
+    if app.selected_indices:
+        selected_series_ids = app.cash_flows.loc[app.selected_indices, "Series_ID"].unique()
+        if len(selected_series_ids) == 1:
+            series_id = selected_series_ids[0]
+            series_data = app.cash_flows[app.cash_flows["Series_ID"] == series_id]
+            if len(series_data) > 1:
+                show_split_option = True
+    
     # Add menu items for each operation
     context_menu.add_command(label="Present Value", command=app.popup_present_value)
     context_menu.add_command(label="Future Value", command=app.popup_future_value)
@@ -135,6 +145,8 @@ def show_context_menu(event, app):
     context_menu.add_separator()
     context_menu.add_command(label="Combine Cash Flow", command=app.combine_cash_flows)
     context_menu.add_command(label="Invert Series", command=app.invert_selected_series)
+    if show_split_option:
+        context_menu.add_command(label="Split Series", command=app.split_selected_series)
     context_menu.add_separator()
     context_menu.add_command(label="Rename", command=lambda: rename_series(app))
     context_menu.add_separator()
