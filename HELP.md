@@ -75,13 +75,13 @@ A single cash flow is a one-time payment or receipt at a specific period.
 
 1. Go to **Insert → Single Cash Flow**
 2. Enter the cash flow amount (can be negative for outflows)
-3. Enter the period (0-100)
+3. Enter the period (any whole number, positive or negative)
 4. Enter a series name (up to 14 characters)
 5. Click **Graph** or press Enter
 
 **Inputs:**
 - **Cash Flow Amount**: Any positive or negative number (up to 2 decimal places, max 10 characters)
-- **Period**: Integer from 0 to 100
+- **Period**: Any integer (whole number), positive, negative, or zero
 - **Series Name**: Descriptive text (max 14 characters)
 
 **Notes:**
@@ -97,15 +97,15 @@ A uniform series is a sequence of equal cash flows occurring at regular interval
 
 1. Go to **Insert → Uniform Series**
 2. Enter the cash flow amount (constant for all periods)
-3. Enter the starting period (0-100)
+3. Enter the starting period (any whole number, positive or negative)
 4. Enter the series length (number of periods)
 5. Enter a series name
 6. Click **Graph** or press Enter
 
 **Inputs:**
 - **Cash Flow Amount**: Constant value for each period (can be negative)
-- **Starting Period**: Integer from 0 to 100
-- **Series Length**: Number of consecutive periods (must keep total within 0-100 range)
+- **Starting Period**: Any integer (whole number), positive, negative, or zero
+- **Series Length**: Number of consecutive periods (must be at least 1)
 - **Series Name**: Descriptive text (max 14 characters)
 
 **Example:**
@@ -117,7 +117,6 @@ A uniform series is a sequence of equal cash flows occurring at regular interval
 **Notes:**
 - All cash flows in the series have the same value
 - The series will be displayed in a single color
-- Starting period + length must not exceed period 100
 
 ### Gradient Series
 
@@ -134,8 +133,8 @@ A gradient series is a sequence where each cash flow increases by a constant amo
 
 **Inputs:**
 - **Gradient Amount**: Constant increase per period (can be negative for decreasing series)
-- **Starting Period**: Integer from 0 to 100
-- **Series Length**: Number of periods
+- **Starting Period**: Any integer (whole number), positive, negative, or zero
+- **Series Length**: Number of periods (must be at least 1)
 - **Series Name**: Descriptive text (max 14 characters)
 
 **Formula:**
@@ -173,9 +172,9 @@ A geometric series is a sequence where each cash flow increases by a constant pe
 7. Click **Graph** or press Enter
 
 **Inputs:**
-- **Starting Period**: Integer from 0 to 100
+- **Starting Period**: Any integer (whole number), positive, negative, or zero
 - **Initial Cash Flow Amount**: First value in the series (can be negative)
-- **Series Length**: Number of periods
+- **Series Length**: Number of periods (must be at least 1)
 - **Growth Rate (%)**: Percentage increase per period (can be negative)
 - **Series Name**: Descriptive text (max 14 characters)
 
@@ -282,7 +281,7 @@ Annual Value converts a single cash flow into an equivalent uniform series over 
 **Requirements:**
 - Only works with a single selected cash flow
 - Cannot be used on series with multiple cash flows
-- The number of periods must not extend beyond period 100
+- The number of periods must be at least 1
 
 **Formula (when interest rate ≠ 0):**
 A = PV × [i / (1 - (1 + i)^-n)]
@@ -461,7 +460,7 @@ Econogram/
 ### Code Overview
 
 The application is built with tkinter for the GUI and matplotlib for graphing. Cash flows are stored in a pandas DataFrame with columns:
-- **Period**: Time period (0-100)
+- **Period**: Time period (any integer)
 - **Cash Flow**: Dollar amount
 - **Color**: RGB color tuple for display
 - **Series_ID**: Unique identifier for the series
@@ -473,11 +472,7 @@ The application is built with tkinter for the GUI and matplotlib for graphing. C
 
 **Q: Can I use negative periods (e.g., period -5)?**
 
-A: No, Econogram only supports periods from 0 to 100. If your problem includes negative periods, reframe it by shifting all periods so that the most negative value becomes period 0.
-
-**Example:**
-- Original: Periods -3, -2, -1, 0, 1, 2
-- Reframed: Periods 0, 1, 2, 3, 4, 5
+A: Yes, Econogram supports any positive or negative whole number for periods, including zero. You can enter negative periods directly when adding cash flows or series.
 
 ### Multiple Interest Rates
 
@@ -490,12 +485,6 @@ A: Since Econogram uses a single global interest rate, you'll need to manually c
 3. Continue calculations from the transition point with the new rate
 
 **Note:** When moving cash flows across periods, the calculation always uses the current global interest rate.
-
-### Period Limits
-
-**Q: Why is there a limit of 100 periods?**
-
-A: The 100-period limit keeps the interface manageable and covers most engineering economics problems encountered in education. For problems requiring more periods, consider using alternative engineering economics software or programming tools.
 
 ### Series Naming
 
@@ -543,10 +532,6 @@ Menu items can also be accessed using Alt+[menu letter] on Windows.
 **Q: What does "You cannot move your cash flow forward in time using the present value function" mean?**
 
 A: This means you're trying to calculate a present value at a period that comes after the cash flow, which would actually be a future value. Use the Future Value function instead.
-
-**Q: What does "Period must be an integer between 0 and 100" mean?**
-
-A: All periods must be whole numbers (no decimals) within the range 0-100. Check your input and ensure it's a valid integer in this range.
 
 ## Additional Resources
 
