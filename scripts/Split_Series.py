@@ -44,15 +44,8 @@ def show_split_dialog(app, series_id, series_data, periods):
     def on_split_button_click():
         """Handle the split operation."""
         try:
-            selected_index = split_listbox.curselection()
-            if not selected_index:
-                messagebox.showerror("Selection Error", "Please select a split point.")
-                top.lift()
-                top.focus_force()
-                return
-
-            # Get the split point index (this is the index in the listbox)
-            split_idx = selected_index[0]
+            # Get the split point index from the slider
+            split_idx = slider_var.get()
 
             # The split point is between periods[split_idx] and periods[split_idx + 1]
             # So the first series includes periods[0] to periods[split_idx] (inclusive)
@@ -71,7 +64,7 @@ def show_split_dialog(app, series_id, series_data, periods):
             series1_id = app._get_next_series_id()
             series2_id = app._get_next_series_id()
 
-            # Get the color for the series
+            # Get the color for the series and assign different colors
             original_color = series_data.iloc[0]["Color"]
             color1 = original_color
             color2 = next(app.colors)
@@ -81,18 +74,16 @@ def show_split_dialog(app, series_id, series_data, periods):
             series2_mask = (app.cash_flows["Series_ID"] == series_id) & (app.cash_flows["Period"] > split_period)
 
             # Update the first part
+            series1_indices = app.cash_flows[series1_mask].index
             app.cash_flows.loc[series1_mask, "Series_ID"] = series1_id
             app.cash_flows.loc[series1_mask, "Series_Name"] = series1_name
-            # If Color is a list/tuple (iterable), pandas may try to treat it as a sequence to assign;
-            # ensure we provide a list of the correct length so assignment doesn't fail.
-            n1 = app.cash_flows.loc[series1_mask].shape[0]
-            app.cash_flows.loc[series1_mask, "Color"] = [color1] * n1
+            app.cash_flows.loc[series1_mask, "Color"] = pd.Series([color1] * len(series1_indices), index=series1_indices)
 
             # Update the second part
+            series2_indices = app.cash_flows[series2_mask].index
             app.cash_flows.loc[series2_mask, "Series_ID"] = series2_id
             app.cash_flows.loc[series2_mask, "Series_Name"] = series2_name
-            n2 = app.cash_flows.loc[series2_mask].shape[0]
-            app.cash_flows.loc[series2_mask, "Color"] = [color2] * n2
+            app.cash_flows.loc[series2_mask, "Color"] = pd.Series([color2] * len(series2_indices), index=series2_indices)
 
             # Clear selection and update display
             app.selected_indices = []
@@ -107,6 +98,13 @@ def show_split_dialog(app, series_id, series_data, periods):
             messagebox.showerror("Error", f"An error occurred while splitting: {str(e)}")
             top.lift()
             top.focus_force()
+
+    def update_split_label(value):
+        """Update the label showing the current split position."""
+        idx = int(float(value))
+        # Safety check (though slider range prevents this)
+        if idx + 1 < len(periods):
+            split_label.config(text=f"Split between period {periods[idx]} and {periods[idx + 1]}")
 
     # Create the popup window
     top = tk.Toplevel(app.root)
@@ -123,28 +121,40 @@ def show_split_dialog(app, series_id, series_data, periods):
     top.attributes('-topmost', True)
 
     # Add instruction label
-    instruction_text = "Select where to split the series:"
-    tk.Label(top, text=instruction_text, font=("Arial", 10, "bold")).pack(padx=10, pady=10)
+    instruction_text = "Drag the slider to choose where to split the series:"
+    tk.Label(top, text=instruction_text, font=("Arial", 10, "bold")).pack(padx=20, pady=(15, 5))
 
-    # Create listbox with scrollbar for split options
-    frame = tk.Frame(top)
-    frame.pack(padx=10, pady=5)
+    # Create a frame for the slider and labels
+    slider_frame = tk.Frame(top)
+    slider_frame.pack(padx=20, pady=10, fill=tk.X)
 
-    scrollbar = tk.Scrollbar(frame)
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    # Add period labels on sides
+    tk.Label(slider_frame, text=f"Period {periods[0]}", font=("Arial", 9)).pack(side=tk.LEFT)
+    tk.Label(slider_frame, text=f"Period {periods[-1]}", font=("Arial", 9)).pack(side=tk.RIGHT)
 
-    split_listbox = tk.Listbox(frame, yscrollcommand=scrollbar.set, height=min(10, len(periods) - 1), width=40)
-    split_listbox.pack(side=tk.LEFT, fill=tk.BOTH)
-    scrollbar.config(command=split_listbox.yview)
+    # Create slider variable
+    slider_var = tk.IntVar(value=0)
 
-    # Populate the listbox with split options
-    for i in range(len(periods) - 1):
-        split_text = f"Between period {periods[i]} and {periods[i + 1]}"
-        split_listbox.insert(tk.END, split_text)
+    # Create the slider
+    slider = tk.Scale(
+        top,
+        from_=0,
+        to=len(periods) - 2,
+        orient=tk.HORIZONTAL,
+        variable=slider_var,
+        length=400,
+        showvalue=False,
+        command=update_split_label
+    )
+    slider.pack(padx=20, pady=(0, 10))
+
+    # Label to show current split position
+    split_label = tk.Label(top, text=f"Split between period {periods[0]} and {periods[1]}", font=("Arial", 10))
+    split_label.pack(padx=20, pady=(5, 15))
 
     # Add split button
-    split_button = tk.Button(top, text="Split", command=on_split_button_click)
-    split_button.pack(pady=10)
+    split_button = tk.Button(top, text="Split", command=on_split_button_click, font=("Arial", 10, "bold"))
+    split_button.pack(pady=(0, 15))
 
     # Center the window
     top.update_idletasks()
