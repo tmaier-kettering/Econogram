@@ -5,6 +5,7 @@ from matplotlib.patches import Rectangle, Patch
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from scripts.Create_Table import create_table
 from scripts.Clear_Graph import clear_graph
+import matplotlib.ticker as mtick
 
 
 def update_plot(app):
@@ -60,8 +61,13 @@ def set_y_limits_with_buffer(ax):
 
 def configure_axes(ax, app):
     ax.set_xlabel("Period")
-    ax.set_ylabel("Cash Flow")
+    ax.set_ylabel("Dollars")
     ax.set_title("Cash Flow Diagram")
+
+    # Format y-axis ticks with dollar sign and comma separators, two decimal places
+    # Use StrMethodFormatter instead of FuncFormatter so we don't need ticklabel_format
+    ax.yaxis.set_major_formatter(mtick.StrMethodFormatter("${x:,.2f}"))
+
     max_period = app.cash_flows["Period"].max()
     min_period = app.cash_flows["Period"].min()
     tick_interval = 1 if max_period <= 20 else (2 if max_period <= 50 else 5)
