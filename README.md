@@ -44,6 +44,7 @@ This software was originally developed as a senior capstone project (IME454 Seni
 - Ryan Fehn
 - Nicholas Hong
 - William Mains
+
 It is now updated and maintained by Dr. Torsten Maier within the Department of Industrial & Manufacturing Engineering. 
 
 ## Disclaimer
