@@ -37,6 +37,15 @@ For detailed documentation on all features, see [HELP.md](HELP.md).
 
 If you find this tool helpful, consider supporting its development by [buying me a coffee](https://buymeacoffee.com/professthor)! 
 
+## Credit
+
+This software was originally developed as a senior capstone project (IME454 Senior Design Project) at Kettering University by 4 students:
+- Cash Ericson
+- Ryan Fehn
+- Nicholas Hong
+- William Mains
+It is now updated and maintained by Dr. Torsten Maier within the Department of Industrial & Manufacturing Engineering. 
+
 ## Disclaimer
 
 This software is provided "as is" under the MIT License. While designed to assist with engineering economics education, users should verify all calculations independently. The authors are not responsible for any errors or decisions made based on the software's output.
