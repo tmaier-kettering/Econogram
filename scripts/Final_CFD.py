@@ -67,7 +67,6 @@ class ColorManager:
     
     def _generate_new_color(self):
         """Generate a new distinct color when base palette is exhausted."""
-        import random
         # Use a deterministic but varied approach based on number of colors generated
         num_extra_colors = len(self.used_colors) - len(self.base_colors)
         
