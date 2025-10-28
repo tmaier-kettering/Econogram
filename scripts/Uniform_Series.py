@@ -1,3 +1,7 @@
+"""Uniform series input dialog module.
+
+Provides the dialog for adding uniform (constant) cash flow series to the diagram.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd

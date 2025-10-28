@@ -1,3 +1,8 @@
+"""Present value calculation module.
+
+Calculates the present value of selected cash flows or series,
+moving cash flows backward in time using the specified interest rate.
+"""
 import pandas as pd
 from tkinter import simpledialog, messagebox, Tk
 from scripts.Create_Table import create_table

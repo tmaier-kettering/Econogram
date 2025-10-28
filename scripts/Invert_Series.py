@@ -1,3 +1,8 @@
+"""Invert series module.
+
+Inverts the sign of all cash flows in a selected series, converting inflows
+to outflows and vice versa.
+"""
 import pandas as pd
 from tkinter import messagebox
 from scripts.Create_Table import create_table

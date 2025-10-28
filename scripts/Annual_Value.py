@@ -1,3 +1,8 @@
+"""Annual value calculation module.
+
+Converts a single cash flow into an equivalent uniform series over a specified
+number of periods using the specified interest rate.
+"""
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import pandas as pd

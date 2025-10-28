@@ -1,3 +1,8 @@
+"""User interface setup and configuration module.
+
+This module handles the creation and configuration of the main application UI,
+including menus, status bars, and event bindings.
+"""
 import webbrowser
 
 from scripts.Clear_Graph import clear_graph

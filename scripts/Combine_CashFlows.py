@@ -1,3 +1,7 @@
+"""Combine cash flows module.
+
+Combines multiple cash flows occurring in the same period into a single aggregated value.
+"""
 import pandas as pd
 from tkinter import messagebox
 from scripts.Create_Table import create_table  # Ensure this import is at the top

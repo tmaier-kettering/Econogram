@@ -1,3 +1,8 @@
+"""Split series module.
+
+Splits a multi-cash-flow series into individual single cash flows,
+each with its own series ID.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd

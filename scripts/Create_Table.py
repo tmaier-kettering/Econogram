@@ -1,3 +1,7 @@
+"""Table creation and display module.
+
+Creates and updates the tabular view of cash flows displayed alongside the diagram.
+"""
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk

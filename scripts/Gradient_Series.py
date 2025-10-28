@@ -1,3 +1,8 @@
+"""Gradient series input dialog module.
+
+Provides the dialog for adding gradient cash flow series to the diagram.
+A gradient series increases by a constant amount each period, starting from zero.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd

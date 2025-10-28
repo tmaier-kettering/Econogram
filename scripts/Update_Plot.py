@@ -1,3 +1,8 @@
+"""Plot update and rendering module.
+
+Handles the creation and updating of the cash flow diagram visualization
+using matplotlib.
+"""
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from matplotlib import pyplot as plt

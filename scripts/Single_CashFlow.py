@@ -1,3 +1,7 @@
+"""Single cash flow input dialog module.
+
+Provides the dialog for adding individual single cash flows to the diagram.
+"""
 import pandas as pd
 import tkinter as tk
 from tkinter import messagebox

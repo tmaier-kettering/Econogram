@@ -1,3 +1,8 @@
+"""Future value calculation module.
+
+Calculates the future value of selected cash flows or series,
+moving cash flows forward in time using the specified interest rate.
+"""
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 import pandas as pd

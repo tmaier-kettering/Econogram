@@ -1,3 +1,8 @@
+"""Geometric series input dialog module.
+
+Provides the dialog for adding geometric cash flow series to the diagram.
+A geometric series increases by a constant percentage each period.
+"""
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
