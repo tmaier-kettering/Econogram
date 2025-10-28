@@ -66,8 +66,8 @@ def popup_add_single_cash_flow(app, series_id):
             if not series_name:
                 raise ValueError("Series name cannot be empty.")
 
-            # Fetch the next color from the cyclic iterator in app
-            color = next(app.colors)
+            # Fetch the next color from the color manager
+            color = app.get_next_color()
 
             # Create a new DataFrame entry with the validated inputs
             new_entry = pd.DataFrame({

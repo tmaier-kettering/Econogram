@@ -67,7 +67,7 @@ def show_split_dialog(app, series_id, series_data, periods):
             # Get the color for the series and assign different colors
             original_color = series_data.iloc[0]["Color"]
             color1 = original_color
-            color2 = next(app.colors)
+            color2 = app.get_next_color()
 
             # Split the data
             series1_mask = (app.cash_flows["Series_ID"] == series_id) & (app.cash_flows["Period"] <= split_period)
