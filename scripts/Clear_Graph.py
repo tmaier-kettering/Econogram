@@ -3,7 +3,7 @@
 Provides the functionality to clear all cash flows from the diagram.
 """
 from tkinter import messagebox
-from scripts.Create_Table import create_table  # Ensure the import at the top
+from scripts.Create_Table import create_table
 
 
 def clear_graph(app):
