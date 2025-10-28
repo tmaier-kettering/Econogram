@@ -29,8 +29,8 @@ def combine_cash_flows(app):
         # Combine series names into a single name
         series_name = " + ".join(selected_cash_flows["Series_Name"].unique())
 
-        # Assign a new color using the cyclic color iterator
-        color = next(app.colors)
+        # Assign a new color using the color manager
+        color = app.get_next_color()
 
         # Create a new entry for the combined cash flow
         new_entry = pd.DataFrame({

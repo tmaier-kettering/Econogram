@@ -85,7 +85,7 @@ def popup_geometric_series(app, series_id):
                 raise ValueError("Series name cannot be empty.")
 
             # Use a single color for all cash flows
-            color = next(app.colors)
+            color = app.get_next_color()
 
             # Calculate the geometric series
             cash_flows = []

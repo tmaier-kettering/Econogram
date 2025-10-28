@@ -71,8 +71,8 @@ def popup_gradient_series(app, series_id):
             if not series_name:
                 raise ValueError("Series name cannot be empty.")
 
-            # Assign a color to the series using the cyclic iterator
-            color = next(app.colors)
+            # Assign a color to the series using the color manager
+            color = app.get_next_color()
 
             # Create gradient cash flow entries
             for i in range(length):

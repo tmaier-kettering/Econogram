@@ -141,7 +141,7 @@ def make_new_series_for_multiple_cash_flow(app, combined_value, new_period, seri
     rendered_series_name = f"FV of {original_series_name}"
     # Create a new entry for the calculated future value
     new_series_id = app._get_next_series_id()
-    color = next(app.colors)  # Assign a new unique color
+    color = app.get_next_color()  # Assign a new unique color
     new_entry = pd.DataFrame({
         "Period": [new_period],
         "Cash Flow": [combined_value],
@@ -159,7 +159,7 @@ def make_new_series_for_single_cash_flow(app, combined_value, new_period, select
     rendered_series_name = f"FV of {original_series_name}"
     # Create a new entry for the calculated future value
     new_series_id = app._get_next_series_id()
-    color = next(app.colors)  # Assign a new unique color
+    color = app.get_next_color()  # Assign a new unique color
     new_entry = pd.DataFrame({
         "Period": [new_period],
         "Cash Flow": [combined_value],
