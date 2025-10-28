@@ -69,10 +69,8 @@ def popup_present_value(app):
 
         else:
             # Handle single cash flow or one-cash-flow series
-            new_period = simpledialog.askinteger("Input", "Enter period to move the cash flow to (0-100):")
+            new_period = simpledialog.askinteger("Input", "Enter period to move the cash flow to:")
             if new_period is not None:
-                if new_period < 0 or new_period > 100:
-                    raise ValueError("Period must be an integer between 0 and 100.")
 
                 initial_period = selected_cash_flows["Period"].min()
 

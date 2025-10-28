@@ -25,9 +25,16 @@ def popup_add_single_cash_flow(app, series_id):
         return True
 
     def validate_period_input(entry_text, action_type):
-        # Allow only numeric input with a maximum of 3 characters
-        if action_type == '1' and (not entry_text.isdigit() or len(entry_text) >= 4):
-            return False
+        # Allow negative integers and positive integers (no length limit)
+        if action_type == '1':  # If we're inserting a character
+            if entry_text in {'-', ''}:  # Allow '-' during input
+                return True
+            if not (
+                    entry_text.replace('-', '', 1).isdigit() and  # Allows '-' 
+                    entry_text.count('-') <= 1 and  # Only one negative sign
+                    (entry_text.find('-') <= 0)  # Negative sign must be at the first position
+            ):
+                return False
         return True
 
     def validate_series_name_input(entry_text, action_type):
@@ -41,10 +48,8 @@ def popup_add_single_cash_flow(app, series_id):
             # Validate period input
             try:
                 period = int(period_entry.get())
-                if period < 0 or period > 100:
-                    raise ValueError("Period must be an integer between 0 and 100.")
             except ValueError:
-                raise ValueError("Period must be an integer between 0 and 100.")
+                raise ValueError("Period must be a valid integer.")
 
             # Validate and convert cash flow input to float
             cash_flow = cash_flow_entry.get()
@@ -117,7 +122,7 @@ def popup_add_single_cash_flow(app, series_id):
                                validatecommand=(top.register(validate_cash_flow_input), '%P', '%d'))
     cash_flow_entry.grid(row=0, column=1, padx=10, pady=5)
 
-    tk.Label(top, text="Period (0-100):").grid(row=1, column=0, padx=10, pady=5)
+    tk.Label(top, text="Period:").grid(row=1, column=0, padx=10, pady=5)
     period_entry = tk.Entry(top, validate="key", validatecommand=(top.register(validate_period_input), '%P', '%d'))
     period_entry.grid(row=1, column=1, padx=10, pady=5)
 
