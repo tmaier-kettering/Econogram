@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from matplotlib import pyplot as plt
-from matplotlib.patches import Rectangle, Patch
+from matplotlib.patches import Rectangle, Patch, FancyArrow
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from scripts.Create_Table import create_table
 from scripts.Clear_Graph import clear_graph
@@ -30,7 +30,7 @@ def update_plot(app):
 
 
 def create_bars(ax, app):
-    # Loop through each period and create bars for cash flows
+    # Loop through each period and create arrows for cash flows
     for period in app.cash_flows["Period"].unique():
         period_cash_flows = app.cash_flows[app.cash_flows["Period"] == period].sort_values(
             by="Cash Flow", ascending=False
@@ -39,12 +39,42 @@ def create_bars(ax, app):
         for i, row in period_cash_flows.iterrows():
             cash_flow = row["Cash Flow"]
             bottom = bottom_positive if cash_flow >= 0 else bottom_negative
-            bar = ax.bar(period, cash_flow, bottom=bottom, color=row["Color"], align='center')[0]
+            
+            # Create an arrow instead of a bar
+            # Arrow parameters
+            arrow_width = 0.4  # Width of the arrow shaft
+            head_width = 0.6  # Width of the arrow head
+            head_length = abs(cash_flow) * 0.1 if cash_flow != 0 else 0.1  # Head length proportional to cash flow
+            
+            # Create the arrow starting from bottom, pointing up for positive, down for negative
+            if cash_flow >= 0:
+                # Upward arrow
+                arrow = FancyArrow(period, bottom, 0, cash_flow, 
+                                 width=arrow_width, 
+                                 head_width=head_width, 
+                                 head_length=min(head_length, abs(cash_flow) * 0.9),
+                                 length_includes_head=True,
+                                 color=row["Color"], 
+                                 edgecolor='black',
+                                 linewidth=0.5)
+            else:
+                # Downward arrow
+                arrow = FancyArrow(period, bottom, 0, cash_flow, 
+                                 width=arrow_width, 
+                                 head_width=head_width, 
+                                 head_length=min(head_length, abs(cash_flow) * 0.9),
+                                 length_includes_head=True,
+                                 color=row["Color"], 
+                                 edgecolor='black',
+                                 linewidth=0.5)
+            
+            ax.add_patch(arrow)
+            arrow.set_gid(i)
+            
             if cash_flow >= 0:
                 bottom_positive += cash_flow
             else:
                 bottom_negative += cash_flow
-            bar.set_gid(i)
 
 
 def set_y_limits_with_buffer(ax):
@@ -190,19 +220,25 @@ def update_selection_display(ax, app):
     app.selection_rects.clear()
 
     selected_values = []
-    for bar in ax.patches:
-        bar_id = bar.get_gid()
-        if bar_id in app.selected_indices:
+    for patch in ax.patches:
+        patch_id = patch.get_gid()
+        if patch_id in app.selected_indices:
+            # Get the bounding box of the arrow/patch
+            bbox = patch.get_extents()
+            x0, y0 = bbox.x0, bbox.y0
+            width = bbox.width
+            height = bbox.height
+            
             selection_rect = Rectangle(
-                (bar.get_x(), bar.get_y()), bar.get_width(), bar.get_height(),
+                (x0, y0), width, height,
                 linewidth=2, edgecolor='r', facecolor='none'
             )
             ax.add_patch(selection_rect)
             app.selection_rects.append(selection_rect)
 
-            period = app.cash_flows.loc[bar_id, "Period"]
-            cash_flow_value = app.cash_flows.loc[bar_id, "Cash Flow"]
-            series_name = app.cash_flows.loc[bar_id, "Series_Name"]
+            period = app.cash_flows.loc[patch_id, "Period"]
+            cash_flow_value = app.cash_flows.loc[patch_id, "Cash Flow"]
+            series_name = app.cash_flows.loc[patch_id, "Series_Name"]
             selected_values.append([series_name, period, cash_flow_value])
 
     create_table(app, selected_values) if selected_values else create_table(app, [])

@@ -117,6 +117,9 @@ def popup_gradient_series(app, series_id):
     x = (top.winfo_screenwidth() // 2) - (width // 2)
     y = (top.winfo_screenheight() // 2) - (height // 2)
     top.geometry(f'+{x}+{y}')
+    
+    # Auto-focus the window
+    top.focus_force()
 
     # Layout the form fields and labels
     tk.Label(top, text="Gradient Amount:").grid(row=0, column=0, padx=10, pady=5)
