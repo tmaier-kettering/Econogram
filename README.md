@@ -10,7 +10,6 @@ Econogram helps students and educators visualize and solve engineering economics
 - Insert single cash flows, uniform series, gradient series, and geometric series
 - Calculate present value (PV), future value (FV), and annual value (AV) of cash flows
 - Combine and manipulate cash flow series
-- Export results as tables for analysis
 - Work with a global interest rate that applies to all calculations
 
 ## Download
