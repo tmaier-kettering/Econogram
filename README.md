@@ -1,5 +1,5 @@
 
-![Econogram Logo](./assets/banner_trans.png)
+![Econogram Logo](./assets/banner.png)
 
 # Econogram
 
