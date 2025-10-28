@@ -30,7 +30,7 @@ Econogram's interface consists of:
 - **Menu Bar**: Access to all functions organized by category
 - **Status Bar**: Displays the current interest rate
 - **Graph Panel**: Visual cash flow diagram showing periods (x-axis) and cash flow amounts (y-axis)
-- **Table Panel**: Tabular view of all cash flows with period, amount, and series information
+- **Table Panel**: Tabular view of selected cash flows with period, amount, and series information
 
 ### Menu Structure
 
