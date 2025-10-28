@@ -56,7 +56,7 @@ def popup_future_value(app):
                 if count > 1:
                     # Handle a series with multiple cash flows
                     series_cash_flows = selected_cash_flows[selected_cash_flows["Series_ID"] == series_id]
-                    new_period = series_cash_flows["Period"].max() + 1  # One period after the last period
+                    new_period = series_cash_flows["Period"].max()  # At the last period
                     initial_period = series_cash_flows["Period"].min()
 
                     # Ensure the cash flow is moved forward in time (just double-checking, you can remove if not necessary)

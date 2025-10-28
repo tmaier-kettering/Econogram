@@ -25,7 +25,6 @@ def delete_selected_series(app):
         # Remove series from cash_flows where Series_ID is in selected_series_ids
         app.cash_flows.drop(index=app.selected_indices, inplace=True)
 
-        # Clear the table by calling create_table with an empty list
         create_table(app, [])
 
         # Clear the selection and update all dependent parts

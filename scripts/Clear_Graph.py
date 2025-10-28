@@ -26,7 +26,6 @@ def clear_graph(app):
             app.canvas.get_tk_widget().pack_forget()
             app.canvas = None
 
-        # Clear the table by calling create_table with an empty list
         create_table(app, [])
 
         # Save the state after clearing

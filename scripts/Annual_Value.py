@@ -65,8 +65,7 @@ def popup_annual_value(app, series_id):
         # Append the new annual series to the cash flows
         app.cash_flows = pd.concat([app.cash_flows, new_cash_flows], ignore_index=True)
 
-        # Clear and update the table
-        create_table(app, [])  # Reset or refresh the table with updated rows
+        create_table(app, [])
 
         # Clear selections and update the plot
         app.selected_indices = []

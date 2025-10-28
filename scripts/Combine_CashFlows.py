@@ -51,8 +51,7 @@ def combine_cash_flows(app):
         # Add the new combined cash flow entry
         app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
 
-        # Clear the table and refresh the application
-        create_table(app, [])  # Clear or update the displayed table
+        create_table(app, [])
 
         # Reset app selections and visuals
         app.selected_indices = []  # Clear selected indices

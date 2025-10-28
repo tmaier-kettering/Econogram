@@ -246,7 +246,7 @@ Future Value calculates the equivalent worth of cash flows at a point after the 
 
 **Behavior for different series types:**
 
-- **Series with multiple cash flows** (uniform, gradient, geometric): The future value is calculated at one period after the final payment. This is automatic and does not require user input for the period.
+- **Series with multiple cash flows** (uniform, gradient, geometric): The future value is calculated at the final payment period. This is automatic and does not require user input for the period.
 
 - **Single cash flow**: You can specify any period after the cash flow to calculate the future value.
 

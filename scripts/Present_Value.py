@@ -96,8 +96,7 @@ def popup_present_value(app):
                 else:
                     update_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows)
 
-        # Clear the table and update selections/visualizations
-        create_table(app, [])  # Clear or reset the displayed table
+        create_table(app, [])
 
         app.selected_indices = []  # Clear selected indices
         for rect in app.selection_rects:
