@@ -1,0 +1,5 @@
+# Python dependencies for Econogram
+# Note: tkinter is part of Python's standard library and is usually included with Python installations
+
+pandas>=2.0.0
+matplotlib>=3.7.0
