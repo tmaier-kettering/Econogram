@@ -1,3 +1,6 @@
+
+![Econogram Logo](./assets/banner_trans.png)
+
 # Econogram
 
 Econogram is a desktop application for creating and analyzing cash flow diagrams used in engineering economics. It provides a visual interface for working with time value of money calculations, including present value, future value, and annual value conversions.
@@ -27,6 +30,12 @@ The application displays cash flows as a bar chart with periods on the x-axis an
 ## Help
 
 For detailed documentation on all features, see [HELP.md](HELP.md).
+
+## How to Support
+
+[![BuyMeACoffee](./assets/buymeacoffee.png)](https://buymeacoffee.com/professthor)
+
+If you find this tool helpful, consider supporting its development by [buying me a coffee](https://buymeacoffee.com/professthor)! 
 
 ## Disclaimer
 
