@@ -350,38 +350,40 @@ Multiplies all cash flows in the selected series by -1, converting inflows to ou
 
 **Edit → Split Series**
 
-Breaks a multi-cash-flow series into individual single cash flows, each with its own series ID but retaining the original series name.
+Splits a multi-cash-flow series into two separate series at a chosen point using a slider interface.
 
 **Use cases:**
-- Isolating specific cash flows for individual analysis
+- Dividing a series into two parts for separate analysis
 - Preparing for selective calculations on part of a series
 - Creating flexibility for different manipulations of series components
 
 **Notes:**
-- Each resulting cash flow gets a new color
-- The original series name is preserved
-- This operation cannot be applied to series that are already single cash flows
+- The first part retains the original color
+- The second part gets a new color
+- Both parts are named with "_1" and "_2" suffixes
+- This operation cannot be applied to series with only one cash flow
 
 ### Combine Cash Flows
 
 **Edit → Combine Cash Flows**
 
-Sums all cash flows that occur in the same period, creating a single aggregated cash flow for each period.
+Combines selected cash flows that occur in the same period into a single aggregated cash flow.
 
 **Behavior:**
-- Cash flows at the same period are added together
-- The resulting combined series gets a new series ID and color
-- Original series are removed
-- The combined series is named "Combined Cash Flows"
+- Select multiple cash flows from the same period
+- The selected cash flows are added together
+- The resulting combined cash flow gets a new series ID and color
+- Original selected cash flows are removed
+- The combined series is named by joining the original series names with " + "
 
 **Use cases:**
-- Simplifying complex diagrams
-- Creating a net cash flow view
-- Preparing for calculations on the total effect
+- Simplifying complex diagrams by combining related cash flows
+- Creating a net cash flow view for a specific period
+- Preparing for calculations on the combined effect
 
 **Example:**
-- Period 5: +$1000 (Series A), -$300 (Series B)
-- After combining: Period 5: +$700 (Combined Cash Flows)
+- Select two cash flows at Period 5: +$1000 (Series A), -$300 (Series B)
+- After combining: Period 5: +$700 (Series A + Series B)
 
 ### Clear Graph
 

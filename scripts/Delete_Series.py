@@ -14,7 +14,7 @@ def delete_selected_series(app):
 
     # Ensure all selected indices are within bounds and exist
     if not all(index in app.cash_flows.index for index in app.selected_indices):
-        messagebox.showinfo("Selection Erro",
+        messagebox.showinfo("Selection Error",
                             "No series selected for deletion.")
         return
 
