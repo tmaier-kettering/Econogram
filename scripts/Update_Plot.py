@@ -238,7 +238,6 @@ def update_selection_display(ax, app):
         rect.set_visible(False)
     app.selection_rects.clear()
 
-    selected_values = []
     for bar in ax.patches:
         bar_id = bar.get_gid()
         if bar_id in app.selected_indices:
@@ -249,12 +248,13 @@ def update_selection_display(ax, app):
             ax.add_patch(selection_rect)
             app.selection_rects.append(selection_rect)
 
-            period = app.cash_flows.loc[bar_id, "Period"]
-            cash_flow_value = app.cash_flows.loc[bar_id, "Cash Flow"]
-            series_name = app.cash_flows.loc[bar_id, "Series_Name"]
-            selected_values.append([series_name, period, cash_flow_value])
-
-    create_table(app, selected_values) if selected_values else create_table(app, [])
+    # Update table to show all cash flows
+    all_values = []
+    if not app.cash_flows.empty:
+        for _, row in app.cash_flows.iterrows():
+            all_values.append([row['Series_Name'], row['Period'], row['Cash Flow']])
+    
+    create_table(app, all_values)
     app.update_canvas()
 
 

@@ -43,7 +43,13 @@ def create_table(app, selected_values):
     for i in app.tree.get_children():
         app.tree.delete(i)
 
-    # If there are selected values, populate the table
+    # If selected_values is empty, populate with all cash flows
+    if not selected_values and hasattr(app, 'cash_flows') and not app.cash_flows.empty:
+        selected_values = []
+        for _, row in app.cash_flows.iterrows():
+            selected_values.append([row['Series_Name'], row['Period'], row['Cash Flow']])
+
+    # Populate the table with values
     if selected_values:
         # Convert selected_values to DataFrame
         df = pd.DataFrame(selected_values, columns=['Series Name', 'Period', 'Cash Flow'])
