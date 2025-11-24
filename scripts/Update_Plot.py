@@ -82,6 +82,10 @@ def configure_axes(ax, app):
 
 
 def add_legend(ax, app):
+    # Only create legend if cash_flows has data and the required columns
+    if app.cash_flows.empty or 'Series_Name' not in app.cash_flows.columns:
+        return
+    
     series_info = app.cash_flows[['Series_Name', 'Color', 'Series_ID']].drop_duplicates().sort_values('Series_Name')
     if not series_info.empty:
         legend_handles = []
