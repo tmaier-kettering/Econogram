@@ -82,20 +82,50 @@ def configure_axes(ax, app):
 
 
 def add_legend(ax, app):
-    series_info = app.cash_flows[['Series_Name', 'Color']].drop_duplicates().sort_values('Series_Name')
+    series_info = app.cash_flows[['Series_Name', 'Color', 'Series_ID']].drop_duplicates().sort_values('Series_Name')
     if not series_info.empty:
-        legend_handles = [
-            Patch(facecolor=row['Color'], edgecolor='black', label=row["Series_Name"], picker=True)
-            for _, row in series_info.iterrows()
-        ]
-        ax.legend(handles=legend_handles, loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0)
+        legend_handles = []
+        for _, row in series_info.iterrows():
+            patch = Patch(facecolor=row['Color'], edgecolor='black', label=row["Series_Name"], picker=True)
+            # Store series_id as a custom attribute for click handling
+            patch.series_id = row['Series_ID']
+            legend_handles.append(patch)
+        legend = ax.legend(handles=legend_handles, loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0)
+        # Make legend pickable with a tolerance of 5 pixels
+        legend.set_picker(5)
 
 
 def configure_event_handling(fig, ax, app):
     def on_click(event):
         handle_click(event, ax, app)
+    
+    def on_pick(event):
+        handle_pick(event, ax, app)
 
     fig.canvas.mpl_connect("button_press_event", on_click)
+    fig.canvas.mpl_connect("pick_event", on_pick)
+
+
+def handle_pick(event, ax, app):
+    """Handle pick events on legend items."""
+    artist = event.artist
+    
+    # Check if the picked artist is a legend patch with a series_id attribute
+    if hasattr(artist, 'series_id'):
+        series_id = artist.series_id
+        # Get all indices for this series
+        series_indices = app.cash_flows[app.cash_flows["Series_ID"] == series_id].index.tolist()
+        
+        # Toggle selection of this series
+        if all(index in app.selected_indices for index in series_indices):
+            # Deselect the series
+            app.selected_indices = [index for index in app.selected_indices if index not in series_indices]
+        else:
+            # Select the series
+            app.selected_indices.extend(index for index in series_indices if index not in app.selected_indices)
+        
+        # Update the display
+        update_selection_display(ax, app)
 
 
 def handle_click(event, ax, app):
