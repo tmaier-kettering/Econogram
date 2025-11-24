@@ -18,15 +18,6 @@ def popup_annual_value(app, series_id):
     if len(app.selected_indices) > 1:
         messagebox.showerror("Selection Error", "Please select only one cash flow.")
         return
-    
-    # Check if more than one series is selected (additional safety check)
-    selected_cash_flows = app.cash_flows.loc[app.selected_indices]
-    unique_series = selected_cash_flows["Series_ID"].unique()
-    if len(unique_series) > 1:
-        messagebox.showerror("Selection Error", 
-            "Cannot calculate annual value for multiple series. "
-            "Please select only one series at a time.")
-        return
 
     try:
         # Prompt the user to enter the number of periods

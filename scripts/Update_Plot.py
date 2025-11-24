@@ -120,13 +120,8 @@ def handle_pick(event, ax, app):
         # Get all indices for this series
         series_indices = app.cash_flows[app.cash_flows["Series_ID"] == series_id].index.tolist()
         
-        # Toggle selection of this series
-        if all(index in app.selected_indices for index in series_indices):
-            # Deselect the series
-            app.selected_indices = [index for index in app.selected_indices if index not in series_indices]
-        else:
-            # Select the series
-            app.selected_indices.extend(index for index in series_indices if index not in app.selected_indices)
+        # Use existing toggle_series_selection function
+        toggle_series_selection(series_indices, app, right_click=False)
         
         # Update the display
         update_selection_display(ax, app)
