@@ -40,7 +40,7 @@ def popup_annual_value(app, series_id):
             A = selected_cash_flow / num_periods
 
         # Update the series name to include a reference to Annual Value
-        rendered_series_name = f"AV of {series_name}"  # Use 'AV of' for Annual Value reference
+        rendered_series_name = f"AV({series_name})"  # Use 'AV()' for Annual Value reference
 
         if app.makeNewSeries:
             # Create a new series with a new color and series ID
