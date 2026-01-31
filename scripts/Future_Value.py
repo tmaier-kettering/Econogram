@@ -48,6 +48,14 @@ def popup_future_value(app):
             return
 
         selected_cash_flows = app.cash_flows.loc[valid_indices]
+        
+        # Check if more than one series is selected
+        unique_series = selected_cash_flows["Series_ID"].unique()
+        if len(unique_series) > 1:
+            messagebox.showerror("Selection Error", 
+                "Cannot calculate future value for multiple series. "
+                "Please select only one series at a time.")
+            return
 
         # Check if the selected items are a single series or multiple items of one series
         series_id_counts = selected_cash_flows["Series_ID"].value_counts()
