@@ -50,9 +50,16 @@ def test_reset_clears_used_colors():
 def test_generate_new_color_retries_on_collision():
     """Verify the collision-retry path in _generate_new_color actually executes.
 
-    This test forces a real collision by pre-seeding used_colors with the exact
-    color the fallback generator would naively produce for attempt=0, then
-    verifies the retry loop correctly returns a different color.
+    _generate_new_color computes attempt = len(used_colors) - len(base_colors).
+    Seeding a color directly into used_colors (to simulate a collision) itself
+    increases len(used_colors) by 1 -- so to force a collision on the very
+    first candidate the generator checks, we must seed the candidate for
+    attempt=1 (not attempt=0): after exhausting the base palette,
+    len(used_colors) == 20, and adding one seeded color makes it 21, so the
+    first candidate _generate_new_color actually evaluates is for
+    attempt = 21 - 20 = 1. Seeding that exact color forces a genuine
+    collision, so the retry loop must advance to attempt=2 to find a free
+    color.
     """
     assigner = ColorAssigner()
 
@@ -60,23 +67,34 @@ def test_generate_new_color_retries_on_collision():
     for _ in range(20):
         assigner.get_color()
 
-    # Calculate what the first generated color would be (attempt=0).
-    # When available_colors is empty and _generate_new_color is called:
-    # attempt = len(used_colors) - len(base_colors) = 20 - 20 = 0
-    hue = (0 * 0.618033988749895) % 1.0      # = 0.0
-    saturation = 0.6 + (0 % 3) * 0.15        # = 0.6
-    value = 0.7 + (0 % 2) * 0.2              # = 0.7
-    first_generated = tuple(mcolors.hsv_to_rgb([hue, saturation, value]))
+    # Candidate the generator would check for attempt=1 -- this is the color
+    # that will actually be evaluated first once our seed is counted.
+    hue = (1 * 0.618033988749895) % 1.0
+    saturation = 0.6 + (1 % 3) * 0.15
+    value = 0.7 + (1 % 2) * 0.2
+    attempt_1_candidate = tuple(mcolors.hsv_to_rgb([hue, saturation, value]))
 
-    # Pre-seed this exact color as already used (simulating a collision)
-    assigner.used_colors.add(first_generated)
+    # Candidate the generator should fall back to on retry (attempt=2),
+    # proving the loop actually advanced rather than coincidentally differing.
+    hue = (2 * 0.618033988749895) % 1.0
+    saturation = 0.6 + (2 % 3) * 0.15
+    value = 0.7 + (2 % 2) * 0.2
+    attempt_2_candidate = tuple(mcolors.hsv_to_rgb([hue, saturation, value]))
+
+    # Pre-seed the attempt=1 candidate as already used (simulating a collision)
+    assigner.used_colors.add(attempt_1_candidate)
 
     # Now call get_color() and verify the retry loop returns a different color
     returned_color = assigner.get_color()
 
     # Assert the retry worked: returned color is NOT the pre-seeded collision
-    assert returned_color != first_generated, \
+    assert returned_color != attempt_1_candidate, \
         f"Expected retry to find different color, but got {returned_color} (collision color)"
+
+    # Assert the loop landed on the correct fallback (attempt=2), proving it
+    # advanced exactly one step rather than jumping to an arbitrary color.
+    assert returned_color == attempt_2_candidate, \
+        f"Expected retry to fall back to attempt=2 candidate {attempt_2_candidate}, got {returned_color}"
 
     # Assert the returned color is valid and now in used_colors
     assert len(returned_color) == 3, "Returned value should be an RGB tuple"
