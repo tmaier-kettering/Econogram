@@ -167,6 +167,45 @@ class CashFlowLedger:
 
         return series_id_1, series_id_2
 
+    def combine_rows(self, row_ids: list, color, series_name: str) -> int:
+        """Sum the Cash Flow of the given rows (which must all share one
+        Period) into a single new row under a new series. Returns the new
+        Row_ID."""
+        if len(row_ids) < 2:
+            raise LedgerError("Select at least two cash flows to combine.")
+
+        rows = self._df[self._df["Row_ID"].isin(row_ids)]
+        if rows.empty:
+            raise LedgerError("The selected cash flows no longer exist.")
+        if rows["Period"].nunique() > 1:
+            raise LedgerError("Selected cash flows must be in the same period to be combined.")
+
+        period = rows.iloc[0]["Period"]
+        combined_value = rows["Cash Flow"].sum()
+
+        self._df = self._df[~self._df["Row_ID"].isin(row_ids)].reset_index(drop=True)
+        series_id = self.reserve_series_id()
+        new_row_ids = self._append_rows([(period, combined_value)], color=color, series_id=series_id, series_name=series_name)
+        return new_row_ids[0]
+
+    def replace_rows(self, row_ids: list, new_entries: list, *, series_id: int, color, series_name: str) -> list:
+        """Delete `row_ids` (may be empty, for a pure insert), then insert
+        `new_entries` ((period, cash_flow) pairs) under `series_id`.
+        Returns the new Row_IDs, in the same order as new_entries.
+
+        This one method covers both of Present/Future/Annual Value's
+        modes: pass the row's existing series_id/color/series_name to
+        update a series in place, or pass a freshly-reserved series_id
+        (via reserve_series_id()) with a new color/name to create a new
+        series instead."""
+        if not new_entries:
+            raise LedgerError("Nothing to replace the selected cash flows with.")
+
+        if row_ids:
+            self._df = self._df[~self._df["Row_ID"].isin(row_ids)].reset_index(drop=True)
+
+        return self._append_rows(new_entries, color=color, series_id=series_id, series_name=series_name)
+
     def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
         """Append (period, cash_flow) pairs as new rows under one series.
         Returns the list of new Row_IDs, in order. The single mutation

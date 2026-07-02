@@ -256,3 +256,96 @@ def test_split_series_raises_if_split_point_leaves_one_side_empty():
     # split_period below every period in the series -> first half would be empty
     with pytest.raises(LedgerError):
         ledger.split_series(series_id, split_period=-1, name_1="A_1", name_2="A_2", color_2="blue")
+
+
+def test_combine_rows_sums_cash_flow_at_the_shared_period():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=3, amount=100.0, color="red", series_name="A")
+    ledger.add_single(period=3, amount=50.0, color="blue", series_name="B")
+    row_ids = ledger.as_dataframe()["Row_ID"].tolist()
+
+    new_row_id = ledger.combine_rows(row_ids, color="green", series_name="A + B")
+
+    df = ledger.as_dataframe()
+    assert len(df) == 1
+    row = df.iloc[0]
+    assert row["Row_ID"] == new_row_id
+    assert row["Period"] == 3
+    assert row["Cash Flow"] == pytest.approx(150.0)
+    assert row["Series_Name"] == "A + B"
+    assert row["Color"] == "green"
+
+
+def test_combine_rows_requires_at_least_two_rows():
+    ledger = CashFlowLedger()
+    row_id = ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    with pytest.raises(LedgerError):
+        ledger.combine_rows([row_id], color="green", series_name="A")
+
+
+def test_combine_rows_requires_the_same_period():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    ledger.add_single(period=1, amount=50.0, color="blue", series_name="B")
+    row_ids = ledger.as_dataframe()["Row_ID"].tolist()
+    with pytest.raises(LedgerError):
+        ledger.combine_rows(row_ids, color="green", series_name="A + B")
+
+
+def test_replace_rows_updates_a_series_in_place():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_single(period=5, amount=1000.0, color="red", series_name="Deposit")
+    old_row_id = ledger.as_dataframe().iloc[0]["Row_ID"]
+
+    new_row_ids = ledger.replace_rows(
+        [old_row_id], [(3, 863.84)],
+        series_id=series_id, color="red", series_name="Deposit"
+    )
+
+    df = ledger.as_dataframe()
+    assert len(df) == 1
+    assert len(new_row_ids) == 1
+    assert df.iloc[0]["Row_ID"] == new_row_ids[0]
+    assert df.iloc[0]["Row_ID"] != old_row_id
+    assert df.iloc[0]["Period"] == 3
+    assert df.iloc[0]["Cash Flow"] == pytest.approx(863.84)
+    assert df.iloc[0]["Series_ID"] == series_id
+
+
+def test_replace_rows_can_create_a_brand_new_series():
+    ledger = CashFlowLedger()
+    original_series_id = ledger.add_single(period=5, amount=1000.0, color="red", series_name="Deposit")
+    old_row_id = ledger.as_dataframe().iloc[0]["Row_ID"]
+    new_series_id = ledger.reserve_series_id()
+
+    ledger.replace_rows(
+        [], [(3, 863.84)],  # empty row_ids: nothing is removed, this is a pure insert
+        series_id=new_series_id, color="blue", series_name="PV(Deposit)"
+    )
+
+    df = ledger.as_dataframe()
+    assert len(df) == 2  # original row is untouched, new one is added
+    assert old_row_id in df["Row_ID"].tolist()
+    new_row = df[df["Series_ID"] == new_series_id].iloc[0]
+    assert new_row["Series_Name"] == "PV(Deposit)"
+    assert new_row["Series_ID"] != original_series_id
+
+
+def test_replace_rows_can_insert_multiple_entries_for_annual_value():
+    ledger = CashFlowLedger()
+    series_id = ledger.reserve_series_id()
+    new_row_ids = ledger.replace_rows(
+        [], [(1, 263.80), (2, 263.80), (3, 263.80)],
+        series_id=series_id, color="red", series_name="AV(Deposit)"
+    )
+    assert len(new_row_ids) == 3
+    df = ledger.as_dataframe()
+    assert len(df) == 3
+    assert (df["Series_ID"] == series_id).all()
+
+
+def test_replace_rows_requires_at_least_one_new_entry():
+    ledger = CashFlowLedger()
+    series_id = ledger.reserve_series_id()
+    with pytest.raises(LedgerError):
+        ledger.replace_rows([], [], series_id=series_id, color="red", series_name="X")
