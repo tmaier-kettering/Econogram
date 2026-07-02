@@ -106,3 +106,36 @@ def test_add_gradient_with_zero_length_raises():
     ledger = CashFlowLedger()
     with pytest.raises(LedgerError):
         ledger.add_gradient(start_period=0, gradient_amount=200.0, length=0, color="blue", series_name="Raise")
+
+
+def test_add_geometric_grows_by_percentage_each_period():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_geometric(
+        start_period=0, initial_value=1000.0, length=3, growth_rate_pct=10.0,
+        color="green", series_name="Sales"
+    )
+    df = ledger.as_dataframe()
+    assert df["Period"].tolist() == [0, 1, 2]
+    cash_flows = df["Cash Flow"].tolist()
+    assert cash_flows[0] == pytest.approx(1000.0)
+    assert cash_flows[1] == pytest.approx(1100.0)
+    assert cash_flows[2] == pytest.approx(1210.0)
+    assert (df["Series_ID"] == series_id).all()
+
+
+def test_add_geometric_with_zero_initial_value_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.add_geometric(
+            start_period=0, initial_value=0.0, length=3, growth_rate_pct=10.0,
+            color="green", series_name="Sales"
+        )
+
+
+def test_add_geometric_with_zero_length_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.add_geometric(
+            start_period=0, initial_value=1000.0, length=0, growth_rate_pct=10.0,
+            color="green", series_name="Sales"
+        )

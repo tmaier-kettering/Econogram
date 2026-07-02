@@ -85,6 +85,27 @@ class CashFlowLedger:
         self._append_rows(entries, color=color, series_id=series_id, series_name=series_name)
         return series_id
 
+    def add_geometric(self, start_period: int, initial_value: float, length: int,
+                      growth_rate_pct: float, color, series_name: str) -> int:
+        """Add a geometric series: cash_flow(i) = initial_value * (1 +
+        growth_rate_pct/100) ** i, for i in 0..length-1. Returns the new series_id."""
+        series_name = series_name.strip()
+        if not series_name:
+            raise LedgerError("Series name cannot be empty.")
+        if length < 1:
+            raise LedgerError("Length of series must be at least 1.")
+        if initial_value == 0:
+            raise LedgerError("Initial value must be non-zero.")
+
+        series_id = self.reserve_series_id()
+        growth_rate = growth_rate_pct / 100.0
+        entries = [
+            (start_period + i, initial_value * ((1 + growth_rate) ** i))
+            for i in range(length)
+        ]
+        self._append_rows(entries, color=color, series_id=series_id, series_name=series_name)
+        return series_id
+
     def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
         """Append (period, cash_flow) pairs as new rows under one series.
         Returns the list of new Row_IDs, in order. The single mutation
