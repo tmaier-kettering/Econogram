@@ -69,3 +69,40 @@ def test_dataframe_columns_have_correct_dtypes():
     assert df["Period"].dtype == "int64"
     assert df["Cash Flow"].dtype == "float64"
     assert df["Series_ID"].dtype == "int64"
+
+
+def test_add_uniform_creates_length_rows_with_constant_amount():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=1000.0, length=3, color="red", series_name="Rent")
+    df = ledger.as_dataframe()
+    assert len(df) == 3
+    assert df["Period"].tolist() == [0, 1, 2]
+    assert df["Cash Flow"].tolist() == [1000.0, 1000.0, 1000.0]
+    assert (df["Series_ID"] == series_id).all()
+
+
+def test_add_uniform_with_zero_length_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.add_uniform(start_period=0, amount=1000.0, length=0, color="red", series_name="Rent")
+
+
+def test_add_uniform_with_negative_length_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.add_uniform(start_period=0, amount=1000.0, length=-1, color="red", series_name="Rent")
+
+
+def test_add_gradient_first_value_is_zero_then_increases_by_gradient_amount():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_gradient(start_period=5, gradient_amount=200.0, length=3, color="blue", series_name="Raise")
+    df = ledger.as_dataframe()
+    assert df["Period"].tolist() == [5, 6, 7]
+    assert df["Cash Flow"].tolist() == [0.0, 200.0, 400.0]
+    assert (df["Series_ID"] == series_id).all()
+
+
+def test_add_gradient_with_zero_length_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.add_gradient(start_period=0, gradient_amount=200.0, length=0, color="blue", series_name="Raise")

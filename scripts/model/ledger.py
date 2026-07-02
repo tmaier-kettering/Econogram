@@ -58,6 +58,33 @@ class CashFlowLedger:
         self._append_rows([(period, amount)], color=color, series_id=series_id, series_name=series_name)
         return series_id
 
+    def add_uniform(self, start_period: int, amount: float, length: int, color, series_name: str) -> int:
+        """Add `length` equal cash flows starting at start_period. Returns the new series_id."""
+        series_name = series_name.strip()
+        if not series_name:
+            raise LedgerError("Series name cannot be empty.")
+        if length < 1:
+            raise LedgerError("Length of series must be at least 1.")
+
+        series_id = self.reserve_series_id()
+        entries = [(start_period + i, amount) for i in range(length)]
+        self._append_rows(entries, color=color, series_id=series_id, series_name=series_name)
+        return series_id
+
+    def add_gradient(self, start_period: int, gradient_amount: float, length: int, color, series_name: str) -> int:
+        """Add a gradient series: cash_flow(i) = gradient_amount * i, for
+        i in 0..length-1, so the first value is always 0. Returns the new series_id."""
+        series_name = series_name.strip()
+        if not series_name:
+            raise LedgerError("Series name cannot be empty.")
+        if length < 1:
+            raise LedgerError("Length of series must be at least 1.")
+
+        series_id = self.reserve_series_id()
+        entries = [(start_period + i, gradient_amount * i) for i in range(length)]
+        self._append_rows(entries, color=color, series_id=series_id, series_name=series_name)
+        return series_id
+
     def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
         """Append (period, cash_flow) pairs as new rows under one series.
         Returns the list of new Row_IDs, in order. The single mutation
