@@ -6,9 +6,9 @@ including menus, status bars, and event bindings.
 import webbrowser
 
 from scripts.Clear_Graph import clear_graph
-from scripts.Theme import COLORS, SPACING, get_fonts
+from scripts.Theme import COLORS, SPACING, get_fonts, is_dark, toggle_dark_mode
 import tkinter as tk
-from tkinter import font, messagebox, simpledialog
+from tkinter import font, messagebox, simpledialog, ttk
 import os
 
 
@@ -71,7 +71,9 @@ def setup_ui(app):
     # Create a status bar at the top for interest rate display
     create_status_bar(app)
 
-    # Create a PanedWindow for resizable sections (graph and table)
+    # Create a PanedWindow for resizable sections (graph and table).
+    # Stays classic tk: ttkbootstrap doesn't offer a materially different
+    # PanedWindow, and the sash is already themed via option_add.
     app.main_paned_window = tk.PanedWindow(
         app.root, orient=tk.HORIZONTAL, sashrelief=tk.FLAT, sashwidth=6,
         background=COLORS["border"], bd=0
@@ -79,11 +81,11 @@ def setup_ui(app):
     app.main_paned_window.pack(side="top", fill=tk.BOTH, expand=True)
 
     # Create a frame for the graph (will be populated by update_plot)
-    app.graph_frame = tk.Frame(app.main_paned_window)
+    app.graph_frame = ttk.Frame(app.main_paned_window)
     app.main_paned_window.add(app.graph_frame, stretch="always")
 
     # Create a frame for the table (will be populated by create_table)
-    app.table_frame = tk.Frame(app.main_paned_window)
+    app.table_frame = ttk.Frame(app.main_paned_window)
     app.main_paned_window.add(app.table_frame, stretch="never")
 
     # Initialize toggle state for Make New Series
@@ -152,6 +154,13 @@ def create_menu_bar(app):
     # reduced motion" setting from Tkinter, so this is an explicit toggle.
     app.reduce_motion = tk.BooleanVar(value=False)
     options_menu.add_checkbutton(label="Reduce Motion", variable=app.reduce_motion, underline=0)
+
+    options_menu.add_separator()
+    app.dark_mode_var = tk.BooleanVar(value=is_dark())
+    options_menu.add_checkbutton(
+        label="Dark Mode", variable=app.dark_mode_var,
+        command=lambda: _on_toggle_dark_mode(app), underline=0
+    )
 
     # Help Menu
     # (mnemonics skipped here: with 17 topic entries the letters run out
@@ -254,20 +263,21 @@ def _update_calculate_menu_state(app, calculate_menu):
 def create_status_bar(app):
     """Create a status bar at the top to display the interest rate."""
     fonts = get_fonts()
-    status_bar = tk.Frame(app.root, background=COLORS["surface"], height=36)
+    status_bar = ttk.Frame(app.root, style="Surface.TFrame", height=36)
     status_bar.pack(side="top", fill="x")
+    app.status_bar = status_bar
 
     # A 1px bottom border instead of a sunken bevel, in line with the flat
     # theme used everywhere else.
-    separator = tk.Frame(app.root, background=COLORS["border"], height=1)
+    separator = ttk.Frame(app.root, style="Border.TFrame", height=1)
     separator.pack(side="top", fill="x")
 
     # Interest rate label
-    tk.Label(
+    ttk.Label(
         status_bar, text="Interest Rate", font=fonts["body"],
         background=COLORS["surface"], foreground=COLORS["muted"]
     ).pack(side="left", padx=(SPACING["md"], SPACING["xs"]), pady=SPACING["xs"])
-    app.interest_rate_label = tk.Label(
+    app.interest_rate_label = ttk.Label(
         status_bar, text=f"{app.interest_rate}%", font=fonts["body_bold"],
         background=COLORS["surface"], foreground=COLORS["accent"]
     )
@@ -286,6 +296,20 @@ def show_series_popup(app):
     # This function is no longer needed since series insertion is now in the Insert menu
     # But keeping it for backward compatibility if called elsewhere
     pass
+
+
+def _on_toggle_dark_mode(app):
+    """Swap the active palette and redraw everything that caches colors
+    outside of Tk's own widget system (the matplotlib chart, the table's
+    row-tag colors) -- toggle_dark_mode() itself only handles the ttk
+    Style engine and the remaining classic-tk options."""
+    from scripts.Create_Table import retheme_table
+
+    def redraw():
+        retheme_table(app)
+        app.update_plot()
+
+    toggle_dark_mode(app.dark_mode_var.get(), on_retheme=redraw)
 
 
 def prompt_interest_rate_change(app):

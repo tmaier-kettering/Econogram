@@ -12,7 +12,7 @@ def create_table(app, selected_values):
     # Check if tree exists, if not create it
     if not hasattr(app, 'tree'):
         # Create a container to hold the treeview and scrollbar
-        table_container = tk.Frame(app.table_frame)
+        table_container = ttk.Frame(app.table_frame)
         table_container.pack(fill=tk.BOTH, expand=True)
 
         # Add vertical scrollbar
@@ -81,3 +81,18 @@ def create_table(app, selected_values):
         app.table_hint.place_forget()
     else:
         app.table_hint.place(relx=0.5, rely=0.5, anchor="center")
+
+
+def retheme_table(app):
+    """Re-apply the current palette to the parts of the table that don't
+    update automatically when the ttk Style theme changes: the Treeview's
+    manually-configured row tags (zebra striping, sign coloring) and the
+    empty-state hint label, both set once at table-creation time rather
+    than driven by the Style engine."""
+    if not hasattr(app, 'tree'):
+        return
+    app.tree.tag_configure('evenrow', background=COLORS["surface"])
+    app.tree.tag_configure('oddrow', background=COLORS["surface_alt"])
+    app.tree.tag_configure('positive', foreground=COLORS["positive"])
+    app.tree.tag_configure('negative', foreground=COLORS["negative"])
+    app.table_hint.config(background=COLORS["surface"], foreground=COLORS["muted"])

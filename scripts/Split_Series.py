@@ -4,10 +4,11 @@ Splits a multi-cash-flow series into two separate series at a chosen point
 using an interactive slider dialog.
 """
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import pandas as pd
+import ttkbootstrap as tb
 from scripts.Create_Table import create_table
-from scripts.DialogKit import create_popup, center_popup, add_press_feedback
+from scripts.DialogKit import create_popup, center_popup
 from scripts.Theme import COLORS, SPACING, get_fonts
 from scripts.Toast import show_toast
 
@@ -119,45 +120,44 @@ def show_split_dialog(app, series_id, series_data, periods):
 
     # Add instruction label
     instruction_text = "Drag the slider to choose where to split the series:"
-    tk.Label(top, text=instruction_text, font=fonts["body_bold"]).pack(
+    ttk.Label(top, text=instruction_text, font=fonts["body_bold"]).pack(
         padx=SPACING["lg"], pady=(SPACING["lg"], SPACING["sm"])
     )
 
     # Create a frame for the slider and labels
-    slider_frame = tk.Frame(top, background=COLORS["bg"])
+    slider_frame = ttk.Frame(top)
     slider_frame.pack(padx=SPACING["lg"], pady=SPACING["sm"], fill=tk.X)
 
     # Add period labels on sides
-    tk.Label(slider_frame, text=f"Period {periods[0]}", font=fonts["body"], fg=COLORS["muted"]).pack(side=tk.LEFT)
-    tk.Label(slider_frame, text=f"Period {periods[-1]}", font=fonts["body"], fg=COLORS["muted"]).pack(side=tk.RIGHT)
+    ttk.Label(slider_frame, text=f"Period {periods[0]}", font=fonts["body"], foreground=COLORS["muted"]).pack(side=tk.LEFT)
+    ttk.Label(slider_frame, text=f"Period {periods[-1]}", font=fonts["body"], foreground=COLORS["muted"]).pack(side=tk.RIGHT)
 
     # Create slider variable
     slider_var = tk.IntVar(value=0)
 
     # Create the slider
-    slider = tk.Scale(
+    slider = tb.Scale(
         top,
         from_=0,
         to=len(periods) - 2,
         orient=tk.HORIZONTAL,
         variable=slider_var,
         length=400,
-        showvalue=False,
+        bootstyle="primary",
         command=update_split_label
     )
     slider.pack(padx=SPACING["lg"], pady=(0, SPACING["sm"]))
 
     # Label to show current split position
-    split_label = tk.Label(
+    split_label = ttk.Label(
         top, text=f"Split between period {periods[0]} and {periods[1]}",
-        font=fonts["body_bold"], fg=COLORS["accent"]
+        font=fonts["body_bold"], foreground=COLORS["accent"]
     )
     split_label.pack(padx=SPACING["lg"], pady=(SPACING["xs"], SPACING["lg"]))
 
     # Add split button
-    split_button = tk.Button(top, text="Split", command=on_split_button_click)
+    split_button = tb.Button(top, text="Split", command=on_split_button_click, bootstyle="primary")
     split_button.pack(pady=(0, SPACING["lg"]))
-    add_press_feedback(split_button)
 
     top.bind('<Return>', lambda e: on_split_button_click())
     center_popup(top)

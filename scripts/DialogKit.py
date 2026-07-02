@@ -6,8 +6,15 @@ always-on-top, centering) and identical character-level validators. This
 module centralizes both, and adds a themed inline error message so a
 validation failure doesn't have to interrupt the user with a modal
 messagebox on every mistake.
+
+Widgets here are ttk/ttkbootstrap, not classic tk: ttkbootstrap's Style
+engine (see scripts/Theme.py) only reaches ttk.* widgets, and its built-in
+per-state style maps (hover/pressed/disabled) replace the hand-rolled
+press-feedback binding a classic tk.Button would have needed.
 """
 import tkinter as tk
+from tkinter import ttk
+import ttkbootstrap as tb
 from scripts.UI_Setup import get_asset_path
 from scripts.Theme import COLORS, SPACING, get_fonts
 from scripts.Motion import fade_in_window, reduced_motion
@@ -46,7 +53,7 @@ def center_popup(top):
 
 def build_form(top):
     """Create the padded, two-column form container used by every dialog."""
-    frame = tk.Frame(top, background=COLORS["bg"])
+    frame = ttk.Frame(top)
     frame.pack(padx=SPACING["lg"], pady=SPACING["lg"], fill="both", expand=True)
     frame.grid_columnconfigure(1, weight=1, minsize=160)
     return frame
@@ -62,7 +69,7 @@ def add_field(form, row, label_text, validate_fn=None, default=None, select_defa
     are a placeholder to overwrite rather than a value to keep.
     """
     fonts = get_fonts()
-    tk.Label(form, text=label_text, font=fonts["body"], anchor="w").grid(
+    ttk.Label(form, text=label_text, font=fonts["body"], anchor="w").grid(
         row=row, column=0, sticky="w", padx=(0, SPACING["md"]), pady=SPACING["xs"]
     )
 
@@ -71,7 +78,7 @@ def add_field(form, row, label_text, validate_fn=None, default=None, select_defa
         kwargs["validate"] = "key"
         kwargs["validatecommand"] = (form.register(validate_fn), '%P', '%d')
 
-    entry = tk.Entry(form, **kwargs)
+    entry = ttk.Entry(form, **kwargs)
     entry.grid(row=row, column=1, sticky="ew", pady=SPACING["xs"])
 
     if default is not None:
@@ -86,9 +93,9 @@ def add_field(form, row, label_text, validate_fn=None, default=None, select_defa
 def add_error_label(form, row, columnspan=2):
     """An inline validation-error message, hidden until show_error() is called."""
     fonts = get_fonts()
-    label = tk.Label(
-        form, text="", font=fonts["body"], fg=COLORS["negative"],
-        background=COLORS["bg"], wraplength=280, justify="left"
+    label = ttk.Label(
+        form, text="", font=fonts["body"], foreground=COLORS["negative"],
+        wraplength=280, justify="left"
     )
     label.grid(row=row, column=0, columnspan=columnspan, sticky="w", pady=(SPACING["xs"], 0))
     label.grid_remove()
@@ -106,29 +113,9 @@ def clear_error(error_label):
 
 
 def add_submit_button(form, row, text, command, columnspan=2):
-    button = tk.Button(form, text=text, command=command)
+    button = tb.Button(form, text=text, command=command, bootstyle="primary")
     button.grid(row=row, column=0, columnspan=columnspan, pady=(SPACING["md"], 0))
-    add_press_feedback(button)
     return button
-
-
-def add_press_feedback(button):
-    """Darken a button a step further on press, for tactile click feedback.
-
-    Tk already swaps to `activebackground` on hover automatically; this
-    additionally swaps `activebackground` itself while the mouse button is
-    down, then restores it on release.
-    """
-    hover_color = button.cget("activebackground")
-
-    def on_press(_event):
-        button.configure(activebackground=COLORS["accent_active"])
-
-    def on_release(_event):
-        button.configure(activebackground=hover_color)
-
-    button.bind("<ButtonPress-1>", on_press, add="+")
-    button.bind("<ButtonRelease-1>", on_release, add="+")
 
 
 # --- Shared character-level validators -------------------------------------

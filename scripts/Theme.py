@@ -1,21 +1,22 @@
 """Design tokens and theming for the Econogram desktop UI.
 
-Defines the color palette, type scale, and spacing scale used across the
-app, and applies them to both classic Tk widgets (via the option database)
-and ttk widgets (via ttk.Style). The palette extends the deep-navy brand
-color already used in assets/logo.png and assets/banner.png rather than
-inventing a new one.
+Powered by ttkbootstrap: a custom light/dark theme pair built from the
+existing brand palette (still the deep-navy from assets/logo.png and
+assets/banner.png), registered with ttkbootstrap's Style engine so every
+ttk.*/ttkbootstrap widget in the app picks up modern flat-design styling
+(richer hover/pressed states, modern Treeview/scrollbar rendering) instead
+of the plain ttk "clam" theme used previously.
 
-Because Tk's option database cascades to every classic-tk widget created
-anywhere in the app (menus, popups, entries, buttons), calling apply_theme()
-once at startup themes the existing popup dialogs without needing to edit
-each dialog module individually.
+A handful of widgets stay classic tk (native Menu can't be themed by any
+ttk engine on any platform; PanedWindow's sash is simple enough to keep as
+direct option_add) -- everything else in the app was converted to ttk
+widgets so the Style engine below actually reaches it.
 """
 import tkinter as tk
 from tkinter import font as tkfont
-from tkinter import ttk
+from ttkbootstrap.style import Style, ThemeDefinition, Colors as TbColors
 
-COLORS = {
+LIGHT_COLORS = {
     "bg": "#F4F6F9",            # app window background
     "surface": "#FFFFFF",       # entries, table, popups
     "surface_alt": "#EEF1F6",   # zebra striping / recessed areas
@@ -31,6 +32,31 @@ COLORS = {
     "negative": "#B3261E",      # cash outflow
 }
 
+# Same brand hue family, lifted in lightness/saturation so it reads clearly
+# against near-black surfaces -- the light-mode navy would nearly vanish on
+# a dark background. Contrast-checked (WCAG AA) against its own bg/surface.
+DARK_COLORS = {
+    "bg": "#12151A",
+    "surface": "#1A1F27",
+    "surface_alt": "#212733",
+    "border": "#2E3642",
+    "ink": "#E7EAEE",
+    "muted": "#9BA5B4",
+    "accent": "#4C6FC7",
+    "accent_hover": "#5470BE",
+    "accent_active": "#3A57A3",
+    "accent_on": "#FFFFFF",
+    "focus": "#6C8EE8",
+    "positive": "#3FB876",
+    "negative": "#EA6259",
+}
+
+# A single mutable dict object, never reassigned. Every
+# `from scripts.Theme import COLORS` elsewhere in the app binds to this
+# object, so toggle_dark_mode()'s in-place mutation is automatically
+# visible everywhere without touching those files' imports.
+COLORS = dict(LIGHT_COLORS)
+
 SPACING = {
     "xs": 4,
     "sm": 8,
@@ -42,6 +68,7 @@ SPACING = {
 _FONT_CANDIDATES = ["Segoe UI", "Helvetica Neue", "Helvetica", "Arial"]
 
 _cache = {}
+_state = {"dark": False, "root": None}
 
 
 def _pick_family():
@@ -69,109 +96,106 @@ def get_fonts():
     return scale
 
 
-def apply_theme(root):
-    """Apply the Econogram design tokens to the whole app."""
-    fonts = get_fonts()
-    body = fonts["body"]
-    button_font = fonts["body_bold"]
+def is_dark() -> bool:
+    return _state["dark"]
 
-    root.configure(background=COLORS["bg"])
+
+def _build_theme_definition(name, colors, themetype):
+    tb_colors = TbColors(
+        primary=colors["accent"],
+        secondary=colors["muted"],
+        success=colors["positive"],
+        info=colors["focus"],
+        warning=colors["negative"],
+        danger=colors["negative"],
+        light=colors["surface_alt"],
+        dark=colors["ink"],
+        bg=colors["bg"],
+        fg=colors["ink"],
+        selectbg=colors["accent"],
+        selectfg=colors["accent_on"],
+        border=colors["border"],
+        inputfg=colors["ink"],
+        inputbg=colors["surface"],
+        active=colors["accent_hover"],
+    )
+    return ThemeDefinition(name=name, colors=tb_colors, themetype=themetype)
+
+
+def apply_theme(root):
+    """Apply the Econogram design tokens to the whole app.
+
+    Registers both the light and dark ttkbootstrap themes up front (so
+    toggling later is just a theme_use() swap) and activates light mode.
+    """
+    _state["root"] = root
+    _state["dark"] = False
+    COLORS.clear()
+    COLORS.update(LIGHT_COLORS)
+    fonts = get_fonts()
+
     root.option_clear()
 
-    root.option_add("*Font", body)
-    root.option_add("*Background", COLORS["bg"])
-    root.option_add("*Foreground", COLORS["ink"])
+    style = Style()
+    style.register_theme(_build_theme_definition("econogram-light", LIGHT_COLORS, "light"))
+    style.register_theme(_build_theme_definition("econogram-dark", DARK_COLORS, "dark"))
+    style.theme_use("econogram-light")
 
-    root.option_add("*Toplevel.Background", COLORS["bg"])
-    root.option_add("*Frame.Background", COLORS["bg"])
+    _configure_ttk_extras(style, fonts)
+    _apply_classic_tk_options(root, fonts)
+    root.configure(background=COLORS["bg"])
 
-    root.option_add("*Label.Background", COLORS["bg"])
-    root.option_add("*Label.Foreground", COLORS["ink"])
 
-    root.option_add("*Entry.Background", COLORS["surface"])
-    root.option_add("*Entry.Foreground", COLORS["ink"])
-    root.option_add("*Entry.insertBackground", COLORS["ink"])
-    root.option_add("*Entry.relief", "flat")
-    root.option_add("*Entry.highlightThickness", 1)
-    root.option_add("*Entry.highlightBackground", COLORS["border"])
-    root.option_add("*Entry.highlightColor", COLORS["focus"])
-    root.option_add("*Entry.disabledBackground", COLORS["surface_alt"])
+def toggle_dark_mode(on: bool, on_retheme=None):
+    """Swap the active palette and re-theme everything already on screen.
 
-    root.option_add("*Button.Background", COLORS["accent"])
-    root.option_add("*Button.Foreground", COLORS["accent_on"])
-    root.option_add("*Button.activeBackground", COLORS["accent_hover"])
-    root.option_add("*Button.activeForeground", COLORS["accent_on"])
-    root.option_add("*Button.relief", "flat")
-    root.option_add("*Button.font", button_font)
-    root.option_add("*Button.padX", 16)
-    root.option_add("*Button.padY", 7)
-    root.option_add("*Button.cursor", "hand2")
-    root.option_add("*Button.borderWidth", 0)
-    # Keep a visible focus ring (in the brand focus color) for keyboard nav
-    # rather than stripping it for a flatter look.
-    root.option_add("*Button.highlightThickness", 2)
-    root.option_add("*Button.highlightBackground", COLORS["bg"])
-    root.option_add("*Button.highlightColor", COLORS["focus"])
+    Mutating COLORS in place only affects *future* widget creation; this
+    also re-applies the palette to the ttk Style engine and the remaining
+    classic-tk options. `on_retheme` is an optional no-arg callback for
+    things that cache colors outside Tk's own widget system entirely (the
+    matplotlib chart, Treeview row-tag colors) -- those need to be
+    explicitly redrawn, since changing the ttk theme doesn't touch them.
+    """
+    _state["dark"] = on
+    COLORS.clear()
+    COLORS.update(DARK_COLORS if on else LIGHT_COLORS)
 
+    style = Style.get_instance()
+    style.theme_use("econogram-dark" if on else "econogram-light")
+    _configure_ttk_extras(style, get_fonts())
+
+    root = _state["root"]
+    if root is not None:
+        _apply_classic_tk_options(root, get_fonts())
+        root.configure(background=COLORS["bg"])
+
+    if on_retheme is not None:
+        on_retheme()
+
+
+def _configure_ttk_extras(style, fonts):
+    """Widget-specific tweaks the theme engine doesn't cover by default.
+
+    ttk.Frame doesn't accept a direct `background=` kwarg the way classic
+    tk.Frame does (confirmed: it raises "unknown option -background") --
+    any frame that needs a color other than the theme's default window
+    background has to go through a named style like these instead.
+    """
+    style.configure("Treeview", rowheight=26, font=fonts["body"])
+    style.configure("Treeview.Heading", font=fonts["body_bold"], padding=(8, 6))
+    style.configure("Surface.TFrame", background=COLORS["surface"])
+    style.configure("Border.TFrame", background=COLORS["border"])
+
+
+def _apply_classic_tk_options(root, fonts):
+    """The few widgets that stay classic tk: native Menu, and PanedWindow's
+    sash (simple enough not to need a ttk equivalent)."""
     root.option_add("*Menu.Background", COLORS["surface"])
     root.option_add("*Menu.Foreground", COLORS["ink"])
     root.option_add("*Menu.activeBackground", COLORS["accent"])
     root.option_add("*Menu.activeForeground", COLORS["accent_on"])
-    root.option_add("*Menu.font", body)
+    root.option_add("*Menu.font", fonts["body"])
     root.option_add("*Menu.borderWidth", 1)
-
-    root.option_add("*Scale.Background", COLORS["bg"])
-    root.option_add("*Scale.troughColor", COLORS["border"])
-    root.option_add("*Scale.foreground", COLORS["ink"])
-    root.option_add("*Scale.activeBackground", COLORS["accent_hover"])
-    root.option_add("*Scale.highlightThickness", 0)
 
     root.option_add("*PanedWindow.Background", COLORS["border"])
     root.option_add("*PanedWindow.sashRelief", "flat")
-
-    _configure_ttk(root, fonts)
-
-
-def _configure_ttk(root, fonts):
-    style = ttk.Style(root)
-    try:
-        style.theme_use("clam")
-    except tk.TclError:
-        pass
-
-    style.configure("TFrame", background=COLORS["bg"])
-    style.configure("TLabel", background=COLORS["bg"], foreground=COLORS["ink"], font=fonts["body"])
-
-    style.configure(
-        "TScrollbar",
-        background=COLORS["surface_alt"],
-        troughcolor=COLORS["bg"],
-        bordercolor=COLORS["border"],
-        arrowcolor=COLORS["muted"],
-        relief="flat",
-    )
-    style.map("TScrollbar", background=[("active", COLORS["border"])])
-
-    style.configure(
-        "Treeview",
-        background=COLORS["surface"],
-        fieldbackground=COLORS["surface"],
-        foreground=COLORS["ink"],
-        rowheight=26,
-        font=fonts["body"],
-        borderwidth=0,
-    )
-    style.configure(
-        "Treeview.Heading",
-        background=COLORS["accent"],
-        foreground=COLORS["accent_on"],
-        font=fonts["body_bold"],
-        relief="flat",
-        padding=(8, 6),
-    )
-    style.map("Treeview.Heading", background=[("active", COLORS["accent_hover"])])
-    style.map(
-        "Treeview",
-        background=[("selected", COLORS["accent"])],
-        foreground=[("selected", COLORS["accent_on"])],
-    )
