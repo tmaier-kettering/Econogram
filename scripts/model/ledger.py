@@ -46,11 +46,16 @@ class CashFlowLedger:
         self._next_series_id += 1
         return series_id
 
+    def _require_name(self, name: str) -> str:
+        """Validate and normalize a series name. Raises LedgerError if empty."""
+        name = name.strip()
+        if not name:
+            raise LedgerError("Series name cannot be empty.")
+        return name
+
     def add_single(self, period: int, amount: float, color, series_name: str) -> int:
         """Add one cash flow as its own new series. Returns the new series_id."""
-        series_name = series_name.strip()
-        if not series_name:
-            raise LedgerError("Series name cannot be empty.")
+        series_name = self._require_name(series_name)
         if amount == 0:
             raise LedgerError("Cash flow amount must be non-zero.")
 
@@ -60,9 +65,7 @@ class CashFlowLedger:
 
     def add_uniform(self, start_period: int, amount: float, length: int, color, series_name: str) -> int:
         """Add `length` equal cash flows starting at start_period. Returns the new series_id."""
-        series_name = series_name.strip()
-        if not series_name:
-            raise LedgerError("Series name cannot be empty.")
+        series_name = self._require_name(series_name)
         if length < 1:
             raise LedgerError("Length of series must be at least 1.")
 
@@ -74,9 +77,7 @@ class CashFlowLedger:
     def add_gradient(self, start_period: int, gradient_amount: float, length: int, color, series_name: str) -> int:
         """Add a gradient series: cash_flow(i) = gradient_amount * i, for
         i in 0..length-1, so the first value is always 0. Returns the new series_id."""
-        series_name = series_name.strip()
-        if not series_name:
-            raise LedgerError("Series name cannot be empty.")
+        series_name = self._require_name(series_name)
         if length < 1:
             raise LedgerError("Length of series must be at least 1.")
 
@@ -89,9 +90,7 @@ class CashFlowLedger:
                       growth_rate_pct: float, color, series_name: str) -> int:
         """Add a geometric series: cash_flow(i) = initial_value * (1 +
         growth_rate_pct/100) ** i, for i in 0..length-1. Returns the new series_id."""
-        series_name = series_name.strip()
-        if not series_name:
-            raise LedgerError("Series name cannot be empty.")
+        series_name = self._require_name(series_name)
         if length < 1:
             raise LedgerError("Length of series must be at least 1.")
         if initial_value == 0:
@@ -142,6 +141,8 @@ class CashFlowLedger:
         split_period go to a new series named name_1 (keeping the original
         color), rows with Period > split_period go to a new series named
         name_2 with color_2. Returns (new_series_id_1, new_series_id_2)."""
+        name_1 = self._require_name(name_1)
+        name_2 = self._require_name(name_2)
         series_rows = self._df[self._df["Series_ID"] == series_id]
         if series_rows.empty:
             raise LedgerError("The series to split no longer exists.")
@@ -171,6 +172,7 @@ class CashFlowLedger:
         """Sum the Cash Flow of the given rows (which must all share one
         Period) into a single new row under a new series. Returns the new
         Row_ID."""
+        series_name = self._require_name(series_name)
         if len(row_ids) < 2:
             raise LedgerError("Select at least two cash flows to combine.")
 
@@ -198,6 +200,7 @@ class CashFlowLedger:
         update a series in place, or pass a freshly-reserved series_id
         (via reserve_series_id()) with a new color/name to create a new
         series instead."""
+        series_name = self._require_name(series_name)
         if not new_entries:
             raise LedgerError("Nothing to replace the selected cash flows with.")
 
@@ -205,6 +208,15 @@ class CashFlowLedger:
             self._df = self._df[~self._df["Row_ID"].isin(row_ids)].reset_index(drop=True)
 
         return self._append_rows(new_entries, color=color, series_id=series_id, series_name=series_name)
+
+    def restore(self, snapshot: pd.DataFrame) -> None:
+        """Replace the ledger's rows with a previously-saved snapshot (e.g.
+        from UndoHistory.undo()). Row_ID and series_id counters are left
+        untouched — Row_IDs in the restored snapshot are already valid and
+        must never be reused, and series_id continuing to climb is
+        intentional — new series created after a restore still get ids
+        that have never been seen before."""
+        self._df = snapshot.copy()
 
     def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
         """Append (period, cash_flow) pairs as new rows under one series.

@@ -46,12 +46,18 @@ def test_worked_example_uniform_series_present_value_and_undo():
     )
     assert combined_value == pytest.approx(-2723.248, abs=0.01)
 
-    # Undo the invert: should get back the positive-valued series.
+    # Undo the invert: should get back the positive-valued series. Feed the
+    # snapshot back into the ledger via restore() — the point of this test
+    # is that the pieces work *together*, so it's not enough to just check
+    # the raw DataFrame undo() handed back in isolation.
     restored = undo.undo()
     assert (restored["Cash Flow"] > 0).all()
+
+    ledger.restore(restored)
+    assert (ledger.as_dataframe()["Cash Flow"] > 0).all()
 
     # Selection sync after undo: the row ids are unchanged (undo restores
     # the same Row_IDs, since Row_ID is never reused/renumbered), so the
     # prior selection is still fully valid.
-    selection.sync(set(restored["Row_ID"]))
+    selection.sync(set(ledger.as_dataframe()["Row_ID"]))
     assert selection.selected == frozenset(row_ids)

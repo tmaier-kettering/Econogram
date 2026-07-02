@@ -1,5 +1,6 @@
 import pytest
 from scripts.model.finance import present_value, future_value, annual_value
+from scripts.model.errors import LedgerError
 
 
 def test_present_value_matches_textbook_example():
@@ -34,5 +35,5 @@ def test_annual_value_zero_interest_rate_divides_evenly():
 
 
 def test_annual_value_raises_for_zero_periods():
-    with pytest.raises(ValueError):
+    with pytest.raises(LedgerError):
         annual_value(1000, 0.05, 0)

@@ -349,3 +349,51 @@ def test_replace_rows_requires_at_least_one_new_entry():
     series_id = ledger.reserve_series_id()
     with pytest.raises(LedgerError):
         ledger.replace_rows([], [], series_id=series_id, color="red", series_name="X")
+
+
+def test_combine_rows_with_empty_series_name_raises():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=3, amount=100.0, color="red", series_name="A")
+    ledger.add_single(period=3, amount=50.0, color="blue", series_name="B")
+    row_ids = ledger.as_dataframe()["Row_ID"].tolist()
+    with pytest.raises(LedgerError):
+        ledger.combine_rows(row_ids, color="green", series_name="   ")
+
+
+def test_replace_rows_with_empty_series_name_raises():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_single(period=5, amount=1000.0, color="red", series_name="Deposit")
+    old_row_id = ledger.as_dataframe().iloc[0]["Row_ID"]
+    with pytest.raises(LedgerError):
+        ledger.replace_rows(
+            [old_row_id], [(3, 863.84)],
+            series_id=series_id, color="red", series_name=""
+        )
+
+
+def test_split_series_with_empty_name_1_raises():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=100.0, length=2, color="red", series_name="A")
+    with pytest.raises(LedgerError):
+        ledger.split_series(series_id, split_period=0, name_1="", name_2="A_2", color_2="blue")
+
+
+def test_split_series_with_empty_name_2_raises():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=100.0, length=2, color="red", series_name="A")
+    with pytest.raises(LedgerError):
+        ledger.split_series(series_id, split_period=0, name_1="A_1", name_2="   ", color_2="blue")
+
+
+def test_restore_replaces_rows_with_a_snapshot():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    snapshot = ledger.as_dataframe()
+
+    ledger.add_single(period=1, amount=200.0, color="blue", series_name="B")
+    assert len(ledger.as_dataframe()) == 2
+
+    ledger.restore(snapshot)
+    restored = ledger.as_dataframe()
+    assert len(restored) == 1
+    assert restored.iloc[0]["Series_Name"] == "A"
