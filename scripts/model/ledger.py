@@ -19,7 +19,14 @@ class CashFlowLedger:
     (colors are passed in by the caller, which owns a ColorAssigner)."""
 
     def __init__(self):
-        self._df = pd.DataFrame(columns=COLUMNS)
+        self._df = pd.DataFrame({
+            "Row_ID": pd.Series(dtype="int64"),
+            "Period": pd.Series(dtype="int64"),
+            "Cash Flow": pd.Series(dtype="float64"),
+            "Color": pd.Series(dtype="object"),
+            "Series_ID": pd.Series(dtype="int64"),
+            "Series_Name": pd.Series(dtype="object"),
+        })
         self._next_row_id = 1
         self._next_series_id = 1
 
@@ -65,12 +72,17 @@ class CashFlowLedger:
             new_row_ids.append(row_id)
             rows.append({
                 "Row_ID": row_id,
-                "Period": period,
+                "Period": int(period),
                 "Cash Flow": float(cash_flow),
                 "Color": color,
                 "Series_ID": series_id,
                 "Series_Name": series_name,
             })
-        new_df = pd.DataFrame(rows, columns=COLUMNS)
+        new_df = pd.DataFrame(rows, columns=COLUMNS).astype({
+            "Row_ID": "int64",
+            "Period": "int64",
+            "Cash Flow": "float64",
+            "Series_ID": "int64",
+        })
         self._df = pd.concat([self._df, new_df], ignore_index=True)
         return new_row_ids

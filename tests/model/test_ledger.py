@@ -58,3 +58,14 @@ def test_as_dataframe_returns_a_copy_not_a_live_reference():
     snapshot = ledger.as_dataframe()
     snapshot.iloc[0, snapshot.columns.get_loc("Cash Flow")] = 999.0
     assert ledger.as_dataframe().iloc[0]["Cash Flow"] == 100.0
+
+
+def test_dataframe_columns_have_correct_dtypes():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    ledger.add_single(period=1, amount=-200.0, color="blue", series_name="B")
+    df = ledger.as_dataframe()
+    assert df["Row_ID"].dtype == "int64"
+    assert df["Period"].dtype == "int64"
+    assert df["Cash Flow"].dtype == "float64"
+    assert df["Series_ID"].dtype == "int64"
