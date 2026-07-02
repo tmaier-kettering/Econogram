@@ -110,14 +110,16 @@ def popup_present_value(app):
 
 
 def update_series_for_multiple_cash_flow(app, combined_value, new_period, series_cash_flows, series_id):
-    # Update the series
+    # Update the series with renamed series name
+    original_series_name = series_cash_flows["Series_Name"].iloc[0]
+    rendered_series_name = f"PV({original_series_name})"
     color = series_cash_flows["Color"].iloc[0]  # Assuming color is consistent within a series
     new_entry = pd.DataFrame({
         "Period": [new_period],
         "Cash Flow": [combined_value],
         "Color": [color],
         "Series_ID": [series_id],
-        "Series_Name": [series_cash_flows["Series_Name"].iloc[0]]
+        "Series_Name": [rendered_series_name]
     })
     app.cash_flows = app.cash_flows.drop(series_cash_flows.index).reset_index(drop=True)
     app.cash_flows = pd.concat([app.cash_flows, new_entry], ignore_index=True)
@@ -126,7 +128,7 @@ def update_series_for_multiple_cash_flow(app, combined_value, new_period, series
 def make_new_series_for_multiple_cash_flow(app, combined_value, new_period, series_cash_flows):
     # Create a name for the calculated series
     original_series_name = series_cash_flows["Series_Name"].iloc[0]
-    rendered_series_name = f"PV of {original_series_name}"
+    rendered_series_name = f"PV({original_series_name})"
     # Create a new entry for the calculated present value
     new_series_id = app._get_next_series_id()
     color = app.get_next_color()  # Assign a new unique color
@@ -144,7 +146,7 @@ def make_new_series_for_multiple_cash_flow(app, combined_value, new_period, seri
 def make_new_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows):
     # Create a name for the calculated series
     original_series_name = selected_cash_flows["Series_Name"].iloc[0]
-    rendered_series_name = f"PV of {original_series_name}"
+    rendered_series_name = f"PV({original_series_name})"
     # Create a new entry for the calculated present value
     new_series_id = app._get_next_series_id()
     color = app.get_next_color()  # Assign a new unique color
@@ -161,14 +163,15 @@ def make_new_series_for_single_cash_flow(app, combined_value, new_period, select
 
 def update_series_for_single_cash_flow(app, combined_value, new_period, selected_cash_flows):
     series_id = selected_cash_flows["Series_ID"].iloc[0]
-    series_name = selected_cash_flows["Series_Name"].iloc[0]
+    original_series_name = selected_cash_flows["Series_Name"].iloc[0]
+    rendered_series_name = f"PV({original_series_name})"
     color = selected_cash_flows["Color"].iloc[0]  # Assuming color is consistent within a series
     new_entry = pd.DataFrame({
         "Period": [new_period],
         "Cash Flow": [combined_value],
         "Color": [color],
         "Series_ID": [series_id],
-        "Series_Name": [series_name]
+        "Series_Name": [rendered_series_name]
     })
     app.cash_flows = app.cash_flows.drop(app.selected_indices).reset_index(drop=True)
     new_entry_cleaned = new_entry.dropna(how='all')
