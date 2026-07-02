@@ -139,3 +139,72 @@ def test_add_geometric_with_zero_length_raises():
             start_period=0, initial_value=1000.0, length=0, growth_rate_pct=10.0,
             color="green", series_name="Sales"
         )
+
+
+def test_delete_rows_removes_only_the_given_rows():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    series_id_b = ledger.add_single(period=1, amount=200.0, color="blue", series_name="B")
+    row_to_delete = ledger.as_dataframe().iloc[0]["Row_ID"]
+
+    deleted_count = ledger.delete_rows([row_to_delete])
+
+    assert deleted_count == 1
+    remaining = ledger.as_dataframe()
+    assert len(remaining) == 1
+    assert remaining.iloc[0]["Series_ID"] == series_id_b
+
+
+def test_delete_rows_ignores_stale_ids_but_deletes_valid_ones():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    real_row_id = ledger.as_dataframe().iloc[0]["Row_ID"]
+
+    deleted_count = ledger.delete_rows([real_row_id, 99999])
+
+    assert deleted_count == 1
+    assert ledger.is_empty()
+
+
+def test_delete_rows_with_no_valid_ids_raises():
+    ledger = CashFlowLedger()
+    ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    with pytest.raises(LedgerError):
+        ledger.delete_rows([99999])
+
+
+def test_delete_rows_with_empty_list_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.delete_rows([])
+
+
+def test_invert_series_negates_every_row_in_the_series():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=500.0, length=2, color="red", series_name="A")
+
+    inverted_count = ledger.invert_series([series_id])
+
+    assert inverted_count == 1
+    assert ledger.as_dataframe()["Cash Flow"].tolist() == [-500.0, -500.0]
+
+
+def test_invert_series_twice_returns_to_original_sign():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    ledger.invert_series([series_id])
+    ledger.invert_series([series_id])
+    assert ledger.as_dataframe().iloc[0]["Cash Flow"] == 100.0
+
+
+def test_invert_series_with_empty_list_raises():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.invert_series([])
+
+
+def test_invert_series_ignores_unknown_series_ids():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    inverted_count = ledger.invert_series([series_id, 99999])
+    assert inverted_count == 1

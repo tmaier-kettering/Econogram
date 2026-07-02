@@ -106,6 +106,37 @@ class CashFlowLedger:
         self._append_rows(entries, color=color, series_id=series_id, series_name=series_name)
         return series_id
 
+    def delete_rows(self, row_ids: list) -> int:
+        """Delete rows by Row_ID. Unknown ids in the list are ignored as
+        long as at least one given id still exists. Returns the number of
+        rows actually deleted."""
+        if not row_ids:
+            raise LedgerError("No rows selected to delete.")
+
+        existing_ids = set(self._df["Row_ID"])
+        valid_ids = [r for r in row_ids if r in existing_ids]
+        if not valid_ids:
+            raise LedgerError("The selected rows no longer exist.")
+
+        self._df = self._df[~self._df["Row_ID"].isin(valid_ids)].reset_index(drop=True)
+        return len(valid_ids)
+
+    def invert_series(self, series_ids: list) -> int:
+        """Negate Cash Flow for every row in each given series. Unknown
+        series ids are ignored as long as at least one still exists.
+        Returns the number of series actually inverted."""
+        if not series_ids:
+            raise LedgerError("No series selected to invert.")
+
+        existing_ids = set(self._df["Series_ID"])
+        valid_ids = [s for s in series_ids if s in existing_ids]
+        if not valid_ids:
+            raise LedgerError("The selected series no longer exist.")
+
+        mask = self._df["Series_ID"].isin(valid_ids)
+        self._df.loc[mask, "Cash Flow"] = -self._df.loc[mask, "Cash Flow"]
+        return len(valid_ids)
+
     def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
         """Append (period, cash_flow) pairs as new rows under one series.
         Returns the list of new Row_IDs, in order. The single mutation
