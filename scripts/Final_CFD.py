@@ -8,8 +8,9 @@ from tkinter import messagebox
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from scripts.Update_Plot import update_plot
+from scripts.Update_Plot import update_plot, update_selection_display
 from scripts.UI_Setup import setup_ui, get_asset_path
+from scripts.Theme import apply_theme
 from scripts.Uniform_Series import popup_uniform_series
 from scripts.Combine_CashFlows import combine_cash_flows
 from scripts.Single_CashFlow import popup_add_single_cash_flow
@@ -96,7 +97,12 @@ class CashFlowDiagramApp:
         self.toggle_makeNewSeries_button = None
         self.root = root
         self.root.title("Econogram")
-        
+
+        # Apply the shared design tokens (color, type, spacing) before any
+        # widgets are built, so every subsequently-created widget inherits
+        # them via the Tk option database and ttk.Style.
+        apply_theme(self.root)
+
         # Set the application icon
         try:
             icon_path = get_asset_path("app.ico")
@@ -104,6 +110,10 @@ class CashFlowDiagramApp:
         except Exception as e:
             print(f"Could not load icon: {e}")
         
+        # Keep the window from being resized into something the menu bar,
+        # status bar, and table can no longer lay out sensibly.
+        self.root.minsize(900, 600)
+
         # Maximize the window (cross-platform approach)
         try:
             # Try Windows/Mac method
@@ -213,6 +223,22 @@ class CashFlowDiagramApp:
     def select_series(self, series_id):
         self.selected_indices = self.cash_flows[self.cash_flows["Series_ID"] == series_id].index.tolist()
         self.update_canvas()
+
+    def select_all(self):
+        if self.cash_flows.empty:
+            return
+        self.selected_indices = list(self.cash_flows.index)
+        self._refresh_selection_display()
+
+    def deselect_all(self):
+        if not self.selected_indices:
+            return
+        self.selected_indices = []
+        self._refresh_selection_display()
+
+    def _refresh_selection_display(self):
+        if self.canvas and self.canvas.figure.axes:
+            update_selection_display(self.canvas.figure.axes[0], self)
 
     def delete_selected_series(self):
         self._save_state()

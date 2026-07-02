@@ -5,6 +5,7 @@ Combines multiple cash flows occurring in the same period into a single aggregat
 import pandas as pd
 from tkinter import messagebox
 from scripts.Create_Table import create_table
+from scripts.Toast import show_toast
 
 
 def combine_cash_flows(app):
@@ -63,6 +64,8 @@ def combine_cash_flows(app):
 
         # Update the application plot with new data
         app.update_plot()
+
+        show_toast(app, f"Combined into '{series_name}'", kind="info")
 
     except Exception as e:
         # Show error message if any exception occurs

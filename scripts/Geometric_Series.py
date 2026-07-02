@@ -3,53 +3,18 @@
 Provides the dialog for adding geometric cash flow series to the diagram.
 A geometric series increases by a constant percentage each period.
 """
-import tkinter as tk
-from tkinter import messagebox
 import pandas as pd
-from scripts.UI_Setup import get_asset_path
+from scripts.DialogKit import (
+    create_popup, center_popup, build_form, add_field, add_error_label,
+    show_error, clear_error, add_submit_button,
+    validate_currency, validate_integer, validate_series_name,
+)
+from scripts.Toast import show_toast
 
 
 def popup_geometric_series(app, series_id):
-    def validate_cash_flow_input(entry_text, action_type):
-        # Allow negative numbers, at most one decimal point, and handle intermediate states
-        if action_type == '1':  # If inserting a character
-            if entry_text in {'-', '-.', '.'}:  # Allow intermediate input like '-' or '-.' or '.'
-                return True
-            if not (
-                    entry_text.replace('-', '', 1).replace('.', '',
-                                                           1).isdigit() and  # Remove '-' and '.' for digit check
-                    entry_text.count('-') <= 1 and  # Ensure at most one negative sign
-                    entry_text.count('.') <= 1 and  # Ensure at most one decimal point
-                    (entry_text.find('-') <= 0)  # Ensure '-' is only at the start
-            ):
-                return False
-            # Check for more than two decimal places
-            if '.' in entry_text and len(entry_text.split('.')[1]) > 2:
-                return False
-            if len(entry_text) > 10:  # Restrict total input length
-                return False
-        return True
-
-    def validate_numeric_input(entry_text, action_type):
-        # Allow negative integers and positive integers (no length limit)
-        if action_type == '1':  # If we're inserting a character
-            if entry_text in {'-', ''}:  # Allow '-' during input
-                return True
-            if not (
-                    entry_text.replace('-', '', 1).isdigit() and  # Allows '-'
-                    entry_text.count('-') <= 1 and  # Only one negative sign
-                    (entry_text.find('-') <= 0)  # Negative sign must be at the first position
-            ):
-                return False
-        return True
-
-    def validate_series_name_input(entry_text, action_type):
-        # Limit the series name to 14 characters (validate at 15 to allow up to 14)
-        if action_type == '1' and len(entry_text) >= 15:
-            return False
-        return True
-
     def submit(event=None):
+        clear_error(error_label)
         try:
             # Validate start year input
             try:
@@ -115,62 +80,26 @@ def popup_geometric_series(app, series_id):
             app.selected_indices = []
             app.update_plot()
             popup.destroy()
+            show_toast(app, f"Added {num_years} entries to '{series_name}'")
 
         except ValueError as e:
-            messagebox.showerror("Input Error", str(e), parent=popup)
-            # Ensure the window remains on top and focused
-            popup.lift()
-            popup.focus_force()
+            show_error(error_label, str(e))
 
     # Create the popup window
-    popup = tk.Toplevel(app.root)
-    popup.title("Geometric Series Input")
-    
-    # Set the window icon
-    try:
-        icon_path = get_asset_path("app.ico")
-        popup.iconbitmap(icon_path)
-    except Exception as e:
-        print(f"Could not load icon for geometric series window: {e}")
-    
-    # Make window always on top
-    popup.attributes('-topmost', True)
-    
-    # Center the window after widgets are added
-    popup.update_idletasks()
-    width = popup.winfo_reqwidth()
-    height = popup.winfo_reqheight()
-    x = (popup.winfo_screenwidth() // 2) - (width // 2)
-    y = (popup.winfo_screenheight() // 2) - (height // 2)
-    popup.geometry(f'+{x}+{y}')
+    popup = create_popup(app, "Geometric Series Input")
+    form = build_form(popup)
 
-    tk.Label(popup, text="Starting Period:").grid(row=0, column=0, padx=10, pady=5)
-    start_year_entry = tk.Entry(popup, validate="key",
-                                validatecommand=(popup.register(validate_numeric_input), '%P', '%d'))
-    start_year_entry.grid(row=0, column=1, padx=10, pady=5)
+    start_year_entry = add_field(form, 0, "Starting Period:", validate_integer, default="0")
+    initial_value_entry = add_field(form, 1, "Initial Cash Flow Amount:", validate_currency)
+    num_years_entry = add_field(form, 2, "Series Length:", validate_integer)
+    growth_rate_entry = add_field(form, 3, "Growth Rate (%):", validate_currency)
+    series_name_entry = add_field(
+        form, 4, "Series Name:", validate_series_name,
+        default=f"Series {series_id}", select_default=True
+    )
 
-    tk.Label(popup, text="Initial Cash Flow Amount:").grid(row=1, column=0, padx=10, pady=5)
-    initial_value_entry = tk.Entry(popup, validate="key",
-                                   validatecommand=(popup.register(validate_cash_flow_input), '%P', '%d'))
-    initial_value_entry.grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(popup, text="Series Length:").grid(row=2, column=0, padx=10, pady=5)
-    num_years_entry = tk.Entry(popup, validate="key",
-                               validatecommand=(popup.register(validate_numeric_input), '%P', '%d'))
-    num_years_entry.grid(row=2, column=1, padx=10, pady=5)
-
-    tk.Label(popup, text="Growth Rate (%):").grid(row=3, column=0, padx=10, pady=5)
-    growth_rate_entry = tk.Entry(popup, validate="key",
-                                 validatecommand=(popup.register(validate_cash_flow_input), '%P', '%d'))
-    growth_rate_entry.grid(row=3, column=1, padx=10, pady=5)
-
-    tk.Label(popup, text="Series Name:").grid(row=4, column=0, padx=10, pady=5)
-    series_name_entry = tk.Entry(popup, validate="key",
-                                 validatecommand=(popup.register(validate_series_name_input), '%P', '%d'))
-    series_name_entry.grid(row=4, column=1, padx=10, pady=5)
-
-    submit_button = tk.Button(popup, text="Graph", command=submit)
-    submit_button.grid(row=5, columnspan=2, pady=10)
+    error_label = add_error_label(form, 5)
+    add_submit_button(form, 6, "Graph", submit)
 
     # Bind the "Enter" key to the submit function
     popup.bind('<Return>', submit)
@@ -179,3 +108,6 @@ def popup_geometric_series(app, series_id):
     num_years_entry.bind('<Return>', submit)
     growth_rate_entry.bind('<Return>', submit)
     series_name_entry.bind('<Return>', submit)
+
+    start_year_entry.focus_set()
+    center_popup(popup)

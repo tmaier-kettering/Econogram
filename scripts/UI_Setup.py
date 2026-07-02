@@ -6,6 +6,7 @@ including menus, status bars, and event bindings.
 import webbrowser
 
 from scripts.Clear_Graph import clear_graph
+from scripts.Theme import COLORS, SPACING, get_fonts
 import tkinter as tk
 from tkinter import font, messagebox, simpledialog
 import os
@@ -71,7 +72,10 @@ def setup_ui(app):
     create_status_bar(app)
 
     # Create a PanedWindow for resizable sections (graph and table)
-    app.main_paned_window = tk.PanedWindow(app.root, orient=tk.HORIZONTAL, sashrelief=tk.RAISED, sashwidth=5)
+    app.main_paned_window = tk.PanedWindow(
+        app.root, orient=tk.HORIZONTAL, sashrelief=tk.FLAT, sashwidth=6,
+        background=COLORS["border"], bd=0
+    )
     app.main_paned_window.pack(side="top", fill=tk.BOTH, expand=True)
 
     # Create a frame for the graph (will be populated by update_plot)
@@ -93,49 +97,68 @@ def create_menu_bar(app):
 
     # File Menu
     file_menu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="File", menu=file_menu)
-    file_menu.add_command(label="Clear Graph", command=app.clear_graph)
+    menubar.add_cascade(label="File", menu=file_menu, underline=0)
+    file_menu.add_command(label="Clear Graph", command=app.clear_graph, underline=0)
     file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=app.root.quit)
+    file_menu.add_command(label="Exit", command=app.root.quit, underline=0)
 
     # Edit Menu
     edit_menu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Edit", menu=edit_menu)
-    edit_menu.add_command(label="Undo", command=app.undo_last_action, accelerator="Ctrl+Z")
-    edit_menu.add_command(label="Delete Selection", command=app.delete_selected_series, accelerator="Delete")
-    edit_menu.add_command(label="Invert Series", command=app.invert_selected_series)
-    edit_menu.add_command(label="Split Series", command=app.split_selected_series)
+    menubar.add_cascade(label="Edit", menu=edit_menu, underline=0)
+    edit_menu.add_command(label="Undo", command=app.undo_last_action, accelerator="Ctrl+Z", underline=0)
+    edit_menu.add_command(label="Delete Selection", command=app.delete_selected_series, accelerator="Delete",
+                          underline=0)
+    edit_menu.add_command(label="Invert Series", command=app.invert_selected_series, underline=0)
+    edit_menu.add_command(label="Split Series", command=app.split_selected_series, underline=1)
     edit_menu.add_separator()
-    edit_menu.add_command(label="Combine Cash Flows", command=app.combine_cash_flows)
+    edit_menu.add_command(label="Combine Cash Flows", command=app.combine_cash_flows, underline=0)
+    edit_menu.add_separator()
+    edit_menu.add_command(label="Select All", command=app.select_all, accelerator="Ctrl+A", underline=0)
+    edit_menu.add_command(label="Deselect All", command=app.deselect_all, accelerator="Esc", underline=7)
+    # Reflect real availability instead of always being clickable and
+    # bouncing back a "please select something" messagebox.
+    edit_menu.config(postcommand=lambda: _update_edit_menu_state(app, edit_menu))
 
     # Insert Menu
     insert_menu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Insert", menu=insert_menu)
-    insert_menu.add_command(label="Single Cash Flow", command=app.popup_add_single_cash_flow)
-    insert_menu.add_command(label="Uniform Series", command=app.popup_uniform_series)
-    insert_menu.add_command(label="Gradient Series", command=app.popup_gradient_series)
-    insert_menu.add_command(label="Geometric Series", command=app.popup_geometric_series)
+    menubar.add_cascade(label="Insert", menu=insert_menu, underline=0)
+    insert_menu.add_command(label="Single Cash Flow", command=app.popup_add_single_cash_flow, underline=0)
+    insert_menu.add_command(label="Uniform Series", command=app.popup_uniform_series, underline=0)
+    insert_menu.add_command(label="Gradient Series", command=app.popup_gradient_series, underline=0)
+    insert_menu.add_command(label="Geometric Series", command=app.popup_geometric_series, underline=1)
 
     # Calculate Menu
     calculate_menu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Calculate", menu=calculate_menu)
-    calculate_menu.add_command(label="Present Value", command=app.popup_present_value)
-    calculate_menu.add_command(label="Future Value", command=app.popup_future_value)
-    calculate_menu.add_command(label="Annual Value", command=app.popup_annual_value)
+    menubar.add_cascade(label="Calculate", menu=calculate_menu, underline=0)
+    calculate_menu.add_command(label="Present Value", command=app.popup_present_value, underline=0)
+    calculate_menu.add_command(label="Future Value", command=app.popup_future_value, underline=0)
+    calculate_menu.add_command(label="Annual Value", command=app.popup_annual_value, underline=0)
+    calculate_menu.config(postcommand=lambda: _update_calculate_menu_state(app, calculate_menu))
 
     # Options Menu
     options_menu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Options", menu=options_menu)
-    options_menu.add_command(label="Set Interest Rate...", command=lambda: prompt_interest_rate_change(app))
+    menubar.add_cascade(label="Options", menu=options_menu, underline=0)
+    options_menu.add_command(label="Set Interest Rate...", command=lambda: prompt_interest_rate_change(app),
+                             underline=0)
     options_menu.add_separator()
     # Add checkbutton for Make New Series toggle
     app.makeNewSeries_var = tk.BooleanVar(value=False)
     options_menu.add_checkbutton(label="Make New Series", variable=app.makeNewSeries_var,
-                                 command=app.toggle_makeNewSeries)
+                                 command=app.toggle_makeNewSeries, underline=0)
+
+    options_menu.add_separator()
+    # Collapses popup fades/pulses/toast slides to instant state changes.
+    # There's no reliable cross-platform way to read the OS "prefers
+    # reduced motion" setting from Tkinter, so this is an explicit toggle.
+    app.reduce_motion = tk.BooleanVar(value=False)
+    options_menu.add_checkbutton(label="Reduce Motion", variable=app.reduce_motion, underline=0)
 
     # Help Menu
+    # (mnemonics skipped here: with 17 topic entries the letters run out
+    # fast and collisions stop being worth tracking for a menu that's
+    # mostly browsed with the mouse rather than the keyboard)
     help_menu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Help", menu=help_menu)
+    menubar.add_cascade(label="Help", menu=help_menu, underline=0)
 
     # Add help topics to the Help menu
     help_menu.add_command(label="Present Value", command=lambda: show_help_message(
@@ -188,17 +211,67 @@ def create_menu_bar(app):
     # Bind keyboard shortcuts
     app.root.bind('<Control-z>', lambda e: app.undo_last_action())
     app.root.bind('<Delete>', lambda e: app.delete_selected_series())
+    app.root.bind('<Control-a>', lambda e: app.select_all())
+    app.root.bind('<Escape>', lambda e: app.deselect_all())
+
+
+def _valid_selected_indices(app):
+    """Selected indices that still exist in the current cash_flows table."""
+    if not app.selected_indices or app.cash_flows.empty:
+        return []
+    return list(app.cash_flows.index.intersection(app.selected_indices))
+
+
+def _update_edit_menu_state(app, edit_menu):
+    """Enable/disable Edit menu items to reflect what's actually doable."""
+    selected = _valid_selected_indices(app)
+    has_selection = bool(selected)
+    has_undo = len(app.state_history) > 1
+
+    can_split = False
+    if has_selection:
+        series_ids = set(app.cash_flows.loc[selected, "Series_ID"])
+        if len(series_ids) == 1:
+            series_id = next(iter(series_ids))
+            can_split = len(app.cash_flows[app.cash_flows["Series_ID"] == series_id]) > 1
+
+    edit_menu.entryconfig("Undo", state=tk.NORMAL if has_undo else tk.DISABLED)
+    edit_menu.entryconfig("Delete Selection", state=tk.NORMAL if has_selection else tk.DISABLED)
+    edit_menu.entryconfig("Invert Series", state=tk.NORMAL if has_selection else tk.DISABLED)
+    edit_menu.entryconfig("Split Series", state=tk.NORMAL if can_split else tk.DISABLED)
+    edit_menu.entryconfig("Combine Cash Flows", state=tk.NORMAL if len(selected) >= 2 else tk.DISABLED)
+    edit_menu.entryconfig("Select All", state=tk.NORMAL if not app.cash_flows.empty else tk.DISABLED)
+    edit_menu.entryconfig("Deselect All", state=tk.NORMAL if has_selection else tk.DISABLED)
+
+
+def _update_calculate_menu_state(app, calculate_menu):
+    """Enable/disable Calculate menu items based on whether anything is selected."""
+    state = tk.NORMAL if _valid_selected_indices(app) else tk.DISABLED
+    for label in ("Present Value", "Future Value", "Annual Value"):
+        calculate_menu.entryconfig(label, state=state)
 
 
 def create_status_bar(app):
     """Create a status bar at the top to display the interest rate."""
-    status_bar = tk.Frame(app.root, relief=tk.SUNKEN, bd=1)
+    fonts = get_fonts()
+    status_bar = tk.Frame(app.root, background=COLORS["surface"], height=36)
     status_bar.pack(side="top", fill="x")
 
+    # A 1px bottom border instead of a sunken bevel, in line with the flat
+    # theme used everywhere else.
+    separator = tk.Frame(app.root, background=COLORS["border"], height=1)
+    separator.pack(side="top", fill="x")
+
     # Interest rate label
-    tk.Label(status_bar, text="Interest Rate:", font=("Arial", 10)).pack(side="left", padx=5)
-    app.interest_rate_label = tk.Label(status_bar, text=f"{app.interest_rate}%", font=("Arial", 10, "bold"))
-    app.interest_rate_label.pack(side="left", padx=5)
+    tk.Label(
+        status_bar, text="Interest Rate", font=fonts["body"],
+        background=COLORS["surface"], foreground=COLORS["muted"]
+    ).pack(side="left", padx=(SPACING["md"], SPACING["xs"]), pady=SPACING["xs"])
+    app.interest_rate_label = tk.Label(
+        status_bar, text=f"{app.interest_rate}%", font=fonts["body_bold"],
+        background=COLORS["surface"], foreground=COLORS["accent"]
+    )
+    app.interest_rate_label.pack(side="left", padx=(0, SPACING["md"]), pady=SPACING["xs"])
 
 
 def _open_help_docs():

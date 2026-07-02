@@ -7,7 +7,9 @@ import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
 from scripts.Create_Table import create_table
-from scripts.UI_Setup import get_asset_path
+from scripts.DialogKit import create_popup, center_popup, add_press_feedback
+from scripts.Theme import COLORS, SPACING, get_fonts
+from scripts.Toast import show_toast
 
 
 def split_selected_series(app):
@@ -97,6 +99,7 @@ def show_split_dialog(app, series_id, series_data, periods):
             app.update_canvas()
 
             top.destroy()
+            show_toast(app, f"Split into '{series1_name}' and '{series2_name}'")
 
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred while splitting: {str(e)}")
@@ -111,30 +114,22 @@ def show_split_dialog(app, series_id, series_data, periods):
             split_label.config(text=f"Split between period {periods[idx]} and {periods[idx + 1]}")
 
     # Create the popup window
-    top = tk.Toplevel(app.root)
-    top.title("Split Series")
-
-    # Set the window icon
-    try:
-        icon_path = get_asset_path("app.ico")
-        top.iconbitmap(icon_path)
-    except Exception as e:
-        print(f"Could not load icon for split series window: {e}")
-
-    # Make window always on top
-    top.attributes('-topmost', True)
+    top = create_popup(app, "Split Series")
+    fonts = get_fonts()
 
     # Add instruction label
     instruction_text = "Drag the slider to choose where to split the series:"
-    tk.Label(top, text=instruction_text, font=("Arial", 10, "bold")).pack(padx=20, pady=(15, 5))
+    tk.Label(top, text=instruction_text, font=fonts["body_bold"]).pack(
+        padx=SPACING["lg"], pady=(SPACING["lg"], SPACING["sm"])
+    )
 
     # Create a frame for the slider and labels
-    slider_frame = tk.Frame(top)
-    slider_frame.pack(padx=20, pady=10, fill=tk.X)
+    slider_frame = tk.Frame(top, background=COLORS["bg"])
+    slider_frame.pack(padx=SPACING["lg"], pady=SPACING["sm"], fill=tk.X)
 
     # Add period labels on sides
-    tk.Label(slider_frame, text=f"Period {periods[0]}", font=("Arial", 9)).pack(side=tk.LEFT)
-    tk.Label(slider_frame, text=f"Period {periods[-1]}", font=("Arial", 9)).pack(side=tk.RIGHT)
+    tk.Label(slider_frame, text=f"Period {periods[0]}", font=fonts["body"], fg=COLORS["muted"]).pack(side=tk.LEFT)
+    tk.Label(slider_frame, text=f"Period {periods[-1]}", font=fonts["body"], fg=COLORS["muted"]).pack(side=tk.RIGHT)
 
     # Create slider variable
     slider_var = tk.IntVar(value=0)
@@ -150,20 +145,19 @@ def show_split_dialog(app, series_id, series_data, periods):
         showvalue=False,
         command=update_split_label
     )
-    slider.pack(padx=20, pady=(0, 10))
+    slider.pack(padx=SPACING["lg"], pady=(0, SPACING["sm"]))
 
     # Label to show current split position
-    split_label = tk.Label(top, text=f"Split between period {periods[0]} and {periods[1]}", font=("Arial", 10))
-    split_label.pack(padx=20, pady=(5, 15))
+    split_label = tk.Label(
+        top, text=f"Split between period {periods[0]} and {periods[1]}",
+        font=fonts["body_bold"], fg=COLORS["accent"]
+    )
+    split_label.pack(padx=SPACING["lg"], pady=(SPACING["xs"], SPACING["lg"]))
 
     # Add split button
-    split_button = tk.Button(top, text="Split", command=on_split_button_click, font=("Arial", 10, "bold"))
-    split_button.pack(pady=(0, 15))
+    split_button = tk.Button(top, text="Split", command=on_split_button_click)
+    split_button.pack(pady=(0, SPACING["lg"]))
+    add_press_feedback(split_button)
 
-    # Center the window
-    top.update_idletasks()
-    width = top.winfo_reqwidth()
-    height = top.winfo_reqheight()
-    x = (top.winfo_screenwidth() // 2) - (width // 2)
-    y = (top.winfo_screenheight() // 2) - (height // 2)
-    top.geometry(f'+{x}+{y}')
+    top.bind('<Return>', lambda e: on_split_button_click())
+    center_popup(top)

@@ -5,13 +5,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2d16781b-0a17-4a5f-a256-0f544d10928c" name="Changes" comment="Refactor import statements in workspace.xml and add misc.xml for project configuration">
+      <change afterPath="$PROJECT_DIR$/.idea/claudeCodeEditorTabs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/CFDDiagramer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CFDDiagramer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_10_27_2025_1_18_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_10_27_2025_1_18_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_10_27_2025_1_24_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_10_27_2025_1_24_PM__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_27_2025_1_24_PM_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_27_2025_1_24_PM__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Clear_Graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Clear_Graph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Combine_CashFlows.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Combine_CashFlows.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Create_Table.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Create_Table.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Delete_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Delete_Series.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Final_CFD.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Final_CFD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Future_Value.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Future_Value.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Geometric_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Geometric_Series.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Gradient_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Gradient_Series.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Invert_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Invert_Series.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Present_Value.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Present_Value.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Single_CashFlow.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Single_CashFlow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Split_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Split_Series.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/UI_Setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/UI_Setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Uniform_Series.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Uniform_Series.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Update_Plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Update_Plot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/torst/PycharmProjects/Econogram" value="2vXaYPeHpkWGzOrChSR2oBq1gtO" />
+    </persistenceIdMap>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -23,7 +51,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="copilot/rename-series-convention" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -37,14 +65,13 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/tmaier-kettering/Econogram.git&quot;,
-    &quot;accountId&quot;: &quot;017c18e9-2abc-47b0-8ff6-113f2a274f67&quot;
+    &quot;accountId&quot;: &quot;b321f2c8-7f20-46a7-b690-eb98024df1dc&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2vXaYPeHpkWGzOrChSR2oBq1gtO" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -56,13 +83,19 @@
     "Python.UI_Setup.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "#11 on copilot/add-split-series-option",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "master",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -87,6 +120,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -100,14 +134,15 @@
       <list>
         <item itemvalue="Python.main" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-PY-243.23654.177" />
-        <option value="bundled-python-sdk-91d3a02ef49d-43b77aa2d136-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.23654.177" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.29346.142" />
+        <option value="bundled-python-sdk-f2b7a9f6281b-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.142" />
       </set>
     </attachedChunks>
   </component>
@@ -122,6 +157,9 @@
       <workItem from="1744293921281" duration="8000" />
       <workItem from="1761576496270" duration="4837000" />
       <workItem from="1761656911577" duration="591000" />
+      <workItem from="1768575856995" duration="270000" />
+      <workItem from="1771473352002" duration="6000" />
+      <workItem from="1782998062147" duration="8699000" />
     </task>
     <task id="LOCAL-00001" summary="Add .gitignore file and rename Final CFD.py to Final_CFD.py">
       <option name="closed" value="true" />
@@ -160,9 +198,9 @@
     <option name="LAST_COMMIT_MESSAGE" value="Refactor import statements in workspace.xml and add misc.xml for project configuration" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Econogram$UI_Setup.coverage" NAME="UI_Setup Coverage Results" MODIFIED="1761581863807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1783007184506" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Econogram$Final_CFD.coverage" NAME="Final CFD Coverage Results" MODIFIED="1761576517876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Econogram$Present_Value.coverage" NAME="Present_Value Coverage Results" MODIFIED="1761576499297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Econogram$main.coverage" NAME="main Coverage Results" MODIFIED="1761662018528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Econogram$UI_Setup.coverage" NAME="UI_Setup Coverage Results" MODIFIED="1761581863807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

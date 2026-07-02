@@ -6,6 +6,7 @@ to outflows and vice versa.
 import pandas as pd
 from tkinter import messagebox
 from scripts.Create_Table import create_table
+from scripts.Toast import show_toast
 
 
 def invert_selected_series(app):
@@ -28,9 +29,11 @@ def invert_selected_series(app):
         series_mask = app.cash_flows["Series_ID"] == series_id
         app.cash_flows.loc[series_mask, "Cash Flow"] = -app.cash_flows.loc[series_mask, "Cash Flow"]
 
-        create_table(app, [])
+    create_table(app, [])
 
-        # Clear the selection and update all dependent parts
-        app.selected_indices = []
-        app.update_plot()
-        app.update_canvas()  # Ensure canvas is updated to reflect changes
+    # Clear the selection and update all dependent parts
+    app.selected_indices = []
+    app.update_plot()
+    app.update_canvas()  # Ensure canvas is updated to reflect changes
+
+    show_toast(app, f"Inverted {len(selected_series_ids)} series", kind="info")

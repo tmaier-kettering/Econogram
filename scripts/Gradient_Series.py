@@ -3,52 +3,18 @@
 Provides the dialog for adding gradient cash flow series to the diagram.
 A gradient series increases by a constant amount each period, starting from zero.
 """
-import tkinter as tk
-from tkinter import messagebox
 import pandas as pd
-from scripts.UI_Setup import get_asset_path
+from scripts.DialogKit import (
+    create_popup, center_popup, build_form, add_field, add_error_label,
+    show_error, clear_error, add_submit_button,
+    validate_currency, validate_integer, validate_series_name,
+)
+from scripts.Toast import show_toast
+
 
 def popup_gradient_series(app, series_id):
-    def validate_cash_flow_input(entry_text, action_type):
-        # Allow negative numbers, at most one decimal point, and handle intermediate states
-        if action_type == '1':  # If inserting a character
-            if entry_text in {'-', '-.', '.'}:  # Allow intermediate input like '-' or '-.' or '.'
-                return True
-            if not (
-                    entry_text.replace('-', '', 1).replace('.', '',
-                                                           1).isdigit() and  # Remove '-' and '.' for digit check
-                    entry_text.count('-') <= 1 and  # Ensure at most one negative sign
-                    entry_text.count('.') <= 1 and  # Ensure at most one decimal point
-                    (entry_text.find('-') <= 0)  # Ensure '-' is only at the start
-            ):
-                return False
-            # Check for more than two decimal places
-            if '.' in entry_text and len(entry_text.split('.')[1]) > 2:
-                return False
-            if len(entry_text) > 10:  # Restrict total input length
-                return False
-        return True
-
-    def validate_numeric_input(entry_text, action_type):
-        # Allow negative integers and positive integers (no length limit)
-        if action_type == '1':  # If we're inserting a character
-            if entry_text in {'-', ''}:  # Allow '-' during input
-                return True
-            if not (
-                    entry_text.replace('-', '', 1).isdigit() and  # Allows '-'
-                    entry_text.count('-') <= 1 and  # Only one negative sign
-                    (entry_text.find('-') <= 0)  # Negative sign must be at the first position
-            ):
-                return False
-        return True
-
-    def validate_series_name_input(entry_text, action_type):
-        # Limit the series name to 14 characters (validate at 15 to allow up to 14)
-        if action_type == '1' and len(entry_text) >= 15:
-            return False
-        return True
-
     def on_graph_button_click(event=None):
+        clear_error(error_label)
         try:
             # Validate and parse gradient amount
             gradient_value = gradient_value_entry.get()
@@ -100,57 +66,24 @@ def popup_gradient_series(app, series_id):
             # Update the application plot and close the popup
             app.update_plot()
             top.destroy()
+            show_toast(app, f"Added {length} entries to '{series_name}'")
         except ValueError as e:
-            messagebox.showerror("Input Error", str(e))
-            # Ensure the popup stays on top and focused
-            top.lift()
-            top.focus_force()
+            show_error(error_label, str(e))
 
     # Create the popup window for gradient series input
-    top = tk.Toplevel(app.root)
-    top.title("Gradient Series Input")
-    
-    # Set the window icon
-    try:
-        icon_path = get_asset_path("app.ico")
-        top.iconbitmap(icon_path)
-    except Exception as e:
-        print(f"Could not load icon for gradient series window: {e}")
-    
-    # Make window always on top
-    top.attributes('-topmost', True)
-    
-    # Center the window after widgets are added
-    top.update_idletasks()
-    width = top.winfo_reqwidth()
-    height = top.winfo_reqheight()
-    x = (top.winfo_screenwidth() // 2) - (width // 2)
-    y = (top.winfo_screenheight() // 2) - (height // 2)
-    top.geometry(f'+{x}+{y}')
+    top = create_popup(app, "Gradient Series Input")
+    form = build_form(top)
 
-    # Layout the form fields and labels
-    tk.Label(top, text="Gradient Amount:").grid(row=0, column=0, padx=10, pady=5)
-    gradient_value_entry = tk.Entry(top, validate="key",
-                                    validatecommand=(top.register(validate_cash_flow_input), '%P', '%d'))
-    gradient_value_entry.grid(row=0, column=1, padx=10, pady=5)
+    gradient_value_entry = add_field(form, 0, "Gradient Amount:", validate_currency)
+    start_year_entry = add_field(form, 1, "Starting Period:", validate_integer, default="0")
+    length_entry = add_field(form, 2, "Series Length:", validate_integer)
+    series_name_entry = add_field(
+        form, 3, "Series Name:", validate_series_name,
+        default=f"Series {series_id}", select_default=True
+    )
 
-    tk.Label(top, text="Starting Period:").grid(row=1, column=0, padx=10, pady=5)
-    start_year_entry = tk.Entry(top, validate="key",
-                                validatecommand=(top.register(validate_numeric_input), '%P', '%d'))
-    start_year_entry.grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(top, text="Series Length:").grid(row=2, column=0, padx=10, pady=5)
-    length_entry = tk.Entry(top, validate="key",
-                            validatecommand=(top.register(validate_numeric_input), '%P', '%d'))
-    length_entry.grid(row=2, column=1, padx=10, pady=5)
-
-    tk.Label(top, text="Series Name:").grid(row=3, column=0, padx=10, pady=5)
-    series_name_entry = tk.Entry(top, validate="key",
-                                 validatecommand=(top.register(validate_series_name_input), '%P', '%d'))
-    series_name_entry.grid(row=3, column=1, padx=10, pady=5)
-
-    graph_button = tk.Button(top, text="Graph", command=on_graph_button_click)
-    graph_button.grid(row=4, columnspan=2, pady=10)
+    error_label = add_error_label(form, 4)
+    add_submit_button(form, 5, "Graph", on_graph_button_click)
 
     # Bind Enter key for convenience to trigger form submission
     top.bind('<Return>', on_graph_button_click)
@@ -158,3 +91,6 @@ def popup_gradient_series(app, series_id):
     start_year_entry.bind('<Return>', on_graph_button_click)
     length_entry.bind('<Return>', on_graph_button_click)
     series_name_entry.bind('<Return>', on_graph_button_click)
+
+    gradient_value_entry.focus_set()
+    center_popup(top)

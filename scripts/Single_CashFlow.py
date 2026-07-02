@@ -3,51 +3,17 @@
 Provides the dialog for adding individual single cash flows to the diagram.
 """
 import pandas as pd
-import tkinter as tk
-from tkinter import messagebox
-from scripts.UI_Setup import get_asset_path
+from scripts.DialogKit import (
+    create_popup, center_popup, build_form, add_field, add_error_label,
+    show_error, clear_error, add_submit_button,
+    validate_currency, validate_integer, validate_series_name,
+)
+from scripts.Toast import show_toast
 
 
 def popup_add_single_cash_flow(app, series_id):
-    def validate_cash_flow_input(entry_text, action_type):
-        # Allow negative numbers and at most one decimal point; also handle intermediate states
-        if action_type == '1':  # If we're inserting a character
-            if entry_text in {'-', '-.', '.'}:  # Allow '-' or '-.' or '.' during input
-                return True
-            if not (
-                    entry_text.replace('-', '', 1).replace('.', '', 1).isdigit() and  # Allows '-' and '.'
-                    entry_text.count('-') <= 1 and  # Only one negative sign
-                    entry_text.count('.') <= 1 and  # Only one decimal point
-                    (entry_text.find('-') <= 0)  # Negative sign must be at the first position
-            ):
-                return False
-            # Check for more than two decimal places
-            if '.' in entry_text and len(entry_text.split('.')[1]) > 2:
-                return False
-            if len(entry_text) > 10:  # Limit total input length
-                return False
-        return True
-
-    def validate_period_input(entry_text, action_type):
-        # Allow negative integers and positive integers (no length limit)
-        if action_type == '1':  # If we're inserting a character
-            if entry_text in {'-', ''}:  # Allow '-' during input
-                return True
-            if not (
-                    entry_text.replace('-', '', 1).isdigit() and  # Allows '-' 
-                    entry_text.count('-') <= 1 and  # Only one negative sign
-                    (entry_text.find('-') <= 0)  # Negative sign must be at the first position
-            ):
-                return False
-        return True
-
-    def validate_series_name_input(entry_text, action_type):
-        # Limit the series name to 14 characters (validate at 15 to allow up to 14)
-        if action_type == '1' and len(entry_text) >= 15:
-            return False
-        return True
-
     def on_graph_button_click(event=None):
+        clear_error(error_label)
         try:
             # Validate period input
             try:
@@ -92,55 +58,29 @@ def popup_add_single_cash_flow(app, series_id):
             app.cash_flows = pd.concat([app.cash_flows, new_entry_filtered], ignore_index=True)
             app.update_plot()
             top.destroy()
+            show_toast(app, f"Added 1 entry to '{series_name}'")
         except ValueError as e:
-            messagebox.showerror("Input Error", str(e))
-            # Ensure the window stays on top and focused
-            top.lift()
-            top.focus_force()
+            show_error(error_label, str(e))
 
     # Create a top-level window
-    top = tk.Toplevel(app.root)
-    top.title("Single Cash Flow Input")
-    
-    # Set the window icon
-    try:
-        icon_path = get_asset_path("app.ico")
-        top.iconbitmap(icon_path)
-    except Exception as e:
-        print(f"Could not load icon for single cash flow window: {e}")
-    
-    # Make window always on top
-    top.attributes('-topmost', True)
-    
-    # Center the window
-    top.update_idletasks()
-    width = top.winfo_reqwidth()
-    height = top.winfo_reqheight()
-    x = (top.winfo_screenwidth() // 2) - (width // 2)
-    y = (top.winfo_screenheight() // 2) - (height // 2)
-    top.geometry(f'+{x}+{y}')
+    top = create_popup(app, "Single Cash Flow Input")
+    form = build_form(top)
 
-    # Arrange the widgets using grid layout
-    tk.Label(top, text="Cash Flow Amount:").grid(row=0, column=0, padx=10, pady=5)
-    cash_flow_entry = tk.Entry(top, validate="key",
-                               validatecommand=(top.register(validate_cash_flow_input), '%P', '%d'))
-    cash_flow_entry.grid(row=0, column=1, padx=10, pady=5)
+    cash_flow_entry = add_field(form, 0, "Cash Flow Amount:", validate_currency)
+    period_entry = add_field(form, 1, "Period:", validate_integer, default="0")
+    series_name_entry = add_field(
+        form, 2, "Series Name:", validate_series_name,
+        default=f"Series {series_id}", select_default=True
+    )
 
-    tk.Label(top, text="Period:").grid(row=1, column=0, padx=10, pady=5)
-    period_entry = tk.Entry(top, validate="key", validatecommand=(top.register(validate_period_input), '%P', '%d'))
-    period_entry.grid(row=1, column=1, padx=10, pady=5)
-
-    tk.Label(top, text="Series Name:").grid(row=2, column=0, padx=10, pady=5)
-    series_name_entry = tk.Entry(top, validate="key",
-                                 validatecommand=(top.register(validate_series_name_input), '%P', '%d'))
-    series_name_entry.grid(row=2, column=1, padx=10, pady=5)
-
-    graph_button = tk.Button(top, text="Graph", command=on_graph_button_click)
-    graph_button.grid(row=3, columnspan=2, pady=10)
+    error_label = add_error_label(form, 3)
+    add_submit_button(form, 4, "Graph", on_graph_button_click)
 
     # Bind the "Enter" key to the on_graph_button_click function for convenience
     top.bind('<Return>', on_graph_button_click)
-    # Additionally bind the "Enter" key on specific entry widgets
     cash_flow_entry.bind('<Return>', on_graph_button_click)
     period_entry.bind('<Return>', on_graph_button_click)
     series_name_entry.bind('<Return>', on_graph_button_click)
+
+    cash_flow_entry.focus_set()
+    center_popup(top)

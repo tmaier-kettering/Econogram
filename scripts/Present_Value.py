@@ -4,7 +4,7 @@ Calculates the present value of selected cash flows or series,
 moving cash flows backward in time using the specified interest rate.
 """
 import pandas as pd
-from tkinter import simpledialog, messagebox, Tk
+from tkinter import simpledialog, messagebox
 from scripts.Create_Table import create_table
 
 
@@ -23,14 +23,11 @@ def check_cash_flow_position(initial_period, new_period):
 
 def show_warning():
     """Display a warning about moving cash flows forward in time."""
-    root = Tk()
-    root.withdraw()  # Hide main window
     messagebox.showwarning(
         "Warning",
         "You cannot move your cash flow forward in time using the present value function. "
         "Please select the future value function instead."
     )
-    root.destroy()
 
 
 def popup_present_value(app):

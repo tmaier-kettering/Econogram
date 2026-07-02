@@ -4,6 +4,7 @@ Provides the functionality to clear all cash flows from the diagram.
 """
 from tkinter import messagebox
 from scripts.Create_Table import create_table
+from scripts.Toast import show_toast
 
 
 def clear_graph(app):
@@ -33,3 +34,5 @@ def clear_graph(app):
 
         # Update the plot to reflect changes
         app.update_plot()
+
+        show_toast(app, "Graph cleared", kind="info")

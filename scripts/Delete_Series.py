@@ -5,6 +5,7 @@ Provides functionality to delete selected cash flow series from the diagram.
 import pandas as pd
 from tkinter import messagebox
 from scripts.Create_Table import create_table
+from scripts.Toast import show_toast
 
 
 def delete_selected_series(app):
@@ -22,6 +23,8 @@ def delete_selected_series(app):
     selected_series_ids = app.cash_flows.loc[app.selected_indices, "Series_ID"].unique()
 
     if messagebox.askyesno("Confirmation", "Are you sure you want to delete these series?"):
+        deleted_count = len(app.selected_indices)
+
         # Remove series from cash_flows where Series_ID is in selected_series_ids
         app.cash_flows.drop(index=app.selected_indices, inplace=True)
 
@@ -31,3 +34,6 @@ def delete_selected_series(app):
         app.selected_indices = []
         app.update_plot()
         app.update_canvas()  # Ensure canvas is updated to reflect changes
+
+        entry_word = "entry" if deleted_count == 1 else "entries"
+        show_toast(app, f"Deleted {deleted_count} {entry_word}", kind="info")

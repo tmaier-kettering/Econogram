@@ -5,6 +5,7 @@ Creates and updates the tabular view of cash flows displayed alongside the diagr
 import pandas as pd
 import tkinter as tk
 from tkinter import ttk
+from scripts.Theme import COLORS, get_fonts
 
 
 def create_table(app, selected_values):
@@ -28,17 +29,33 @@ def create_table(app, selected_values):
         app.tree.heading("Period", text="Period")
         app.tree.heading("Cash Flow", text="Cash Flow")
 
-        # Configure column widths
-        app.tree.column("Series Name", width=150, anchor='center')
+        # Configure column widths. Cash Flow is right-aligned since it's a
+        # money column; Series Name reads better left-aligned.
+        app.tree.column("Series Name", width=150, anchor='w')
         app.tree.column("Period", width=100, anchor='center')
-        app.tree.column("Cash Flow", width=100, anchor='center')
+        app.tree.column("Cash Flow", width=100, anchor='e')
+
+        # Zebra striping and sign coloring for at-a-glance scanning of
+        # inflows vs. outflows.
+        app.tree.tag_configure('evenrow', background=COLORS["surface"])
+        app.tree.tag_configure('oddrow', background=COLORS["surface_alt"])
+        app.tree.tag_configure('positive', foreground=COLORS["positive"])
+        app.tree.tag_configure('negative', foreground=COLORS["negative"])
 
         # Pack the scrollbar
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        
+
         # Pack the tree
         app.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    
+
+        # Placeholder shown when there's nothing selected, so an empty
+        # table reads as "nothing selected yet" rather than "broken".
+        app.table_hint = tk.Label(
+            table_container, text="Select cash flows on the chart to see their details here.",
+            font=get_fonts()["body"], fg=COLORS["muted"], background=COLORS["surface"],
+            wraplength=220, justify="center"
+        )
+
     # Clear previous table data
     for i in app.tree.get_children():
         app.tree.delete(i)
@@ -52,7 +69,15 @@ def create_table(app, selected_values):
         df_sorted = df.sort_values(by=['Series Name', 'Period'], ascending=[True, True])
 
         # Insert the sorted data into the table
-        for index, row in df_sorted.iterrows():
+        for position, (index, row) in enumerate(df_sorted.iterrows()):
             # Round the cash flow to 2 decimal places and prepend a dollar sign
             rounded_cash_flow = f"${round(row['Cash Flow'], 2):,.2f}"
-            app.tree.insert("", "end", values=(row['Series Name'], row['Period'], rounded_cash_flow))
+            stripe_tag = 'evenrow' if position % 2 == 0 else 'oddrow'
+            sign_tag = 'positive' if row['Cash Flow'] >= 0 else 'negative'
+            app.tree.insert(
+                "", "end", values=(row['Series Name'], row['Period'], rounded_cash_flow),
+                tags=(stripe_tag, sign_tag)
+            )
+        app.table_hint.place_forget()
+    else:
+        app.table_hint.place(relx=0.5, rely=0.5, anchor="center")
