@@ -1,0 +1,76 @@
+"""The cash-flow data model: a ledger of cash flow rows, independent of
+any Tkinter or matplotlib code.
+
+Every row has a permanent Row_ID, assigned once at insert time and never
+reused or renumbered — this replaces using the pandas DataFrame's
+positional index as an implicit identity key, which broke whenever a
+reset_index() happened between when a row was selected and when it was
+acted on.
+"""
+import pandas as pd
+
+from scripts.model.errors import LedgerError
+
+COLUMNS = ["Row_ID", "Period", "Cash Flow", "Color", "Series_ID", "Series_Name"]
+
+
+class CashFlowLedger:
+    """Owns the cash flow rows. No UI, no rendering, no color assignment
+    (colors are passed in by the caller, which owns a ColorAssigner)."""
+
+    def __init__(self):
+        self._df = pd.DataFrame(columns=COLUMNS)
+        self._next_row_id = 1
+        self._next_series_id = 1
+
+    def as_dataframe(self) -> pd.DataFrame:
+        """A copy of the current rows. Callers must not mutate the ledger
+        through this — it's a snapshot, not a live reference."""
+        return self._df.copy()
+
+    def is_empty(self) -> bool:
+        return self._df.empty
+
+    def reserve_series_id(self) -> int:
+        """Allocate a new series id without adding any rows under it yet.
+        Used by callers that need to know the id before building rows
+        (e.g. Present Value's "create a new series" mode)."""
+        series_id = self._next_series_id
+        self._next_series_id += 1
+        return series_id
+
+    def add_single(self, period: int, amount: float, color, series_name: str) -> int:
+        """Add one cash flow as its own new series. Returns the new series_id."""
+        series_name = series_name.strip()
+        if not series_name:
+            raise LedgerError("Series name cannot be empty.")
+        if amount == 0:
+            raise LedgerError("Cash flow amount must be non-zero.")
+
+        series_id = self.reserve_series_id()
+        self._append_rows([(period, amount)], color=color, series_id=series_id, series_name=series_name)
+        return series_id
+
+    def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
+        """Append (period, cash_flow) pairs as new rows under one series.
+        Returns the list of new Row_IDs, in order. The single mutation
+        path every add_* method goes through, so there's one consistent
+        way rows get added instead of each dialog hand-rolling its own
+        pd.concat."""
+        new_row_ids = []
+        rows = []
+        for period, cash_flow in entries:
+            row_id = self._next_row_id
+            self._next_row_id += 1
+            new_row_ids.append(row_id)
+            rows.append({
+                "Row_ID": row_id,
+                "Period": period,
+                "Cash Flow": float(cash_flow),
+                "Color": color,
+                "Series_ID": series_id,
+                "Series_Name": series_name,
+            })
+        new_df = pd.DataFrame(rows, columns=COLUMNS)
+        self._df = pd.concat([self._df, new_df], ignore_index=True)
+        return new_row_ids
