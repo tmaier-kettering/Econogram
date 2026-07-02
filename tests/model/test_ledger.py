@@ -208,3 +208,51 @@ def test_invert_series_ignores_unknown_series_ids():
     series_id = ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
     inverted_count = ledger.invert_series([series_id, 99999])
     assert inverted_count == 1
+
+
+def test_split_series_partitions_rows_by_period():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=100.0, length=4, color="red", series_name="A")
+    # periods are 0, 1, 2, 3
+
+    id_1, id_2 = ledger.split_series(series_id, split_period=1, name_1="A_1", name_2="A_2", color_2="blue")
+
+    df = ledger.as_dataframe()
+    first_half = df[df["Series_ID"] == id_1]
+    second_half = df[df["Series_ID"] == id_2]
+    assert sorted(first_half["Period"].tolist()) == [0, 1]
+    assert sorted(second_half["Period"].tolist()) == [2, 3]
+    assert (first_half["Series_Name"] == "A_1").all()
+    assert (second_half["Series_Name"] == "A_2").all()
+    assert (second_half["Color"] == "blue").all()
+    assert (first_half["Color"] == "red").all()  # first half keeps the original color
+
+
+def test_split_series_produces_new_series_ids_not_reusing_the_original():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=100.0, length=2, color="red", series_name="A")
+    id_1, id_2 = ledger.split_series(series_id, split_period=0, name_1="A_1", name_2="A_2", color_2="blue")
+    assert id_1 != series_id
+    assert id_2 != series_id
+    assert id_1 != id_2
+
+
+def test_split_series_raises_if_series_does_not_exist():
+    ledger = CashFlowLedger()
+    with pytest.raises(LedgerError):
+        ledger.split_series(99999, split_period=0, name_1="A_1", name_2="A_2", color_2="blue")
+
+
+def test_split_series_raises_if_series_has_only_one_row():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_single(period=0, amount=100.0, color="red", series_name="A")
+    with pytest.raises(LedgerError):
+        ledger.split_series(series_id, split_period=0, name_1="A_1", name_2="A_2", color_2="blue")
+
+
+def test_split_series_raises_if_split_point_leaves_one_side_empty():
+    ledger = CashFlowLedger()
+    series_id = ledger.add_uniform(start_period=0, amount=100.0, length=3, color="red", series_name="A")
+    # split_period below every period in the series -> first half would be empty
+    with pytest.raises(LedgerError):
+        ledger.split_series(series_id, split_period=-1, name_1="A_1", name_2="A_2", color_2="blue")

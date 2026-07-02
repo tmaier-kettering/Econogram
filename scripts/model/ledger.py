@@ -137,6 +137,36 @@ class CashFlowLedger:
         self._df.loc[mask, "Cash Flow"] = -self._df.loc[mask, "Cash Flow"]
         return len(valid_ids)
 
+    def split_series(self, series_id: int, split_period: int, name_1: str, name_2: str, color_2) -> tuple:
+        """Split a series into two at split_period: rows with Period <=
+        split_period go to a new series named name_1 (keeping the original
+        color), rows with Period > split_period go to a new series named
+        name_2 with color_2. Returns (new_series_id_1, new_series_id_2)."""
+        series_rows = self._df[self._df["Series_ID"] == series_id]
+        if series_rows.empty:
+            raise LedgerError("The series to split no longer exists.")
+        if len(series_rows) <= 1:
+            raise LedgerError("Cannot split a series with only one cash flow.")
+
+        first_mask = (self._df["Series_ID"] == series_id) & (self._df["Period"] <= split_period)
+        second_mask = (self._df["Series_ID"] == series_id) & (self._df["Period"] > split_period)
+        if not first_mask.any() or not second_mask.any():
+            raise LedgerError("Split point must leave cash flows on both sides.")
+
+        original_color = series_rows.iloc[0]["Color"]
+        series_id_1 = self.reserve_series_id()
+        series_id_2 = self.reserve_series_id()
+
+        self._df.loc[first_mask, "Series_ID"] = series_id_1
+        self._df.loc[first_mask, "Series_Name"] = name_1
+        self._df.loc[first_mask, "Color"] = pd.Series([original_color] * first_mask.sum(), index=self._df[first_mask].index)
+
+        self._df.loc[second_mask, "Series_ID"] = series_id_2
+        self._df.loc[second_mask, "Series_Name"] = name_2
+        self._df.loc[second_mask, "Color"] = pd.Series([color_2] * second_mask.sum(), index=self._df[second_mask].index)
+
+        return series_id_1, series_id_2
+
     def _append_rows(self, entries, *, color, series_id: int, series_name: str) -> list:
         """Append (period, cash_flow) pairs as new rows under one series.
         Returns the list of new Row_IDs, in order. The single mutation
