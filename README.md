@@ -27,7 +27,7 @@ No installation required - simply download and run the .exe file.
 
 The application displays cash flows as a bar chart with periods on the x-axis and cash flow amounts on the y-axis. Different series are color-coded for easy identification.
 
-<video src="https://github.com/tmaier-kettering/Econogram/raw/master/assets/Econogram.mp4" controls width="100%"></video>
+![Econogram Demo](assets/Econogram.gif)
 
 ## Help
 
